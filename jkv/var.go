@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	w "github.com/cdutwhu/go-wrappers"
-	cmn "github.com/cdutwhu/n3-privacy/common"
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 type (

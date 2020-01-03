@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	cmn "github.com/cdutwhu/n3-privacy/common"
-	pp "github.com/cdutwhu/n3-privacy/preprocess"
+	cmn "github.com/cdutwhu/json-util/common"
+	pp "github.com/cdutwhu/json-util/preprocess"
 )
 
 func TestQuery(t *testing.T) {

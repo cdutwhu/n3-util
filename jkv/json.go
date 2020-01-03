@@ -7,7 +7,7 @@ import (
 	"math"
 	"sync"
 
-	cmn "github.com/cdutwhu/n3-privacy/common"
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 // IsJSON :

@@ -1,7 +1,7 @@
 package jkv
 
 import (
-	cmn "github.com/cdutwhu/n3-privacy/common"
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 // QueryPV : value ("*.*") for no path checking
