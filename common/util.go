@@ -39,6 +39,29 @@ func TmTrack(start time.Time) {
 	fPf("took %s\n", elapsed)
 }
 
+// var (
+// 	Color = func(colorString string) func(...interface{}) string {
+// 		sprint := func(args ...interface{}) string {
+// 			return fmt.Sprintf(colorString, fmt.Sprint(args...))
+// 		}
+// 		return sprint
+// 	}
+// 	Black   = Color("\033[1;30m%s\033[0m")
+// 	Red     = Color("\033[1;31m%s\033[0m")
+// 	Green   = Color("\033[1;32m%s\033[0m")
+// 	Yellow  = Color("\033[1;33m%s\033[0m")
+// 	Purple  = Color("\033[1;34m%s\033[0m")
+// 	Magenta = Color("\033[1;35m%s\033[0m")
+// 	Teal    = Color("\033[1;36m%s\033[0m")
+// 	White   = Color("\033[1;37m%s\033[0m")
+// )
+
+// var (
+// 	Info  = Teal
+// 	Warn  = Yellow
+// 	Fatal = Red
+// )
+
 // FailOnErr : error holder use "%v"
 func FailOnErr(format string, v ...interface{}) {
 	for _, p := range v {
@@ -208,6 +231,44 @@ NEXT:
 		}
 	}
 	return set.Interface()
+}
+
+// move from "cdutwhu/go-wrappers"
+
+// HasAnyPrefix :
+func HasAnyPrefix(s string, lsPrefix ...string) bool {
+	FailOnCondition(len(lsPrefix) == 0, "%v", fEf("at least one prefix for input"))
+	for _, prefix := range lsPrefix {
+		if sHasPrefix(s, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+// RmTailFromLast :
+func RmTailFromLast(s, mark string) string {
+	if i := sLastIndex(s, mark); i >= 0 {
+		return s[:i]
+	}
+	return s
+}
+
+// RmTailFromLastN :
+func RmTailFromLastN(s, mark string, iLast int) string {
+	rt := s
+	for i := 0; i < iLast; i++ {
+		rt = RmTailFromLast(rt, mark)
+	}
+	return rt
+}
+
+// RmHeadToLast :
+func RmHeadToLast(s, mark string) string {
+	if i := sLastIndex(s, mark); i >= 0 {
+		return s[i+len(mark) : len(s)]
+	}
+	return s
 }
 
 // move from "cdutwhu/go-util"

@@ -20,7 +20,7 @@ func (jkv *JKV) QueryPV(path string, value interface{}) (mLvlOIDs map[int][]stri
 		if v, ok := jkv.MapIPathValue[iPath]; ok && v == valstr {
 			pos, PIPath := jkv.mIPathPos[iPath], ""
 			for upGen := 1; upGen <= nGen; upGen++ {
-				pPath := S(iPath).RmTailFromLastN(pLinker, upGen).V()
+				pPath := cmn.RmTailFromLastN(iPath, pLinker, upGen)
 				for j := 0; j < jkv.mPathMAXIdx[pPath]; j++ {
 					piPath := fSf("%s@%d", pPath, j)
 					pPos := jkv.mIPathPos[piPath]

@@ -10,12 +10,10 @@ import (
 
 func TestSplitJSONArr(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
-	jArrStr := pp.FmtJSONFile("../../JSON-Mask/data/xapi.json", "../preprocess/utils/")
+	jArrStr := pp.FmtJSONFile("../../data/xapi.json", "../preprocess/utils/")
 	// jArrStr := pp.FmtJSONFile("../../Server/config/meta.json", "../preprocess/utils/")
-	if jArrStr == "" {
-		fPln("Read JSON file error")
-		return
-	}
+	cmn.FailOnCondition(jArrStr == "", "%v", fEf("Read JSON file error"))
+
 	if arr := SplitJSONArr(jArrStr); arr != nil {
 		jMergedStr := MergeJSON(arr...)
 		fPln(jMergedStr)
@@ -29,7 +27,7 @@ func TestSplitJSONArr(t *testing.T) {
 
 func TestScan(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
-	json := pp.FmtJSONFile("../../JSON-Mask/data/NAPCodeFrame.json", "../preprocess/utils/")
+	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "")
 	LVL, mLvlFParr, mFPosLvl, _ := jkv.scan()
 	fPln("levels:", LVL)
@@ -43,7 +41,7 @@ func TestScan(t *testing.T) {
 
 func TestFieldByPos(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
-	json := pp.FmtJSONFile("../../JSON-Mask/data/NAPCodeFrame.json", "../preprocess/utils/")
+	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "")
 	LVL, mLvlFParr, _, _ := jkv.scan()
 	// for k, v := range mLvlFParr {
@@ -67,7 +65,7 @@ func TestFieldByPos(t *testing.T) {
 
 func TestFType(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
-	json := pp.FmtJSONFile("../../JSON-Mask/data/NAPCodeFrame.json", "../preprocess/utils/")
+	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "")
 	value, typ := jkv.fValueType(1617)
 	fPln(typ.Str())
@@ -78,14 +76,14 @@ func TestFType(t *testing.T) {
 
 func TestInit(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
-	json := pp.FmtJSONFile("../../JSON-Mask/data/NAPCodeFrame.json", "../preprocess/utils/")
+	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	NewJKV(json, "")
 	fPln("break")
 }
 
 func TestWrap(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
-	json := pp.FmtJSONFile("../../JSON-Mask/data/xapi1.json", "../preprocess/utils/")
+	json := pp.FmtJSONFile("../../data/xapi1.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "root")
 	fPln("--- Init ---")
 	fPln(jkv.JSON)
@@ -94,7 +92,7 @@ func TestWrap(t *testing.T) {
 func TestUnfold(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
 
-	json := pp.FmtJSONFile("../../JSON-Mask/data/xapi1.json", "../preprocess/utils/")
+	json := pp.FmtJSONFile("../../data/xapi1.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "root")
 	fPln("--- Init ---")
 	fPln(jkv.Wrapped)

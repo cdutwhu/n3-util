@@ -12,9 +12,9 @@ import (
 
 func TestJSONPolicy(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
-	data := pp.FmtJSONFile("../../JSON-Mask/data/NAPCodeFrame.json", "../preprocess/utils/")
-	mask1 := pp.FmtJSONFile("../../JSON-Mask/data/NAPCodeFrameMaskP.json", "../preprocess/utils/")
-	mask2 := pp.FmtJSONFile("../../JSON-Mask/data/NAPCodeFrameMaskPcopy.json", "../preprocess/utils/")
+	data := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
+	mask1 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskP.json", "../preprocess/utils/")
+	mask2 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskPcopy.json", "../preprocess/utils/")
 
 	cmn.FailOnCondition(data == "", "%v", fEf("input data is empty, check its path"))
 	cmn.FailOnCondition(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))

@@ -1,6 +1,8 @@
 package common
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestSHA(t *testing.T) {
 	fPln("MD5", MD5Str("a"))       // 0cc175b9c0f1b6a831c399e269772661
@@ -37,14 +39,14 @@ func TestSetUnion(t *testing.T) {
 	fPln(SetUnion(arr1, arr2).([]string))
 }
 
-func TestEncrypt(e *testing.T) {
+func TestEncrypt(t *testing.T) {
 	data := Encrypt([]byte("abc111"), "A")
 	// fPln(string(data))
 	bytes, _ := Decrypt(data, "A")
 	fPln(string(bytes))
 }
 
-func TestMapPrint(e *testing.T) {
+func TestMapPrint(t *testing.T) {
 	MapPrint(map[string]string{
 		// "a": "b",
 		"3": "4 a",
@@ -52,4 +54,24 @@ func TestMapPrint(e *testing.T) {
 		"7": "B    sss",
 		"1": "2  2345678  223",
 	})
+}
+
+func TestRmTailFromLast(t *testing.T) {
+	fPln(RmTailFromLast("AB.CD.EF", "."))
+	fPln(RmTailFromLast("AB.CD.EF", "#"))
+}
+
+func TestRmTailFromLastN(t *testing.T) {
+	fPln(RmTailFromLastN("AB.CD.EF", ".", 2))
+	fPln(RmTailFromLastN("AB.CD.EF", "#", 2))
+}
+
+func TestRmHeadToLast(t *testing.T) {
+	fPln(RmHeadToLast("##AB##CD##F", "#"))
+}
+
+func TestColor(t *testing.T) {
+	fPln("\033[31mRed")
+	fPln("\033[32mGreen")
+	fPln("\033[34mBlue")
 }

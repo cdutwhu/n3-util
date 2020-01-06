@@ -140,10 +140,10 @@ func (jkv *JKV) scan() (int, map[int][]int, map[int]int, error) {
 		NEXT:
 			for i := 0; i < len(s); i++ {
 				// modify levels for array-object
-				if S(s[i:]).HPAny(sTAOStart...) {
+				if cmn.HasAnyPrefix(s[i:], sTAOStart...) {
 					offset++
 				}
-				if S(s[i:]).HPAny(sTAOEnd...) {
+				if cmn.HasAnyPrefix(s[i:], sTAOEnd...) {
 					offset--
 				}
 
@@ -273,7 +273,7 @@ func fValuesOnObjList(strObjlist string) (objlist []string) {
 func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 	getV := func(str string, s int) string {
 		for i := s + 1; i < len(str); i++ {
-			if S(str[i:]).HPAny(Trait1EndV, Trait2EndV) {
+			if cmn.HasAnyPrefix(str[i:], Trait1EndV, Trait2EndV) {
 				return str[s:i]
 			}
 		}
@@ -288,7 +288,7 @@ func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 			case '}':
 				nRCB++
 			}
-			if nLCB == nRCB && S(str[i:]).HPAny("},\n", "}\n") {
+			if nLCB == nRCB && cmn.HasAnyPrefix(str[i:], "},\n", "}\n") {
 				return str[s : i+1]
 			}
 		}
@@ -303,7 +303,7 @@ func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 			case ']':
 				nRBB++
 			}
-			if nLBB == nRBB && S(str[i:]).HPAny("],\n", "]\n") {
+			if nLBB == nRBB && cmn.HasAnyPrefix(str[i:], "],\n", "]\n") {
 				return str[s : i+1]
 			}
 		}
@@ -313,7 +313,7 @@ func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 	s := jkv.JSON
 	v1c, pv := byte(0), 0
 	for i := p; i < len(s); i++ {
-		if S(s[i:]).HP(TraitFV) {
+		if sHasPrefix(s[i:], TraitFV) {
 			pv = i + len(TraitFV)
 			v1c = s[pv]
 			break
@@ -439,10 +439,10 @@ func (jkv *JKV) init() error {
 		for i := 1; i < len(jkv.lsLvlIPaths); i++ {
 			if Ls, LsPrev := jkv.lsLvlIPaths[i], jkv.lsLvlIPaths[i-1]; len(Ls) > 0 && len(LsPrev) > 0 {
 				for _, iPathP := range LsPrev {
-					pathP := S(iPathP).RmTailFromLast("@").V()
+					pathP := cmn.RmTailFromLast(iPathP, "@")
 					chk := pathP + pLinker
 					for _, iPath := range Ls {
-						if S(iPath).HP(chk) {
+						if sHasPrefix(iPath, chk) {
 							oidP, oid := jkv.mIPathOID[iPathP], jkv.mIPathOID[iPath]
 							objP, obj := jkv.mOIDObj[oidP], jkv.mOIDObj[oid]
 							jkv.mOIDObj[oidP] = sReplaceAll(objP, obj, oid)
@@ -573,7 +573,7 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 		frame = jkv.JSON
 	} else {
 		firstField := jkv.lsLvlIPaths[1][0]
-		lvl1path := S(firstField).RmTailFromLast("@").V()
+		lvl1path := cmn.RmTailFromLast(firstField, "@")
 		oid := jkv.MapIPathValue[firstField]
 		frame = fSf("{\n  \"%s\": %s\n}", lvl1path, oid)
 	}
@@ -644,7 +644,7 @@ func Mask(name, obj string, mask *JKV) string {
 	// END -- P1/2 //
 
 	for path, valMask := range mask.MapIPathValue {
-		path = S(path).RmTailFromLast("@").V()
+		path = cmn.RmTailFromLast(path, "@")
 
 		// check current mask path is valid for current objTmp fields,
 		// if AT LEAST ONE mask path is valid, let this path go through and make effect. P2/2
@@ -661,7 +661,7 @@ func Mask(name, obj string, mask *JKV) string {
 		}
 		// END -- P2/2 //
 
-		field := S(path).RmHeadToLast(pLinker).V()
+		field := cmn.RmHeadToLast(path, pLinker)
 		lookfor := fSf("\"%s%s", field, TraitFV)
 
 		if i := sIndex(obj, lookfor); i > 0 {

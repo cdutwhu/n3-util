@@ -13,7 +13,7 @@ func TestQuery(t *testing.T) {
 	param := "NAPTestItemLocalId"
 	value := "x00101935"
 
-	data := pp.FmtJSONFile("../../JSON-Mask/data/NAPCodeFrame.json", "../preprocess/utils/")
+	data := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	jkv := NewJKV(data, "")
 	// fPln("--- Init ---")
 

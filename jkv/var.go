@@ -6,13 +6,11 @@ import (
 	"fmt"
 	"strings"
 
-	w "github.com/cdutwhu/go-wrappers"
 	cmn "github.com/cdutwhu/json-util/common"
 )
 
 type (
 	b        = byte
-	S        = w.Str
 	JSONTYPE int
 )
 
