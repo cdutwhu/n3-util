@@ -55,6 +55,12 @@ func Iter(params ...int) <-chan int {
 
 // Iter2Slc :
 func Iter2Slc(params ...int) (slc []int) {
+	if len(params) == 1 {
+		for i := range N(params[0]) {
+			slc = append(slc, i)
+		}
+		return
+	}
 	for i := range Iter(params...) {
 		slc = append(slc, i)
 	}
