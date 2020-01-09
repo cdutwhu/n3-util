@@ -34,6 +34,7 @@ var (
 	sSpl        = strings.Split
 	sJoin       = strings.Join
 	sCount      = strings.Count
+	sContains   = strings.Contains
 	sReplace    = strings.Replace
 	sReplaceAll = strings.ReplaceAll
 	sIndex      = strings.Index

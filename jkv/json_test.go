@@ -28,7 +28,7 @@ func TestSplitJSONArr(t *testing.T) {
 func TestScan(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
 	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
-	jkv := NewJKV(json, "")
+	jkv := NewJKV(json, "", false)
 	LVL, mLvlFParr, mFPosLvl, _ := jkv.scan()
 	fPln("levels:", LVL)
 	for k, v := range mLvlFParr {
@@ -42,7 +42,7 @@ func TestScan(t *testing.T) {
 func TestFieldByPos(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
 	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
-	jkv := NewJKV(json, "")
+	jkv := NewJKV(json, "", false)
 	LVL, mLvlFParr, _, _ := jkv.scan()
 	// for k, v := range mLvlFParr {
 	// 	fPln(k, v)
@@ -66,7 +66,7 @@ func TestFieldByPos(t *testing.T) {
 func TestFType(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
 	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
-	jkv := NewJKV(json, "")
+	jkv := NewJKV(json, "", false)
 	value, typ := jkv.fValueType(1617)
 	fPln(typ.Str())
 	if typ == ARR|OBJ {
@@ -77,14 +77,14 @@ func TestFType(t *testing.T) {
 func TestInit(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
 	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
-	NewJKV(json, "")
+	NewJKV(json, "", false)
 	fPln("break")
 }
 
 func TestWrap(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
 	json := pp.FmtJSONFile("../../data/xapi1.json", "../preprocess/utils/")
-	jkv := NewJKV(json, "root")
+	jkv := NewJKV(json, "root", false)
 	fPln("--- Init ---")
 	fPln(jkv.JSON)
 }
@@ -93,7 +93,7 @@ func TestUnfold(t *testing.T) {
 	defer cmn.TmTrack(time.Now())
 
 	json := pp.FmtJSONFile("../../data/xapi1.json", "../preprocess/utils/")
-	jkv := NewJKV(json, "root")
+	jkv := NewJKV(json, "root", false)
 	fPln("--- Init ---")
 	fPln(jkv.Wrapped)
 	fPln(jkv.Unfold(0, nil))

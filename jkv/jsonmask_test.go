@@ -20,8 +20,8 @@ func TestJSONPolicy(t *testing.T) {
 	cmn.FailOnCondition(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
 	cmn.FailOnCondition(mask2 == "", "%v", fEf("input mask2 is empty, check its path"))
 
-	jkvM1 := NewJKV(mask1, "root")
-	jkvM2 := NewJKV(mask2, "root")
+	jkvM1 := NewJKV(mask1, "root", false)
+	jkvM2 := NewJKV(mask2, "root", false)
 
 	if IsJSONArr(data) {
 		jsonArr := SplitJSONArr(data)
@@ -31,9 +31,9 @@ func TestJSONPolicy(t *testing.T) {
 		for i, json := range jsonArr {
 			go func(i int, json string) {
 				defer wg.Done()
-				jkvD := NewJKV(json, "root")
+				jkvD := NewJKV(json, "root", false)
 				maskroot, _ := jkvD.Unfold(0, jkvM1)
-				jkvMR := NewJKV(maskroot, "")
+				jkvMR := NewJKV(maskroot, "", false)
 				jkvMR.Wrapped = jkvD.Wrapped
 				jsonList[i] = jkvMR.UnwrapDefault().JSON
 			}(i, json)
@@ -43,16 +43,16 @@ func TestJSONPolicy(t *testing.T) {
 
 	} else {
 
-		jkvD := NewJKV(data, "root")
+		jkvD := NewJKV(data, "root", false)
 		maskroot, _ := jkvD.Unfold(0, jkvM1)
-		jkvMR := NewJKV(maskroot, "")
+		jkvMR := NewJKV(maskroot, "", false)
 		jkvMR.Wrapped = jkvD.Wrapped
 		json := jkvMR.UnwrapDefault().JSON
 		json = pp.FmtJSONStr(json, "../preprocess/utils/")
 
-		jkvD = NewJKV(json, "root")
+		jkvD = NewJKV(json, "root", false)
 		maskroot, _ = jkvD.Unfold(0, jkvM2)
-		jkvMR = NewJKV(maskroot, "")
+		jkvMR = NewJKV(maskroot, "", false)
 		jkvMR.Wrapped = jkvD.Wrapped
 		json = jkvMR.UnwrapDefault().JSON
 		json = pp.FmtJSONStr(json, "../preprocess/utils/")

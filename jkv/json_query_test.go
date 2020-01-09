@@ -14,7 +14,7 @@ func TestQuery(t *testing.T) {
 	value := "x00101935"
 
 	data := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
-	jkv := NewJKV(data, "")
+	jkv := NewJKV(data, "", false)
 	// fPln("--- Init ---")
 
 	path := func(string) string {

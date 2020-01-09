@@ -22,7 +22,7 @@ func IsJSONArr(str string) bool {
 }
 
 // NewJKV :
-func NewJKV(jsonstr, defroot string) *JKV {
+func NewJKV(jsonstr, defroot string, mustWrap bool) *JKV {
 	jkv := &JKV{
 		JSON: jsonstr,
 		LsL12Fields: [][]string{
@@ -48,7 +48,7 @@ func NewJKV(jsonstr, defroot string) *JKV {
 	if defroot == "" {
 		return jkv
 	}
-	return jkv.wrapDefault(defroot)
+	return jkv.wrapDefault(defroot, mustWrap)
 }
 
 // SplitJSONArr :
@@ -501,8 +501,8 @@ func oIDlistStr2oIDlist(aoIDStr string) (oidlist []string) {
 // ******************************************** //
 
 // wrapDefault :
-func (jkv *JKV) wrapDefault(root string) *JKV {
-	if len(jkv.LsL12Fields[1]) == 1 {
+func (jkv *JKV) wrapDefault(root string, must bool) *JKV {
+	if len(jkv.LsL12Fields[1]) == 1 && !must {
 		return jkv
 	}
 	json := jkv.JSON
@@ -519,7 +519,7 @@ func (jkv *JKV) wrapDefault(root string) *JKV {
 	// }
 
 	// fPln(" ----------------------------------------------- ")
-	jkvR := NewJKV(rooted1, "")
+	jkvR := NewJKV(rooted1, "", must)
 	jkvR.Wrapped = true
 	return jkvR
 }
@@ -558,7 +558,7 @@ func (jkv *JKV) UnwrapDefault() *JKV {
 	// 	FailOnErr("%v @ UnwrapDefault", fEf("error unRooted"))
 	// }
 
-	jkvUnR := NewJKV(unRooted1, "")
+	jkvUnR := NewJKV(unRooted1, "", false)
 	jkvUnR.Wrapped = false
 	return jkvUnR
 }
@@ -634,7 +634,7 @@ func Mask(name, obj string, mask *JKV) string {
 
 	// check current mask path is valid for current objTmp fields, P1/2
 	objTmp, _ := IndentFmt(obj)
-	jkvTmp := NewJKV(objTmp, name)
+	jkvTmp := NewJKV(objTmp, name, true)
 	pathlistTmp := func(name, linker string, fields []string) (pathlist []string) {
 		for _, f := range fields {
 			pathlist = append(pathlist, name+linker+f)
