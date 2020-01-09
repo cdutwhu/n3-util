@@ -4,6 +4,22 @@ import (
 	"testing"
 )
 
+func TestIter(t *testing.T) {
+	for i := range N(10) {
+		fPln(i)
+	}
+	fPln(" ------------ ")
+	for i := range Iter(2, 3, 10) {
+		fPln(i)
+	}
+	fPln(" ------------ ")
+	func(slc ...int) {
+		for _, a := range slc {
+			fPln(a)
+		}
+	}(Iter2Slc(2, 3, 30)...)
+}
+
 func TestSHA(t *testing.T) {
 	fPln("MD5", MD5Str("a"))       // 0cc175b9c0f1b6a831c399e269772661
 	fPln("SHA1", SHA1Str("a"))     // 86f7e437faa5a7fce15d1ddcb9eaeaea377667b8
