@@ -320,6 +320,15 @@ func RmHeadToLast(s, mark string) string {
 	return s
 }
 
+// RmHeadToFirst :
+func RmHeadToFirst(s, mark string) string {
+	segs := sSpl(s, mark)
+	if len(segs) > 1 {
+		return sJoin(segs[1:], mark)
+	}
+	return s
+}
+
 // move from "cdutwhu/go-util"
 
 // IF : Ternary Operator LIKE < ? : >, BUT NO S/C, so block1 and block2 MUST all valid. e.g. type assert, nil pointer, out of index

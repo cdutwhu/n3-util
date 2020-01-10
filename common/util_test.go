@@ -86,6 +86,10 @@ func TestRmHeadToLast(t *testing.T) {
 	fPln(RmHeadToLast("##AB##CD##F", "#"))
 }
 
+func TestRmHeadToFirst(t *testing.T) {
+	fPln(RmHeadToFirst("777##AB##CD##F", "##"))
+}
+
 func TestColor(t *testing.T) {
 	fPln("\033[31mRed")
 	fPln("\033[32mGreen")

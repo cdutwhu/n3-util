@@ -60,3 +60,24 @@ func TestJSONPolicy(t *testing.T) {
 		ioutil.WriteFile("single.json", []byte(json), 0666)
 	}
 }
+
+func TestJSONPolicy1(t *testing.T) {
+	defer cmn.TmTrack(time.Now())
+	data := pp.FmtJSONFile("../../data/test.json", "../preprocess/utils/")
+	mask1 := pp.FmtJSONFile("../../data/1.json", "../preprocess/utils/")
+
+	cmn.FailOnCondition(data == "", "%v", fEf("input data is empty, check its path"))
+	cmn.FailOnCondition(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
+
+	jkvM1 := NewJKV(mask1, "root", false)
+
+	jkvD := NewJKV(data, "root", false)
+	maskroot, _ := jkvD.Unfold(0, jkvM1)
+	jkvMR := NewJKV(maskroot, "", false)
+	jkvMR.Wrapped = jkvD.Wrapped
+	json := jkvMR.UnwrapDefault().JSON
+	json = pp.FmtJSONStr(json, "../preprocess/utils/")
+
+	ioutil.WriteFile("single.json", []byte(json), 0666)
+
+}
