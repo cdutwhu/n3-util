@@ -1,5 +1,9 @@
 {
-  "PurchasingItem": {
-    "ExpenseAccounts": "[]"
+  "PurchaseOrder": {
+    "PurchasingItems": {
+      "PurchasingItem": {
+        "ItemNumber": "(N)"
+      }
+    }
   }
 }

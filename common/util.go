@@ -15,8 +15,15 @@ import (
 	"reflect"
 	"regexp"
 	"sort"
+	"strconv"
 	"time"
 )
+
+// IsNumeric :
+func IsNumeric(s string) bool {
+	_, err := strconv.ParseFloat(s, 64)
+	return err == nil
+}
 
 // N : for i := range N()
 func N(n int) []struct{} {

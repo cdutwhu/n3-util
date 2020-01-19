@@ -702,6 +702,16 @@ func Mask(name, obj string, mask *JKV) string {
 					if valData[0] != '[' { // only deal with one element to one element-array
 						obj = obj[:pvS] + "[" + valData + "]" + obj[pvS+pvE:] // format is needed for outcome
 					}
+				case `"(B)"`:
+					if valData == `"true"` || valData == `"false"` {
+						valData = valData[1 : len(valData)-1]
+						obj = obj[:pvS] + valData + obj[pvS+pvE:]
+					}
+				case `"(N)"`:
+					valData = valData[1 : len(valData)-1]
+					if cmn.IsNumeric(valData) {
+						obj = obj[:pvS] + valData + obj[pvS+pvE:]
+					}
 				default:
 					obj = obj[:pvS] + valMask + obj[pvS+pvE:]
 				}
