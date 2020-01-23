@@ -12,8 +12,11 @@ import (
 	"log"
 	"math"
 	"net"
+	"os"
+	"path/filepath"
 	"reflect"
 	"regexp"
+	"runtime"
 	"sort"
 	"strconv"
 	"time"
@@ -41,13 +44,13 @@ func Iter(params ...int) <-chan int {
 	case 3:
 		start, step, end = params[0], params[1], params[2]
 	default:
-		log.Fatalf("invalid params")
+		FailOnErr("invalid params %v", fEf("@Iter"))
 	}
 	if end <= start {
-		log.Fatalf("[end](%d) must be greater than [start](%d)", end, start)
+		FailOnErr("[end](%d) must be greater than [start](%d) %v", end, start, fEf("@Iter"))
 	}
 	if step < 1 {
-		log.Fatalf("[step](%d) must be greater than 0", step)
+		FailOnErr("[step](%d) must be greater than 0 %v", step, fEf("@Iter"))
 	}
 
 	ch := make(chan int)
@@ -117,6 +120,58 @@ func TmTrack(start time.Time) {
 // 	Warn  = Yellow
 // 	Fatal = Red
 // )
+
+// FuncTrack : full path of func name
+// func FuncTrack(i interface{}) string {
+// 	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+// }
+
+// TrackCaller :
+func TrackCaller() string {
+	pc := make([]uintptr, 15)
+	n := runtime.Callers(2, pc)
+	frames := runtime.CallersFrames(pc[:n])
+	frame, _ := frames.Next()
+	return fSf("\n%s:%d\n%s\n", frame.File, frame.Line, frame.Function)
+}
+
+// ErrCaller :
+func ErrCaller() error {
+	pc := make([]uintptr, 15)
+	n := runtime.Callers(2, pc)
+	frames := runtime.CallersFrames(pc[:n])
+	frame, _ := frames.Next()
+	return fEf("\n%s:%d\n%s\n", frame.File, frame.Line, frame.Function)
+}
+
+var mPathFile map[string]*os.File = make(map[string]*os.File)
+
+// SetFailLog :
+func SetFailLog(logpath string) {
+	if abspath, err := filepath.Abs(logpath); err == nil {
+		if f, ok := mPathFile[abspath]; ok {
+			log.SetFlags(log.LstdFlags)
+			log.SetOutput(f)
+			return
+		}
+		if _, err := os.Stat(abspath); err == nil || os.IsNotExist(err) {
+			if f, err := os.OpenFile(abspath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666); err == nil {
+				mPathFile[abspath] = f
+				log.SetFlags(log.LstdFlags)
+				log.SetOutput(f)
+			}
+		}
+	}
+}
+
+// ResetFailLog : call once at the exit
+func ResetFailLog() {
+	for _, f := range mPathFile {
+		f.Close()
+	}
+	mPathFile = make(map[string]*os.File)
+	log.SetOutput(os.Stdout)
+}
 
 // FailOnErr : error holder use "%v"
 func FailOnErr(format string, v ...interface{}) {

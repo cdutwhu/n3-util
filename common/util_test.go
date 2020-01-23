@@ -4,6 +4,19 @@ import (
 	"testing"
 )
 
+func TestFailLog(t *testing.T) {
+	logfile := "./log.txt"
+	SetFailLog(logfile)
+	FailOnErr("aa ")
+
+	logfile = "./log1.txt"
+	SetFailLog(logfile)
+
+	logfile = "./log1.txt"
+	SetFailLog(logfile)
+	FailOnErr("%v%s", ErrCaller(), "test panic")
+}
+
 func TestIter(t *testing.T) {
 	for i := range N(10) {
 		fPln(i)
