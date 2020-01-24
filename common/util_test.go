@@ -7,18 +7,18 @@ import (
 func TestFailLog(t *testing.T) {
 	logfile := "./log.log"
 	SetLog(logfile)
-	FailOnErr("aa ")
+	FailOnErr("aa %v", fEf(""))
 
-	logfile = "./log1.log"
-	SetLog(logfile)
+	// logfile = "./log1.log"
+	// SetLog(logfile)
 
-	logfile = "./log1.log"
-	SetLog(logfile)
-	// FailOnErr("%v", fEf("test panic"))
+	// logfile = "./log1.log"
+	// SetLog(logfile)
+	// // FailOnErr("%v", fEf("test panic"))
 
-	if e := WarnOnErrWhen(1 < 2, "%v", fEf("test")); e != nil {
-		fPln(e.Error())
-	}
+	// if e := WarnOnErrWhen(1 < 2, "%v", fEf("test")); e != nil {
+	// 	fPln(e.Error())
+	// }
 }
 
 func TestIter(t *testing.T) {

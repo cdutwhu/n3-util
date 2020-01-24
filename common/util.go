@@ -135,6 +135,7 @@ func trackCaller() string {
 	return fSf("\n%s:%d\n%s\n", frame.File, frame.Line, frame.Function)
 }
 
+var log2file = false
 var mPathFile map[string]*os.File = make(map[string]*os.File)
 
 // SetLog :
@@ -143,6 +144,7 @@ func SetLog(logpath string) {
 		if f, ok := mPathFile[abspath]; ok {
 			log.SetFlags(log.LstdFlags)
 			log.SetOutput(f)
+			log2file = true
 			return
 		}
 		if _, err := os.Stat(abspath); err == nil || os.IsNotExist(err) {
@@ -150,6 +152,7 @@ func SetLog(logpath string) {
 				mPathFile[abspath] = f
 				log.SetFlags(log.LstdFlags)
 				log.SetOutput(f)
+				log2file = true
 			}
 		}
 	}
@@ -162,6 +165,7 @@ func ResetLog() {
 	}
 	mPathFile = make(map[string]*os.File)
 	log.SetOutput(os.Stdout)
+	log2file = false
 }
 
 // FailOnErr : error holder use "%v"
@@ -171,7 +175,11 @@ func FailOnErr(format string, v ...interface{}) {
 		case error:
 			{
 				if p != nil {
-					log.Fatalf(format+"%s\n", append(v, trackCaller())...)
+					fatalInfo := fSf("FAIL: "+format+"%s\n", append(v, trackCaller())...)
+					if log2file {
+						fPln(fatalInfo)
+					}
+					log.Fatalf(fatalInfo)
 				}
 			}
 		}
@@ -202,7 +210,11 @@ func FailOnErrWhen(condition bool, format string, v ...interface{}) {
 			case error:
 				{
 					if p != nil {
-						log.Fatalf(format+"%s\n", append(v, trackCaller())...)
+						fatalInfo := fSf("FAIL: "+format+"%s\n", append(v, trackCaller())...)
+						if log2file {
+							fPln(fatalInfo)
+						}
+						log.Fatalf(fatalInfo)
 					}
 				}
 			}
