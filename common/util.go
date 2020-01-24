@@ -179,19 +179,19 @@ func FailOnErr(format string, v ...interface{}) {
 }
 
 // WarnOnErr :
-func WarnOnErr(format string, v ...interface{}) bool {
+func WarnOnErr(format string, v ...interface{}) (bool, error) {
 	for _, p := range v {
 		switch p.(type) {
 		case error:
 			{
 				if p != nil {
 					log.Printf(format+"%s\n", append(v, trackCaller())...)
-					return true
+					return true, p.(error)
 				}
 			}
 		}
 	}
-	return false
+	return false, nil
 }
 
 // FailOnErrWhen :
@@ -211,7 +211,7 @@ func FailOnErrWhen(condition bool, format string, v ...interface{}) {
 }
 
 // WarnOnErrWhen :
-func WarnOnErrWhen(condition bool, format string, v ...interface{}) bool {
+func WarnOnErrWhen(condition bool, format string, v ...interface{}) (bool, error) {
 	if condition {
 		for _, p := range v {
 			switch p.(type) {
@@ -219,13 +219,13 @@ func WarnOnErrWhen(condition bool, format string, v ...interface{}) bool {
 				{
 					if p != nil {
 						log.Printf(format+"%s\n", append(v, trackCaller())...)
-						return true
+						return true, p.(error)
 					}
 				}
 			}
 		}
 	}
-	return false
+	return false, nil
 }
 
 // WrapOnErr :

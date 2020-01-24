@@ -5,16 +5,20 @@ import (
 )
 
 func TestFailLog(t *testing.T) {
-	logfile := "./log.txt"
+	logfile := "./log.log"
 	SetLog(logfile)
 	FailOnErr("aa ")
 
-	logfile = "./log1.txt"
+	logfile = "./log1.log"
 	SetLog(logfile)
 
-	logfile = "./log1.txt"
+	logfile = "./log1.log"
 	SetLog(logfile)
 	// FailOnErr("%v", fEf("test panic"))
+
+	if warn, e := WarnOnErrWhen(1 < 2, "%v", fEf("test")); warn {
+		fPln(e.Error())
+	}
 }
 
 func TestIter(t *testing.T) {

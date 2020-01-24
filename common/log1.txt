@@ -1,0 +1,4 @@
+2020/01/24 14:50:27 test
+/home/qing/go/src/github.com/cdutwhu/json-util/common/util_test.go:19
+github.com/cdutwhu/json-util/common.TestFailLog
+
