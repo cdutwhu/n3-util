@@ -14,7 +14,7 @@ func TestFailLog(t *testing.T) {
 
 	logfile = "./log1.txt"
 	SetFailLog(logfile)
-	FailOnErr("%v%s", ErrCaller(), "test panic")
+	FailOnErr("%v", fEf("test panic"))
 }
 
 func TestIter(t *testing.T) {

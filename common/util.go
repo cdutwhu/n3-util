@@ -92,10 +92,10 @@ func MD5Str(s string) string {
 	return fSf("%x", md5.Sum([]byte(s)))
 }
 
-// TmTrack :
-func TmTrack(start time.Time) {
+// TrackTime :
+func TrackTime(start time.Time) {
 	elapsed := time.Since(start)
-	fPf("took %s\n", elapsed)
+	fPf("Took %s\n", elapsed)
 }
 
 // var (
@@ -126,22 +126,13 @@ func TmTrack(start time.Time) {
 // 	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
 // }
 
-// TrackCaller :
-func TrackCaller() string {
+// trackCaller :
+func trackCaller() string {
 	pc := make([]uintptr, 15)
-	n := runtime.Callers(2, pc)
+	n := runtime.Callers(3, pc) // 3 is for util-FailLog. 2 is for "trackCaller" caller
 	frames := runtime.CallersFrames(pc[:n])
 	frame, _ := frames.Next()
 	return fSf("\n%s:%d\n%s\n", frame.File, frame.Line, frame.Function)
-}
-
-// ErrCaller :
-func ErrCaller() error {
-	pc := make([]uintptr, 15)
-	n := runtime.Callers(2, pc)
-	frames := runtime.CallersFrames(pc[:n])
-	frame, _ := frames.Next()
-	return fEf("\n%s:%d\n%s\n", frame.File, frame.Line, frame.Function)
 }
 
 var mPathFile map[string]*os.File = make(map[string]*os.File)
@@ -180,7 +171,7 @@ func FailOnErr(format string, v ...interface{}) {
 		case error:
 			{
 				if p != nil {
-					log.Fatalf(format, v...)
+					log.Fatalf(format+"%s\n", append(v, trackCaller())...)
 				}
 			}
 		}
@@ -190,7 +181,16 @@ func FailOnErr(format string, v ...interface{}) {
 // FailOnCondition :
 func FailOnCondition(condition bool, format string, v ...interface{}) {
 	if condition {
-		FailOnErr(format, v...)
+		for _, p := range v {
+			switch p.(type) {
+			case error:
+				{
+					if p != nil {
+						log.Fatalf(format+"%s\n", append(v, trackCaller())...)
+					}
+				}
+			}
+		}
 	}
 }
 
