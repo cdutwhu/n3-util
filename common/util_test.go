@@ -16,7 +16,7 @@ func TestFailLog(t *testing.T) {
 	SetLog(logfile)
 	// FailOnErr("%v", fEf("test panic"))
 
-	if warn, e := WarnOnErrWhen(1 < 2, "%v", fEf("test")); warn {
+	if e := WarnOnErrWhen(1 < 2, "%v", fEf("test")); e != nil {
 		fPln(e.Error())
 	}
 }
