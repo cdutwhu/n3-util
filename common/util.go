@@ -137,8 +137,8 @@ func trackCaller() string {
 
 var mPathFile map[string]*os.File = make(map[string]*os.File)
 
-// SetFailLog :
-func SetFailLog(logpath string) {
+// SetLog :
+func SetLog(logpath string) {
 	if abspath, err := filepath.Abs(logpath); err == nil {
 		if f, ok := mPathFile[abspath]; ok {
 			log.SetFlags(log.LstdFlags)
@@ -155,8 +155,8 @@ func SetFailLog(logpath string) {
 	}
 }
 
-// ResetFailLog : call once at the exit
-func ResetFailLog() {
+// ResetLog : call once at the exit
+func ResetLog() {
 	for _, f := range mPathFile {
 		f.Close()
 	}
@@ -178,8 +178,24 @@ func FailOnErr(format string, v ...interface{}) {
 	}
 }
 
-// FailOnCondition :
-func FailOnCondition(condition bool, format string, v ...interface{}) {
+// WarnOnErr :
+func WarnOnErr(format string, v ...interface{}) bool {
+	for _, p := range v {
+		switch p.(type) {
+		case error:
+			{
+				if p != nil {
+					log.Printf(format+"%s\n", append(v, trackCaller())...)
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+// FailOnErrWhen :
+func FailOnErrWhen(condition bool, format string, v ...interface{}) {
 	if condition {
 		for _, p := range v {
 			switch p.(type) {
@@ -192,6 +208,24 @@ func FailOnCondition(condition bool, format string, v ...interface{}) {
 			}
 		}
 	}
+}
+
+// WarnOnErrWhen :
+func WarnOnErrWhen(condition bool, format string, v ...interface{}) bool {
+	if condition {
+		for _, p := range v {
+			switch p.(type) {
+			case error:
+				{
+					if p != nil {
+						log.Printf(format+"%s\n", append(v, trackCaller())...)
+						return true
+					}
+				}
+			}
+		}
+	}
+	return false
 }
 
 // WrapOnErr :
@@ -208,6 +242,8 @@ func WrapOnErr(format string, v ...interface{}) error {
 	}
 	return nil
 }
+
+// -------------------------------------------------------- //
 
 // Encrypt :
 func Encrypt(data []byte, password string) []byte {
@@ -348,7 +384,7 @@ NEXT:
 
 // HasAnyPrefix :
 func HasAnyPrefix(s string, lsPrefix ...string) bool {
-	FailOnCondition(len(lsPrefix) == 0, "%v", fEf("at least one prefix for input"))
+	FailOnErrWhen(len(lsPrefix) == 0, "%v", fEf("at least one prefix for input"))
 	for _, prefix := range lsPrefix {
 		if sHasPrefix(s, prefix) {
 			return true
@@ -404,7 +440,7 @@ func IF(condition bool, block1, block2 interface{}) interface{} {
 // XIn :
 func XIn(e, s interface{}) bool {
 	v := reflect.ValueOf(s)
-	FailOnCondition(v.Kind() != reflect.Slice, "%v", fEf("s is NOT a SLICE!"))
+	FailOnErrWhen(v.Kind() != reflect.Slice, "%v", fEf("s is NOT a SLICE!"))
 	l := v.Len()
 	for i := 0; i < l; i++ {
 		if v.Index(i).Interface() == e {
@@ -417,7 +453,7 @@ func XIn(e, s interface{}) bool {
 // MapKeys :
 func MapKeys(m interface{}) interface{} {
 	v := reflect.ValueOf(m)
-	FailOnCondition(v.Kind() != reflect.Map, "%v", fEf("NOT A MAP!"))
+	FailOnErrWhen(v.Kind() != reflect.Map, "%v", fEf("NOT A MAP!"))
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := reflect.TypeOf(keys[0].Interface())
@@ -443,7 +479,7 @@ func MapKeys(m interface{}) interface{} {
 // MapKVs :
 func MapKVs(m interface{}) (interface{}, interface{}) {
 	v := reflect.ValueOf(m)
-	FailOnCondition(v.Kind() != reflect.Map, "%v", fEf("NOT A MAP!"))
+	FailOnErrWhen(v.Kind() != reflect.Map, "%v", fEf("NOT A MAP!"))
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := reflect.TypeOf(keys[0].Interface())
@@ -462,15 +498,15 @@ func MapKVs(m interface{}) (interface{}, interface{}) {
 // MapsJoin : overwritted by the 2nd params
 func MapsJoin(m1, m2 interface{}) interface{} {
 	v1, v2 := reflect.ValueOf(m1), reflect.ValueOf(m2)
-	FailOnCondition(v1.Kind() != reflect.Map, "%v", fEf("m1 is NOT A MAP!"))
-	FailOnCondition(v2.Kind() != reflect.Map, "%v", fEf("m2 is NOT A MAP!"))
+	FailOnErrWhen(v1.Kind() != reflect.Map, "%v", fEf("m1 is NOT A MAP!"))
+	FailOnErrWhen(v2.Kind() != reflect.Map, "%v", fEf("m2 is NOT A MAP!"))
 	keys1, keys2 := v1.MapKeys(), v2.MapKeys()
 	if len(keys1) > 0 && len(keys2) > 0 {
 		k1, k2 := keys1[0], keys2[0]
 		k1Type, k2Type := reflect.TypeOf(k1.Interface()), reflect.TypeOf(k2.Interface())
 		v1Type, v2Type := reflect.TypeOf(v1.MapIndex(k1).Interface()), reflect.TypeOf(v2.MapIndex(k2).Interface())
-		FailOnCondition(k1Type != k2Type, "%v", fEf("different maps' key type!"))
-		FailOnCondition(v1Type != v2Type, "%v", fEf("different maps' value type!"))
+		FailOnErrWhen(k1Type != k2Type, "%v", fEf("different maps' key type!"))
+		FailOnErrWhen(v1Type != v2Type, "%v", fEf("different maps' value type!"))
 		aMap := reflect.MakeMap(reflect.MapOf(k1Type, v1Type))
 		for _, k := range keys1 {
 			aMap.SetMapIndex(reflect.ValueOf(k.Interface()), reflect.ValueOf(v1.MapIndex(k).Interface()))
@@ -530,8 +566,8 @@ func MapPrint(m interface{}) {
 // SliceAttach :
 func SliceAttach(s1, s2 interface{}, pos int) interface{} {
 	v1, v2 := reflect.ValueOf(s1), reflect.ValueOf(s2)
-	FailOnCondition(v1.Kind() != reflect.Slice, "%v", fEf("s1 is NOT a SLICE!"))
-	FailOnCondition(v2.Kind() != reflect.Slice, "%v", fEf("s2 is NOT a SLICE!"))
+	FailOnErrWhen(v1.Kind() != reflect.Slice, "%v", fEf("s1 is NOT a SLICE!"))
+	FailOnErrWhen(v2.Kind() != reflect.Slice, "%v", fEf("s2 is NOT a SLICE!"))
 	l1, l2 := v1.Len(), v2.Len()
 	if l1 > 0 && l2 > 0 {
 		if pos > l1 {
@@ -567,7 +603,7 @@ func SliceCover(ss ...interface{}) interface{} {
 // MatchAssign : NO ShortCut, MUST all valid, e.g. type assert, nil pointer, out of index
 func MatchAssign(chkCasesValues ...interface{}) interface{} {
 	l := len(chkCasesValues)
-	FailOnCondition(l < 4 || l%2 == 1, "%v", fEf("Invalid parameters"))
+	FailOnErrWhen(l < 4 || l%2 == 1, "%v", fEf("Invalid parameters"))
 	_, l1, l2 := 1, (l-1)/2, (l-1)/2
 	check := chkCasesValues[0]
 	cases := chkCasesValues[1 : 1+l1]

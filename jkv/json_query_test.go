@@ -9,7 +9,7 @@ import (
 )
 
 func TestQuery(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 	param := "NAPTestItemLocalId"
 	value := "x00101935"
 

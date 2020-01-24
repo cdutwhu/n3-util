@@ -9,10 +9,10 @@ import (
 )
 
 func TestSplitJSONArr(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 	jArrStr := pp.FmtJSONFile("../../data/xapi.json", "../preprocess/utils/")
 	// jArrStr := pp.FmtJSONFile("../../Server/config/meta.json", "../preprocess/utils/")
-	cmn.FailOnCondition(jArrStr == "", "%v", fEf("Read JSON file error"))
+	cmn.FailOnErrWhen(jArrStr == "", "%v", fEf("Read JSON file error"))
 
 	if arr := SplitJSONArr(jArrStr); arr != nil {
 		jMergedStr := MergeJSON(arr...)
@@ -26,7 +26,7 @@ func TestSplitJSONArr(t *testing.T) {
 }
 
 func TestScan(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "", false)
 	LVL, mLvlFParr, mFPosLvl, _ := jkv.scan()
@@ -40,7 +40,7 @@ func TestScan(t *testing.T) {
 }
 
 func TestFieldByPos(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "", false)
 	LVL, mLvlFParr, _, _ := jkv.scan()
@@ -64,7 +64,7 @@ func TestFieldByPos(t *testing.T) {
 }
 
 func TestFType(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "", false)
 	value, typ := jkv.fValueType(1617)
@@ -75,14 +75,14 @@ func TestFType(t *testing.T) {
 }
 
 func TestInit(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 	json := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	NewJKV(json, "", false)
 	fPln("break")
 }
 
 func TestWrap(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 	json := pp.FmtJSONFile("../../data/xapi1.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "root", false)
 	fPln("--- Init ---")
@@ -90,7 +90,7 @@ func TestWrap(t *testing.T) {
 }
 
 func TestUnfold(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 
 	json := pp.FmtJSONFile("../../data/xapi1.json", "../preprocess/utils/")
 	jkv := NewJKV(json, "root", false)

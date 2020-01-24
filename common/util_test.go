@@ -6,15 +6,15 @@ import (
 
 func TestFailLog(t *testing.T) {
 	logfile := "./log.txt"
-	SetFailLog(logfile)
+	SetLog(logfile)
 	FailOnErr("aa ")
 
 	logfile = "./log1.txt"
-	SetFailLog(logfile)
+	SetLog(logfile)
 
 	logfile = "./log1.txt"
-	SetFailLog(logfile)
-	FailOnErr("%v", fEf("test panic"))
+	SetLog(logfile)
+	// FailOnErr("%v", fEf("test panic"))
 }
 
 func TestIter(t *testing.T) {

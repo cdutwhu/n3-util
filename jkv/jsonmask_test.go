@@ -11,14 +11,14 @@ import (
 )
 
 func TestJSONPolicy(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 	data := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
 	mask1 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskP.json", "../preprocess/utils/")
 	mask2 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskPcopy.json", "../preprocess/utils/")
 
-	cmn.FailOnCondition(data == "", "%v", fEf("input data is empty, check its path"))
-	cmn.FailOnCondition(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
-	cmn.FailOnCondition(mask2 == "", "%v", fEf("input mask2 is empty, check its path"))
+	cmn.FailOnErrWhen(data == "", "%v", fEf("input data is empty, check its path"))
+	cmn.FailOnErrWhen(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
+	cmn.FailOnErrWhen(mask2 == "", "%v", fEf("input mask2 is empty, check its path"))
 
 	jkvM1 := NewJKV(mask1, "root", false)
 	jkvM2 := NewJKV(mask2, "root", false)
@@ -62,12 +62,12 @@ func TestJSONPolicy(t *testing.T) {
 }
 
 func TestJSONPolicy1(t *testing.T) {
-	defer cmn.TmTrack(time.Now())
+	defer cmn.TrackTime(time.Now())
 	data := pp.FmtJSONFile("../../data/test.json", "../preprocess/utils/")
 	mask1 := pp.FmtJSONFile("../../data/1.json", "../preprocess/utils/")
 
-	cmn.FailOnCondition(data == "", "%v", fEf("input data is empty, check its path"))
-	cmn.FailOnCondition(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
+	cmn.FailOnErrWhen(data == "", "%v", fEf("input data is empty, check its path"))
+	cmn.FailOnErrWhen(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
 
 	jkvM1 := NewJKV(mask1, "root", false)
 
