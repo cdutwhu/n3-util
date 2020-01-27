@@ -7,7 +7,10 @@ import (
 func TestFailLog(t *testing.T) {
 	logfile := "./log.log"
 	SetLog(logfile)
-	FailOnErr("aa %v", fEf(""))
+	WarnOnErr("aa %v", fEf(""))
+	FailOnErr("AA %v", fEf(""))
+	// FailOnErrWhen(1 > 0, "AA %v", fEf(""))
+	ResetLog()
 
 	// logfile = "./log1.log"
 	// SetLog(logfile)

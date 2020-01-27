@@ -177,9 +177,29 @@ func FailOnErr(format string, v ...interface{}) {
 				if p != nil {
 					fatalInfo := fSf("FAIL: "+format+"%s\n", append(v, trackCaller())...)
 					if log2file {
-						fPln(fatalInfo)
+						fPln(time.Now().Format("2006/01/02 15:04:05 ") + fatalInfo)
 					}
 					log.Fatalf(fatalInfo)
+				}
+			}
+		}
+	}
+}
+
+// FailOnErrWhen :
+func FailOnErrWhen(condition bool, format string, v ...interface{}) {
+	if condition {
+		for _, p := range v {
+			switch p.(type) {
+			case error:
+				{
+					if p != nil {
+						fatalInfo := fSf("FAIL: "+format+"%s\n", append(v, trackCaller())...)
+						if log2file {
+							fPln(time.Now().Format("2006/01/02 15:04:05 ") + fatalInfo)
+						}
+						log.Fatalf(fatalInfo)
+					}
 				}
 			}
 		}
@@ -193,33 +213,13 @@ func WarnOnErr(format string, v ...interface{}) error {
 		case error:
 			{
 				if p != nil {
-					log.Printf(format+"%s\n", append(v, trackCaller())...)
+					log.Printf("WARN: "+format+"%s\n", append(v, trackCaller())...)
 					return p.(error)
 				}
 			}
 		}
 	}
 	return nil
-}
-
-// FailOnErrWhen :
-func FailOnErrWhen(condition bool, format string, v ...interface{}) {
-	if condition {
-		for _, p := range v {
-			switch p.(type) {
-			case error:
-				{
-					if p != nil {
-						fatalInfo := fSf("FAIL: "+format+"%s\n", append(v, trackCaller())...)
-						if log2file {
-							fPln(fatalInfo)
-						}
-						log.Fatalf(fatalInfo)
-					}
-				}
-			}
-		}
-	}
 }
 
 // WarnOnErrWhen :
@@ -230,7 +230,7 @@ func WarnOnErrWhen(condition bool, format string, v ...interface{}) error {
 			case error:
 				{
 					if p != nil {
-						log.Printf(format+"%s\n", append(v, trackCaller())...)
+						log.Printf("WARN: "+format+"%s\n", append(v, trackCaller())...)
 						return p.(error)
 					}
 				}
