@@ -102,6 +102,10 @@ func TestRmTailFromLastN(t *testing.T) {
 	fPln(RmTailFromLastN("AB.CD.EF", "#", 2))
 }
 
+func TestRmTailFromFirst(t *testing.T) {
+	fPln(RmTailFromFirst(`Activity RefId="C27E1FCF-C163-485F-BEF0-F36F18A0493A" lang="en"`, " "))
+}
+
 func TestRmHeadToLast(t *testing.T) {
 	fPln(RmHeadToLast("##AB##CD##F", "#"))
 }

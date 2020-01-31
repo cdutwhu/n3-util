@@ -422,6 +422,14 @@ func RmTailFromLastN(s, mark string, iLast int) string {
 	return rt
 }
 
+// RmTailFromFirst :
+func RmTailFromFirst(s, mark string) string {
+	if i := sIndex(s, mark); i >= 0 {
+		return s[:i]
+	}
+	return s
+}
+
 // RmHeadToLast :
 func RmHeadToLast(s, mark string) string {
 	if i := sLastIndex(s, mark); i >= 0 {
