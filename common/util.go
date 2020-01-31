@@ -430,6 +430,24 @@ func RmTailFromFirst(s, mark string) string {
 	return s
 }
 
+// RmTailFromFirstAny :
+func RmTailFromFirstAny(s string, marks ...string) string {
+	if len(marks) == 0 {
+		return s
+	}
+	const MAX = 1000000
+	var I int = MAX
+	for _, mark := range marks {
+		if i := sIndex(s, mark); i >= 0 && i < I {
+			I = i
+		}
+	}
+	if I != MAX {
+		return s[:I]
+	}
+	return s
+}
+
 // RmHeadToLast :
 func RmHeadToLast(s, mark string) string {
 	if i := sLastIndex(s, mark); i >= 0 {
