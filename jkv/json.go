@@ -3,18 +3,11 @@
 package jkv
 
 import (
-	"encoding/json"
 	"math"
 	"sync"
 
 	cmn "github.com/cdutwhu/json-util/common"
 )
-
-// IsJSON :
-func IsJSON(str string) bool {
-	var js json.RawMessage
-	return json.Unmarshal([]byte(str), &js) == nil
-}
 
 // IsJSONArr : before using this, make sure it is valid json
 func IsJSONArr(str string) bool {
@@ -122,7 +115,7 @@ func MergeJSON(jsonlist ...string) (arrstr string) {
 
 // isJSON :
 func (jkv *JKV) isJSON() bool {
-	return IsJSON(jkv.JSON)
+	return cmn.IsJSON(jkv.JSON)
 }
 
 // scan :                        L   posarr     pos L
@@ -405,9 +398,7 @@ func (jkv *JKV) init() error {
 
 			oid := ""
 			if !t.IsLeafValue() {
-				if !IsJSON(v) {
-					panic("fetching value error")
-				}
+				cmn.FailOnErrWhen(!cmn.IsJSON(v), "%v", fEf("fetching value error"))
 				oid = hash(v)
 				jkv.mOIDObj[oid] = v
 				v = oid
@@ -492,9 +483,17 @@ func (jkv *JKV) aoID2oIDlist(aoID string) string {
 func oIDlistStr2oIDlist(aoIDStr string) (oidlist []string) {
 	nComma := sCount(aoIDStr, ",")
 	oidlist = hashRExp.FindAllString(aoIDStr, -1)
-	if aoIDStr[0] != '[' || aoIDStr[len(aoIDStr)-1] != ']' || (oidlist != nil && len(oidlist) != nComma+1) {
-		panic("error format @ oIDlistStr2oIDlist")
-	}
+
+	// if aoIDStr[0] != '[' || aoIDStr[len(aoIDStr)-1] != ']' || (oidlist != nil && len(oidlist) != nComma+1) {
+	// 	panic("error format @ oIDlistStr2oIDlist")
+	// }
+
+	cmn.FailOnErrWhen(
+		aoIDStr[0] != '[' || aoIDStr[len(aoIDStr)-1] != ']' || (oidlist != nil && len(oidlist) != nComma+1),
+		"%v",
+		fEf("error format"),
+	)
+
 	return
 }
 
@@ -619,10 +618,7 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 		}
 	}
 
-	if !IsJSON(frame) {
-		panic("UNFOLD ERROR, NOT VALID JSON")
-	}
-
+	cmn.FailOnErrWhen(!cmn.IsJSON(frame), "%v", fEf("UNFOLD ERROR, NOT VALID JSON"))
 	return frame, iExp
 }
 
