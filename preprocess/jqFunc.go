@@ -9,22 +9,21 @@ import (
 )
 
 func prepareJQ(jqDirs ...string) (jqWD, oriWD string, err error) {
-	fn := "prepareJQ"
 	oriWD, err = os.Getwd()
-	cmn.FailOnErr("Getwd() 1 fatal @ %v: %w", fn, err)
+	cmn.FailOnErr("%v", err)
 	jqDirs = append(jqDirs, "./", "../", "../../")
 	for _, jqWD = range jqDirs {
 		if !sHasSuffix(jqWD, "/") {
 			jqWD += "/"
 		}
 		if _, err = os.Stat(jqWD + jq); err == nil {
-			cmn.FailOnErr("Chdir() fatal @ %v: %w", fn, os.Chdir(jqWD))
+			cmn.FailOnErr("%v", os.Chdir(jqWD))
 			jqWD, err = os.Getwd()
-			cmn.FailOnErr("Getwd() 2 fatal @ %v: %w", fn, err)
+			cmn.FailOnErr("%v", err)
 			return jqWD, oriWD, nil
 		}
 	}
-	cmn.FailOnErr("[%s] is not found @ %v", jq, fEf(fn))
+	cmn.FailOnErr("Fatal: %v", fEf("%s is not found", jq))
 	return "", "", nil
 }
 
@@ -45,11 +44,10 @@ func FmtJSONStr(json string, jqDirs ...string) string {
 	return string(output)
 }
 
-// FmtJSONFile : <file> is the <relative path> to <jq>
+// FmtJSONFile : <file> is the <Relative Path> to <LOCAL EXECUTABLE>, NOT to <JQ>
 func FmtJSONFile(file string, jqDirs ...string) string {
 	_, err := os.Stat(file)
 	cmn.FailOnErr("FmtJSONFile file cannot be loaded @ %v", err)
-
 	if !filepath.IsAbs(file) {
 		absfile, err := filepath.Abs(file)
 		cmn.FailOnErr("FmtJSONFile file path for absolute error @ %v", err)
@@ -67,3 +65,25 @@ func FmtJSONFile(file string, jqDirs ...string) string {
 	cmn.FailOnErr("FmtJSONFile cmd.Output() error @ %v", err)
 	return string(output)
 }
+
+// FmtJSONFile : <file> is the <relative path> to <jq>
+// func FmtJSONFile(file string, jqDirs ...string) string {
+// 	_, oriWD, err := prepareJQ(jqDirs...)
+// 	cmn.FailOnErr("FmtJSONFile prepareJQ error @ %v", err)
+// 	_, err = os.Stat(file)
+// 	cmn.FailOnErr("FmtJSONFile file cannot be loaded @ %v", err)
+// 	defer func() { os.Chdir(oriWD) }()
+
+// 	if !filepath.IsAbs(file) {
+// 		absfile, err := filepath.Abs(file)
+// 		cmn.FailOnErr("FmtJSONFile file path for absolute error @ %v", err)
+// 		file = absfile
+// 	}
+
+// 	cmdstr := "cat " + file + ` | ./` + jq + " ."
+// 	cmd := exec.Command(execCmdName, execCmdP0, cmdstr)
+
+// 	output, err := cmd.Output()
+// 	cmn.FailOnErr("FmtJSONFile cmd.Output() error @ %v", err)
+// 	return string(output)
+// }
