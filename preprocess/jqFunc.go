@@ -33,7 +33,9 @@ func FmtJSONStr(json string, jqDirs ...string) string {
 	cmn.FailOnErr("prepareJQ error @ %v", err)
 	defer func() { os.Chdir(oriWD) }()
 
-	json = `$'` + sReplaceAll(json, `'`, `\'`) + `'` // *** deal with <quotes> in "echo" ***
+	json = sReplaceAll(json, `\`, `\\`)
+	json = sReplaceAll(json, `'`, `\'`)
+	json = `$'` + json + `'` // *** deal with <quotes> in "echo" ***
 	// cmdstr := "echo " + json + `> temp.txt`          // May have 'Argument list too long' issue AND Apostrophe issue !
 	cmdstr := "echo " + json + ` | ./` + jq + " ."
 	cmd := exec.Command(execCmdName, execCmdP0, cmdstr)

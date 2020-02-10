@@ -37,11 +37,11 @@ func TestJQ(t *testing.T) {
 	// ioutil.WriteFile("./whyfmt.json", []byte(formatted), 0666)
 	// fmt.Println("OK1")
 
-	bytes, err := ioutil.ReadFile("../_data/single quote.json")
+	bytes, err := ioutil.ReadFile("../_data/why.json")
 	cmn.FailOnErr("%v", err)
 	fmtted := FmtJSONStr(string(bytes), "./utils/")
 	// fmt.Println(fmtted)
-	ioutil.WriteFile("single quote.json", []byte(fmtted), 0666)
+	ioutil.WriteFile("why.json", []byte(fmtted), 0666)
 	fmt.Println("OK2")
 
 	// FmtJSONFile("../data/xapi1.json", "../", "./", "./utils/")
