@@ -31,7 +31,7 @@ func prepareJQ(jqDirs ...string) (jqWD, oriWD string, err error) {
 // May have 'Argument list too long' issue !
 func FmtJSONStr(json string, jqDirs ...string) string {
 	_, oriWD, err := prepareJQ(jqDirs...)
-	cmn.FailOnErr("FmtJSONStr prepareJQ error @ %v", err)
+	cmn.FailOnErr("prepareJQ error @ %v", err)
 	defer func() { os.Chdir(oriWD) }()
 
 	json = "'" + sReplaceAll(json, "'", "\\'") + "'" // *** deal with <single quote> in "echo" ***
@@ -40,43 +40,43 @@ func FmtJSONStr(json string, jqDirs ...string) string {
 	cmd := exec.Command(execCmdName, execCmdP0, cmdstr)
 
 	output, err := cmd.Output()
-	cmn.FailOnErr("FmtJSONStr cmd.Output() error @ %v", err)
+	cmn.FailOnErr("cmd.Output() error @ %v", err)
 	return string(output)
 }
 
 // FmtJSONFile : <file> is the <Relative Path> to <LOCAL EXECUTABLE>, NOT to <JQ>
 func FmtJSONFile(file string, jqDirs ...string) string {
 	_, err := os.Stat(file)
-	cmn.FailOnErr("FmtJSONFile file cannot be loaded @ %v", err)
+	cmn.FailOnErr("file cannot be loaded @ %v", err)
 	if !filepath.IsAbs(file) {
 		absfile, err := filepath.Abs(file)
-		cmn.FailOnErr("FmtJSONFile file path for absolute error @ %v", err)
+		cmn.FailOnErr("file path for absolute error @ %v", err)
 		file = absfile
 	}
 
 	_, oriWD, err := prepareJQ(jqDirs...)
-	cmn.FailOnErr("FmtJSONFile prepareJQ error @ %v", err)
+	cmn.FailOnErr("prepareJQ error @ %v", err)
 	defer func() { os.Chdir(oriWD) }()
 
 	cmdstr := "cat " + file + ` | ./` + jq + " ."
 	cmd := exec.Command(execCmdName, execCmdP0, cmdstr)
 
 	output, err := cmd.Output()
-	cmn.FailOnErr("FmtJSONFile cmd.Output() error @ %v", err)
+	cmn.FailOnErr("cmd.Output() error @ %v", err)
 	return string(output)
 }
 
 // FmtJSONFile : <file> is the <relative path> to <jq>
 // func FmtJSONFile(file string, jqDirs ...string) string {
 // 	_, oriWD, err := prepareJQ(jqDirs...)
-// 	cmn.FailOnErr("FmtJSONFile prepareJQ error @ %v", err)
+// 	cmn.FailOnErr("prepareJQ error @ %v", err)
 // 	_, err = os.Stat(file)
-// 	cmn.FailOnErr("FmtJSONFile file cannot be loaded @ %v", err)
+// 	cmn.FailOnErr("file cannot be loaded @ %v", err)
 // 	defer func() { os.Chdir(oriWD) }()
 
 // 	if !filepath.IsAbs(file) {
 // 		absfile, err := filepath.Abs(file)
-// 		cmn.FailOnErr("FmtJSONFile file path for absolute error @ %v", err)
+// 		cmn.FailOnErr("file path for absolute error @ %v", err)
 // 		file = absfile
 // 	}
 
@@ -84,6 +84,6 @@ func FmtJSONFile(file string, jqDirs ...string) string {
 // 	cmd := exec.Command(execCmdName, execCmdP0, cmdstr)
 
 // 	output, err := cmd.Output()
-// 	cmn.FailOnErr("FmtJSONFile cmd.Output() error @ %v", err)
+// 	cmn.FailOnErr("cmd.Output() error @ %v", err)
 // 	return string(output)
 // }
