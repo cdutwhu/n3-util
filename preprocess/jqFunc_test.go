@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"testing"
+
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 // func MakeRTJQ() {
@@ -31,9 +33,16 @@ func TestJQ(t *testing.T) {
 	// formatted := FmtJSONFile("../../data/xapi.json", "../", "./", "../build/Linux64/")
 	// ioutil.WriteFile("fmt.json", []byte(formatted), 0666)
 
-	formatted := FmtJSONFile("../_data/test.json", "./utils/")
-	ioutil.WriteFile("./test.json", []byte(formatted), 0666)
+	// formatted := FmtJSONFile("../_data/why.json", "./utils/")
+	// ioutil.WriteFile("./whyfmt.json", []byte(formatted), 0666)
+	// fmt.Println("OK1")
 
-	fmt.Println()
+	bytes, err := ioutil.ReadFile("../_data/single quote.json")
+	cmn.FailOnErr("%v", err)
+	fmtted := FmtJSONStr(string(bytes), "./utils/")
+	// fmt.Println(fmtted)
+	ioutil.WriteFile("single quote.json", []byte(fmtted), 0666)
+	fmt.Println("OK2")
+
 	// FmtJSONFile("../data/xapi1.json", "../", "./", "./utils/")
 }

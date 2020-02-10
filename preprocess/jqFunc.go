@@ -27,15 +27,14 @@ func prepareJQ(jqDirs ...string) (jqWD, oriWD string, err error) {
 	return "", "", nil
 }
 
-// FmtJSONStr : <json string> must not have single quote <'>
-// May have 'Argument list too long' issue !
+// FmtJSONStr : May have 'Argument list too long' issue !
 func FmtJSONStr(json string, jqDirs ...string) string {
 	_, oriWD, err := prepareJQ(jqDirs...)
 	cmn.FailOnErr("prepareJQ error @ %v", err)
 	defer func() { os.Chdir(oriWD) }()
 
-	json = "'" + sReplaceAll(json, "'", "\\'") + "'" // *** deal with <single quote> in "echo" ***
-	// cmdstr := "echo " + json + `> temp.txt`       // May have 'Argument list too long' issue !
+	json = `$'` + sReplaceAll(json, `'`, `\'`) + `'` // *** deal with <quotes> in "echo" ***
+	// cmdstr := "echo " + json + `> temp.txt`          // May have 'Argument list too long' issue AND Apostrophe issue !
 	cmdstr := "echo " + json + ` | ./` + jq + " ."
 	cmd := exec.Command(execCmdName, execCmdP0, cmdstr)
 
