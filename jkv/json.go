@@ -704,7 +704,9 @@ func Mask(name, obj string, mask *JKV) string {
 						obj = obj[:pvS] + valData + obj[pvS+pvE:]
 					}
 				case `"(N)"`:
-					valData = valData[1 : len(valData)-1]
+					if valData[0] == '"' && valData[len(valData)-1] == '"' {
+						valData = valData[1 : len(valData)-1]
+					}
 					if valData[0] == '.' { // deal with like ".5" format digits
 						valData = "0" + valData // convert it to "0.5"
 					}
