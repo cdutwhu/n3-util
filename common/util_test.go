@@ -5,12 +5,19 @@ import (
 )
 
 func TestFailLog(t *testing.T) {
-	logfile := "./log.log"
+	logfile := "./error.log"
 	SetLog(logfile)
+	defer ResetLog()
+
+	msg := Log("hello")
+	fPt(msg)
+
+	LogWhen(1 < 3, "hello when")
+
 	WarnOnErr("aa %v", fEf(""))
 	FailOnErr("AA %v", fEf(""))
 	// FailOnErrWhen(1 > 0, "AA %v", fEf(""))
-	ResetLog()
+	// ResetLog()
 
 	// logfile = "./log1.log"
 	// SetLog(logfile)

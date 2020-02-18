@@ -162,7 +162,14 @@ func SetLog(logpath string) {
 
 // ResetLog : call once at the exit
 func ResetLog() {
-	for _, f := range mPathFile {
+	for logPath, f := range mPathFile {
+		// delete empty error log
+		fi, err := f.Stat()
+		FailOnErr("%v", err)
+		if fi.Size() == 0 {
+			FailOnErr("%v", os.Remove(logPath))
+		}
+		// close
 		f.Close()
 	}
 	mPathFile = make(map[string]*os.File)
@@ -206,6 +213,28 @@ func FailOnErrWhen(condition bool, format string, v ...interface{}) {
 			}
 		}
 	}
+}
+
+// Log :
+func Log(format string, v ...interface{}) (logItem string) {
+	logItem = fSf("INFO: "+format+"%s\n", append(v, trackCaller())...)
+	log.Printf("%s", logItem)
+	if log2file {
+		logItem = time.Now().Format("2006/01/02 15:04:05 ") + logItem
+	}
+	return
+}
+
+// LogWhen :
+func LogWhen(condition bool, format string, v ...interface{}) (logItem string) {
+	if condition {
+		logItem = fSf("INFO: "+format+"%s\n", append(v, trackCaller())...)
+		log.Printf("%s", logItem)
+		if log2file {
+			logItem = time.Now().Format("2006/01/02 15:04:05 ") + logItem
+		}
+	}
+	return
 }
 
 // WarnOnErr :

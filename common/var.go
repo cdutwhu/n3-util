@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	fPt         = fmt.Print
 	fPf         = fmt.Printf
 	fPln        = fmt.Println
 	fSf         = fmt.Sprintf
