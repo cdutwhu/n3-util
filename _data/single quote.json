@@ -1,0 +1,25 @@
+{
+    "Debtor": {
+        "-RefId": "B5739375-800A-C4CC-6385-0BB2754114AA",
+        "BilledEntity": {
+            "#content": "8B231144-301C-4D3B-95D4-8BB74C866AE1",
+            "-SIFRefObject": "StudentContactPersonal"
+        },
+        "AddressList": {
+            "Address": {
+                "-Role": "2382",
+                "Street": {
+                    "Line1": "23 E. 43rd St."
+                },
+                "City": "Chicago",
+                "StateProvince": "IL",
+                "Country": "8104",
+                "PostalCode": "60611",
+                "-Type": "0123"
+            }
+        },
+        "BillingName": "Flintstone Family Trust",
+        "BillingNote": "Do not invoice under parent's real name.",
+        "Discount": "10.0"
+    }
+}
