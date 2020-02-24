@@ -128,7 +128,7 @@ func TestColor(t *testing.T) {
 }
 
 func TestStrReplByPos(t *testing.T) {
-	s := ReplByPosGrp("0123456789ABCDEF", [][2]int{{11, 15}, {4, 6}, {1, 2}, {3, 4}}, []string{"TTT", "BBB", "CCC", "*****"})
+	s := ReplByPosGrp("0123456789ABCDEF", [][]int{{11, 15}, {4, 6}, {1, 2}, {3, 4}}, []string{"aaa", "bbb", "ccc", "ddd"})
 	fPln(s) //         0CCC2*****BBB6789ATTTF
 	//                 0CCC2*****BBB6789ATTTF
 }

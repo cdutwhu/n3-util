@@ -737,16 +737,26 @@ func JSONRoot(jsonstr string) string {
 // -------------------------------------------------------- //
 
 // ReplByPosGrp :
-func ReplByPosGrp(s string, posGrp [][2]int, newStrGrp []string) (ret string) {
-	FailOnErrWhen(len(posGrp) != len(newStrGrp), "%v", fEf("position-pairs' length must be equal to new-strings' length"))
+func ReplByPosGrp(s string, posGrp [][]int, newStrGrp []string) (ret string) {
+	if len(posGrp) == 0 {
+		return s
+	}
+
+	FailOnErrWhen(len(posGrp) != len(newStrGrp) && len(newStrGrp) != 1,
+		"%v",
+		fEf("posGrp's length must be equal to newStrGrp's length OR newStrGrp only has 1 element for filling all posGrp"))
 
 	wrapper := make([]struct {
-		posPair [2]int
+		posPair []int
 		newStr  string
 	}, len(posGrp))
 	for i, pair := range posGrp {
 		wrapper[i].posPair = pair
-		wrapper[i].newStr = newStrGrp[i]
+		if len(newStrGrp) == 1 {
+			wrapper[i].newStr = newStrGrp[0]
+		} else {
+			wrapper[i].newStr = newStrGrp[i]
+		}
 	}
 	sort.Slice(wrapper, func(i, j int) bool {
 		return wrapper[i].posPair[0] < wrapper[j].posPair[0]
