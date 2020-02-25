@@ -111,10 +111,32 @@ func FmtJSON(jsonStr string, nSpace int) string {
 	// 	return string(out)
 }
 
+// FmtJSONArr :
+func FmtJSONArr(jsonArr string, nSpace int) string {
+	jsonGrp := []string{}
+	for _, json := range SplitJSONArr(jsonArr, nSpace) {
+		jsonGrp = append(jsonGrp, json)
+	}
+	if len(jsonGrp) > 0 {
+		combine := "[\n" + sJoin(jsonGrp, ",\n")
+		fmtArr, _ := Indent(combine, nSpace, true)
+		return fmtArr + "\n]"
+	}
+	return ""
+}
+
 // FmtJSONFile :
 func FmtJSONFile(filename string, nSpace int) string {
 	cmn.SetLog("./error.log")
 	bytes, err := ioutil.ReadFile(filename)
 	cmn.FailOnErr("%v", err)
-	return FmtJSON(string(bytes), nSpace)
+	if json := string(bytes); cmn.IsJSON(json) {
+		switch {
+		case MaybeJSONArr(json):
+			return FmtJSONArr(json, 2)
+		default:
+			return FmtJSON(json, 2)
+		}
+	}
+	return ""
 }

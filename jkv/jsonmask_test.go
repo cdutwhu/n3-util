@@ -7,14 +7,17 @@ import (
 	"time"
 
 	cmn "github.com/cdutwhu/json-util/common"
-	pp "github.com/cdutwhu/json-util/preprocess"
 )
 
 func TestJSONPolicy(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
-	data := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
-	mask1 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskP.json", "../preprocess/utils/")
-	mask2 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskPcopy.json", "../preprocess/utils/")
+	// data := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
+	// mask1 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskP.json", "../preprocess/utils/")
+	// mask2 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskPcopy.json", "../preprocess/utils/")
+
+	data := FmtJSONFile("../../data/NAPCodeFrame.json", 2)
+	mask1 := FmtJSONFile("../../data/NAPCodeFrameMaskP.json", 2)
+	mask2 := FmtJSONFile("../../data/NAPCodeFrameMaskPcopy.json", 2)
 
 	cmn.FailOnErrWhen(data == "", "%v", fEf("input data is empty, check its path"))
 	cmn.FailOnErrWhen(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
@@ -23,8 +26,8 @@ func TestJSONPolicy(t *testing.T) {
 	jkvM1 := NewJKV(mask1, "root", false)
 	jkvM2 := NewJKV(mask2, "root", false)
 
-	if IsJSONArr(data) {
-		jsonArr := SplitJSONArr(data)
+	if MaybeJSONArr(data) {
+		jsonArr := SplitJSONArr(data, 2)
 		wg := sync.WaitGroup{}
 		wg.Add(len(jsonArr))
 		jsonList := make([]string, len(jsonArr))
@@ -48,14 +51,16 @@ func TestJSONPolicy(t *testing.T) {
 		jkvMR := NewJKV(maskroot, "", false)
 		jkvMR.Wrapped = jkvD.Wrapped
 		json := jkvMR.UnwrapDefault().JSON
-		json = pp.FmtJSONStr(json, "../preprocess/utils/")
+		// json = pp.FmtJSONStr(json, "../preprocess/utils/")
+		json = FmtJSON(json, 2)
 
 		jkvD = NewJKV(json, "root", false)
 		maskroot, _ = jkvD.Unfold(0, jkvM2)
 		jkvMR = NewJKV(maskroot, "", false)
 		jkvMR.Wrapped = jkvD.Wrapped
 		json = jkvMR.UnwrapDefault().JSON
-		json = pp.FmtJSONStr(json, "../preprocess/utils/")
+		// json = pp.FmtJSONStr(json, "../preprocess/utils/")
+		json = FmtJSON(json, 2)
 
 		ioutil.WriteFile("single.json", []byte(json), 0666)
 	}
@@ -63,8 +68,11 @@ func TestJSONPolicy(t *testing.T) {
 
 func TestJSONPolicy1(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
-	data := pp.FmtJSONFile("../../data/test.json", "../preprocess/utils/")
-	mask1 := pp.FmtJSONFile("../../data/1.json", "../preprocess/utils/")
+	// data := pp.FmtJSONFile("../../data/test.json", "../preprocess/utils/")
+	// mask1 := pp.FmtJSONFile("../../data/1.json", "../preprocess/utils/")
+
+	data := FmtJSONFile("../../data/test.json", 2)
+	mask1 := FmtJSONFile("../../data/1.json", 2)
 
 	cmn.FailOnErrWhen(data == "", "%v", fEf("input data is empty, check its path"))
 	cmn.FailOnErrWhen(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
@@ -76,8 +84,8 @@ func TestJSONPolicy1(t *testing.T) {
 	jkvMR := NewJKV(maskroot, "", false)
 	jkvMR.Wrapped = jkvD.Wrapped
 	json := jkvMR.UnwrapDefault().JSON
-	json = pp.FmtJSONStr(json, "../preprocess/utils/")
+	// json = pp.FmtJSONStr(json, "../preprocess/utils/")
+	json = FmtJSON(json, 2)
 
 	ioutil.WriteFile("single.json", []byte(json), 0666)
-
 }

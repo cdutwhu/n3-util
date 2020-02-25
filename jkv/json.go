@@ -4,14 +4,13 @@ package jkv
 
 import (
 	"math"
-	"sync"
 
 	cmn "github.com/cdutwhu/json-util/common"
 )
 
-// IsJSONArr : before using this, make sure it is valid json
-func IsJSONArr(str string) bool {
-	return str[0] == '['
+// MaybeJSONArr : before using this, make sure it is valid json
+func MaybeJSONArr(str string) bool {
+	return sTrimLeft(str, " \t\n\r")[0] == '['
 }
 
 // NewJKV :
@@ -44,59 +43,91 @@ func NewJKV(jsonstr, defroot string, mustWrap bool) *JKV {
 	return jkv.wrapDefault(defroot, mustWrap)
 }
 
-// SplitJSONArr :
-func SplitJSONArr(json string) []string {
-	if json[0] != '[' {
+// SplitJSONArr : json doesn't need to be Formatted
+func SplitJSONArr(json string, nSpace int) []string {
+	if !MaybeJSONArr(json) {
 		return nil
 	}
-
-	arr := sSpl(json, "},\n  {")
-	L := len(arr)
-
-	// one element array
-	if L == 1 {
-		start, end := 0, 0
-		for i, c := range json {
-			if c == '{' {
-				start = i
-				break
-			}
+	psGrp, peGrp := []int{}, []int{}
+	lvlCnt, lvlCntPrev := 0, 0
+	for i, c := range json {
+		switch {
+		case c == '{':
+			lvlCnt++
+		case c == '}':
+			lvlCnt--
 		}
-		for j := len(json) - 1; j >= 0; j-- {
-			if json[j] == '}' {
-				end = j
-				break
-			}
+		if lvlCnt == 1 && lvlCntPrev == 0 {
+			psGrp = append(psGrp, i)
 		}
-		json, _ = IndentFmt(json[start : end+1])
-		if !sHasSuffix(json, "\n") {
-			json += "\n"
+		if lvlCnt == 0 && lvlCntPrev == 1 {
+			peGrp = append(peGrp, i)
 		}
-		return []string{json}
+		lvlCntPrev = lvlCnt
 	}
+	cmn.FailOnErrWhen(len(psGrp) != len(peGrp), "%v", fEf("Fatal, is valid JSON array ?"))
 
-	// multi-elements array
-	wg := sync.WaitGroup{}
-	wg.Add(L)
-	for i := 0; i < L; i++ {
-		go func(i int) {
-			defer wg.Done()
-			switch i {
-			case 0:
-				arr[i], _ = IndentFmt(arr[i][4:] + "}")
-			case L - 1:
-				arr[i], _ = IndentFmt("{" + arr[i][:len(arr[i])-2])
-			default:
-				arr[i], _ = IndentFmt("{" + arr[i] + "}")
-			}
-			if !sHasSuffix(arr[i], "\n") {
-				arr[i] += "\n"
-			}
-		}(i)
+	jsonGrp := make([]string, len(psGrp))
+	for i, ps := range psGrp {
+		pe := peGrp[i]
+		jsonGrp[i] = FmtJSON(json[ps:pe+1], nSpace) // [serial mode]
 	}
-	wg.Wait()
-	return arr
+	return jsonGrp
 }
+
+// SplitJSONArr : json must be Formatted
+// func SplitJSONArr(json string) []string {
+// 	if !MaybeJSONArr(json) {
+// 		return nil
+// 	}
+
+// 	arr := sSpl(json, "},\n  {")
+// 	L := len(arr)
+
+// 	// one element array
+// 	if L == 1 {
+// 		start, end := 0, 0
+// 		for i, c := range json {
+// 			if c == '{' {
+// 				start = i
+// 				break
+// 			}
+// 		}
+// 		for j := len(json) - 1; j >= 0; j-- {
+// 			if json[j] == '}' {
+// 				end = j
+// 				break
+// 			}
+// 		}
+// 		json, _ = IndentFmt(json[start : end+1])
+// 		if !sHasSuffix(json, "\n") {
+// 			json += "\n"
+// 		}
+// 		return []string{json}
+// 	}
+
+// 	// multi-elements array
+// 	wg := sync.WaitGroup{}
+// 	wg.Add(L)
+// 	for i := 0; i < L; i++ {
+// 		go func(i int) {
+// 			defer wg.Done()
+// 			switch i {
+// 			case 0:
+// 				arr[i], _ = IndentFmt(arr[i][4:] + "}")
+// 			case L - 1:
+// 				arr[i], _ = IndentFmt("{" + arr[i][:len(arr[i])-2])
+// 			default:
+// 				arr[i], _ = IndentFmt("{" + arr[i] + "}")
+// 			}
+// 			if !sHasSuffix(arr[i], "\n") {
+// 				arr[i] += "\n"
+// 			}
+// 		}(i)
+// 	}
+// 	wg.Wait()
+// 	return arr
+// }
 
 // MergeJSON :
 func MergeJSON(jsonlist ...string) (arrstr string) {

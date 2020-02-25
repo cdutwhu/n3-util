@@ -5,7 +5,6 @@ import (
 	"time"
 
 	cmn "github.com/cdutwhu/json-util/common"
-	pp "github.com/cdutwhu/json-util/preprocess"
 )
 
 func TestQuery(t *testing.T) {
@@ -13,7 +12,8 @@ func TestQuery(t *testing.T) {
 	param := "NAPTestItemLocalId"
 	value := "x00101935"
 
-	data := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
+	// data := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
+	data := FmtJSONFile("../../data/NAPCodeFrame.json", 2)
 	jkv := NewJKV(data, "", false)
 	// fPln("--- Init ---")
 
