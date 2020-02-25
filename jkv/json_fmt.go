@@ -2,6 +2,7 @@ package jkv
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"reflect"
 	"regexp"
 
@@ -76,8 +77,8 @@ func dumpMap(fmtJSON *string, space string, m map[string]interface{}) {
 	}
 }
 
-// FormatJSON :
-func FormatJSON(jsonStr string, nSpace int) string {
+// FmtJSON :
+func FmtJSON(jsonStr string, nSpace int) string {
 
 	// recursively iterate map[string]interface{}, formatted with error comma
 	SPACE = mSpace[nSpace]
@@ -89,17 +90,31 @@ func FormatJSON(jsonStr string, nSpace int) string {
 	fmtJSON += fSf("}")
 
 	// remove last item's comma
-	in, out := []rune(fmtJSON), []rune{}
+	posCommaGrp := [][]int{}
 	posGrp := regexp.MustCompile(`,\n[ ]*[\]\}]`).FindAllIndex([]byte(fmtJSON), -1)
-NEXT:
-	for p, c := range in {
-		for _, posPair := range posGrp {
-			if p == posPair[0] {
-				continue NEXT
-			}
-		}
-		out = append(out, c)
+	for _, pos := range posGrp {
+		posCommaGrp = append(posCommaGrp, []int{pos[0], pos[0] + 1})
 	}
+	return cmn.ReplByPosGrp(fmtJSON, posCommaGrp, []string{""})
 
-	return string(out)
+	// 	in, out := []rune(fmtJSON), []rune{}
+	// 	posGrp := regexp.MustCompile(`,\n[ ]*[\]\}]`).FindAllIndex([]byte(fmtJSON), -1)
+	// NEXT:
+	// 	for p, c := range in {
+	// 		for _, posPair := range posGrp {
+	// 			if p == posPair[0] {
+	// 				continue NEXT
+	// 			}
+	// 		}
+	// 		out = append(out, c)
+	// 	}
+	// 	return string(out)
+}
+
+// FmtJSONFile :
+func FmtJSONFile(filename string, nSpace int) string {
+	cmn.SetLog("./error.log")
+	bytes, err := ioutil.ReadFile(filename)
+	cmn.FailOnErr("%v", err)
+	return FmtJSON(string(bytes), nSpace)
 }

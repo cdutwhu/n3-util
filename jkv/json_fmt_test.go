@@ -28,8 +28,7 @@ const jsonStr = `
 		}
 	}
   },
-  "string": "Hello 
-  World"
+  "string": "Hello   World"
 }
 `
 
@@ -38,12 +37,8 @@ const jsonStr1 = `
 `
 
 func TestFormatJSON(t *testing.T) {
-
-	// bytes, err := ioutil.ReadFile("./json_fmt_test.json")
-	// cmn.FailOnErr("%v", err)
-	// jsonStr := string(bytes)
-
-	fPln(cmn.IsJSON(jsonStr))
-
-	fPln(FormatJSON(jsonStr, 2))
+	// jsonFmt := FmtJSONFile("./json_fmt_test.json", 2)
+	jsonFmt := FmtJSON(jsonStr1, 2)
+	fPln(cmn.IsJSON(jsonFmt))
+	fPln(jsonFmt)
 }
