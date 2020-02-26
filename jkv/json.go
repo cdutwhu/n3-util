@@ -78,7 +78,7 @@ func SplitJSONArr(json string, nSpace int) []string {
 		// jsonGrp[i] = FmtJSON(json[ps:pe+1], nSpace) // [serial mode]
 
 		// [parallel mode]
-		func(i, ps, pe int) {
+		go func(i, ps, pe int) {
 			defer wg.Done()
 			jsonGrp[i] = FmtJSON(json[ps:pe+1], nSpace)
 		}(i, ps, pe)
@@ -144,17 +144,11 @@ func SplitJSONArr(json string, nSpace int) []string {
 // 	return arr
 // }
 
-// MergeJSON :
-func MergeJSON(jsonlist ...string) (arrstr string) {
-	if len(jsonlist) == 1 {
-		arrstr, _ = Indent("[\n"+jsonlist[0], 2, true)
-	} else {
-		tmp := sJoin(jsonlist, ",")
-		tmp = sReplaceAll(tmp, "}\n,{", "},\n{")
-		arrstr, _ = Indent("[\n"+tmp, 2, true)
-	}
-	arrstr += "]\n"
-	return
+// MakeJSONArray :
+func MakeJSONArray(jsonlist ...string) (arrstr string) {
+	combine := "[\n" + sJoin(jsonlist, ",\n")
+	fmtArr, _ := Indent(combine, 2, true)
+	return fmtArr + "\n]"
 }
 
 // **************************************************************** //

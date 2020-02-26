@@ -42,7 +42,7 @@ func TestJSONPolicy(t *testing.T) {
 			}(i, json)
 		}
 		wg.Wait()
-		ioutil.WriteFile("array.json", []byte(MergeJSON(jsonList...)), 0666)
+		ioutil.WriteFile("array.json", []byte(MakeJSONArray(jsonList...)), 0666)
 
 	} else {
 

@@ -17,7 +17,7 @@ func TestSplitJSONArr(t *testing.T) {
 	jArrStr := FmtJSONFile("../../data/xapi.json", 2)
 
 	if arr := SplitJSONArr(jArrStr, 2); arr != nil {
-		jMergedStr := MergeJSON(arr...)
+		jMergedStr := MakeJSONArray(arr...)
 		fPln(jMergedStr)
 		if jArrStr != jMergedStr {
 			panic("abc")

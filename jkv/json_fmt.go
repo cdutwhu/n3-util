@@ -133,9 +133,7 @@ func FmtJSONArr(jsonArr string, nSpace int) string {
 		jsonGrp = append(jsonGrp, json)
 	}
 	if len(jsonGrp) > 0 {
-		combine := "[\n" + sJoin(jsonGrp, ",\n")
-		fmtArr, _ := Indent(combine, nSpace, true)
-		return fmtArr + "\n]"
+		return MakeJSONArray(jsonGrp...)
 	}
 	return ""
 }
