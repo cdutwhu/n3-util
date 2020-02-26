@@ -4,6 +4,7 @@ package jkv
 
 import (
 	"math"
+	"sync"
 
 	cmn "github.com/cdutwhu/json-util/common"
 )
@@ -67,11 +68,25 @@ func SplitJSONArr(json string, nSpace int) []string {
 	}
 	cmn.FailOnErrWhen(len(psGrp) != len(peGrp), "%v", fEf("Fatal, is valid JSON array ?"))
 
+	// [parallel mode]
+	wg := sync.WaitGroup{}
+	wg.Add(len(psGrp))
+
 	jsonGrp := make([]string, len(psGrp))
 	for i, ps := range psGrp {
 		pe := peGrp[i]
-		jsonGrp[i] = FmtJSON(json[ps:pe+1], nSpace) // [serial mode]
+		// jsonGrp[i] = FmtJSON(json[ps:pe+1], nSpace) // [serial mode]
+
+		// [parallel mode]
+		func(i, ps, pe int) {
+			defer wg.Done()
+			jsonGrp[i] = FmtJSON(json[ps:pe+1], nSpace)
+		}(i, ps, pe)
 	}
+
+	// [parallel mode]
+	wg.Wait()
+
 	return jsonGrp
 }
 

@@ -116,7 +116,7 @@ const jsonStr2 = `[
 
 func TestFormatJSON(t *testing.T) {
 	// jsonFmt := FmtJSONFile("./json_fmt_test.json", 2)
-	jsonFmt := FmtJSON(jsonStr, 2)
+	jsonFmt := FmtJSON(jsonStr2, 2)
 	fPln(cmn.IsJSON(jsonFmt))
 	fPln(jsonFmt)
 }
