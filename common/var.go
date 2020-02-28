@@ -2,7 +2,6 @@ package common
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -24,8 +23,4 @@ var (
 	sTrimLeft   = strings.TrimLeft
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
-
-	RExpMD5    = regexp.MustCompile("\"[a-f0-9]{32}\"")
-	RExpSHA1   = regexp.MustCompile("\"[a-f0-9]{40}\"")
-	RExpSHA256 = regexp.MustCompile("\"[a-f0-9]{64}\"")
 )
