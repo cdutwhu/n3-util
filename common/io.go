@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 )
 
-// WriteFile :
-func WriteFile(filename string, data []byte, perm os.FileMode) {
+// MustWriteFile :
+func MustWriteFile(filename string, data []byte, perm os.FileMode) {
 	dir := filepath.Dir(filename)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		os.MkdirAll(dir, 0700)
