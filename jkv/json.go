@@ -497,8 +497,12 @@ func (jkv *JKV) wrapDefault(root string, must bool) *JKV {
 
 	jsonInd, _ := Indent(json, 2, true)
 	rooted1 := fSf("{\n  \"%s\": %s}\n", root, jsonInd)
-	rooted2 := fSf("{\n  \"%s\": %s}", root, json)
-	rooted2 = FmtJSON(rooted2, 2)
+	rooted2 := fSf("{\n  \"%s\": %s}\n", root, json)
+	rooted2 = FmtJSON(rooted2, 2) + "\n"
+	if rooted1 != rooted2 {
+		cmn.MustWriteFile("./root1.json", []byte(rooted1), 0666)
+		cmn.MustWriteFile("./root2.json", []byte(rooted2), 0666)
+	}
 	cmn.FailOnErrWhen(rooted1 != rooted2, "%v", fEf("error rooted"))
 
 	// fPln(" ----------------------------------------------- ")
@@ -536,7 +540,12 @@ func (jkv *JKV) UnwrapDefault() *JKV {
 	unRooted1 += "\n"
 	// fPln(unRooted1)
 	unRooted2 := FmtJSON(json[i-1:j+2], 2)
+	unRooted2 += "\n"
 	// fPln(unRooted2)
+	if unRooted1 != unRooted2 {
+		cmn.MustWriteFile("./unroot1.json", []byte(unRooted1), 0666)
+		cmn.MustWriteFile("./unroot2.json", []byte(unRooted2), 0666)
+	}
 	cmn.FailOnErrWhen(unRooted1 != unRooted2, "%v", fEf("error unRooted"))
 
 	jkvUnR := NewJKV(unRooted1, "", false)

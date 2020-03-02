@@ -14,7 +14,7 @@ func TestSplitJSONArr(t *testing.T) {
 	// jArrStr := FmtJSONFile("../../Server/config/meta.json", 2)
 	// cmn.FailOnErrWhen(jArrStr == "", "%v", fEf("Read JSON file error"))
 
-	jArrStr := FmtJSONFile("../../data/xapi.json", 2)
+	jArrStr := FmtJSONFile("../_data/xapi.json", 2)
 
 	if arr := SplitJSONArr(jArrStr, 2); arr != nil {
 		jMergedStr := MakeJSONArray(arr...)
@@ -29,7 +29,7 @@ func TestSplitJSONArr(t *testing.T) {
 
 func TestScan(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
-	json := FmtJSONFile("../../data/NAPCodeFrame.json", 2)
+	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	jkv := NewJKV(json, "", false)
 	LVL, mLvlFParr, mFPosLvl, _ := jkv.scan()
 	fPln("levels:", LVL)
@@ -43,7 +43,7 @@ func TestScan(t *testing.T) {
 
 func TestFieldByPos(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
-	json := FmtJSONFile("../../data/NAPCodeFrame.json", 2)
+	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	jkv := NewJKV(json, "", false)
 	LVL, mLvlFParr, _, _ := jkv.scan()
 	// for k, v := range mLvlFParr {
@@ -67,7 +67,7 @@ func TestFieldByPos(t *testing.T) {
 
 func TestFType(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
-	json := FmtJSONFile("../../data/NAPCodeFrame.json", 2)
+	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	jkv := NewJKV(json, "", false)
 	value, typ := jkv.fValueType(1617)
 	fPln(typ.Str())
@@ -78,14 +78,14 @@ func TestFType(t *testing.T) {
 
 func TestInit(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
-	json := FmtJSONFile("../../data/NAPCodeFrame.json", 2)
+	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	NewJKV(json, "", false)
 	fPln("break")
 }
 
 func TestWrap(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
-	json := FmtJSONFile("../../data/xapi1.json", 2)
+	json := FmtJSONFile("../_data/xapi1.json", 2)
 	jkv := NewJKV(json, "root", false)
 	fPln("--- Init ---")
 	fPln(jkv.JSON)
@@ -94,7 +94,7 @@ func TestWrap(t *testing.T) {
 func TestUnfold(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
 
-	json := FmtJSONFile("../../data/xapi1.json", 2)
+	json := FmtJSONFile("../_data/xapi1.json", 2)
 	jkv := NewJKV(json, "root", false)
 	fPln("--- Init ---")
 	fPln(jkv.Wrapped)
