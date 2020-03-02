@@ -11,9 +11,6 @@ import (
 
 func TestJSONPolicy(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
-	// data := pp.FmtJSONFile("../../data/NAPCodeFrame.json", "../preprocess/utils/")
-	// mask1 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskP.json", "../preprocess/utils/")
-	// mask2 := pp.FmtJSONFile("../../data/NAPCodeFrameMaskPcopy.json", "../preprocess/utils/")
 
 	data := FmtJSONFile("../../data/NAPCodeFrame.json", 2)
 	mask1 := FmtJSONFile("../../data/NAPCodeFrameMaskP.json", 2)
@@ -51,7 +48,6 @@ func TestJSONPolicy(t *testing.T) {
 		jkvMR := NewJKV(maskroot, "", false)
 		jkvMR.Wrapped = jkvD.Wrapped
 		json := jkvMR.UnwrapDefault().JSON
-		// json = pp.FmtJSONStr(json, "../preprocess/utils/")
 		json = FmtJSON(json, 2)
 
 		jkvD = NewJKV(json, "root", false)
@@ -59,7 +55,6 @@ func TestJSONPolicy(t *testing.T) {
 		jkvMR = NewJKV(maskroot, "", false)
 		jkvMR.Wrapped = jkvD.Wrapped
 		json = jkvMR.UnwrapDefault().JSON
-		// json = pp.FmtJSONStr(json, "../preprocess/utils/")
 		json = FmtJSON(json, 2)
 
 		ioutil.WriteFile("single.json", []byte(json), 0666)
@@ -68,8 +63,6 @@ func TestJSONPolicy(t *testing.T) {
 
 func TestJSONPolicy1(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
-	// data := pp.FmtJSONFile("../../data/test.json", "../preprocess/utils/")
-	// mask1 := pp.FmtJSONFile("../../data/1.json", "../preprocess/utils/")
 
 	data := FmtJSONFile("../../data/test.json", 2)
 	mask1 := FmtJSONFile("../../data/1.json", 2)
@@ -84,7 +77,6 @@ func TestJSONPolicy1(t *testing.T) {
 	jkvMR := NewJKV(maskroot, "", false)
 	jkvMR.Wrapped = jkvD.Wrapped
 	json := jkvMR.UnwrapDefault().JSON
-	// json = pp.FmtJSONStr(json, "../preprocess/utils/")
 	json = FmtJSON(json, 2)
 
 	ioutil.WriteFile("single.json", []byte(json), 0666)

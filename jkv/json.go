@@ -90,60 +90,6 @@ func SplitJSONArr(json string, nSpace int) []string {
 	return jsonGrp
 }
 
-// SplitJSONArr : json must be Formatted
-// func SplitJSONArr(json string) []string {
-// 	if !MaybeJSONArr(json) {
-// 		return nil
-// 	}
-
-// 	arr := sSpl(json, "},\n  {")
-// 	L := len(arr)
-
-// 	// one element array
-// 	if L == 1 {
-// 		start, end := 0, 0
-// 		for i, c := range json {
-// 			if c == '{' {
-// 				start = i
-// 				break
-// 			}
-// 		}
-// 		for j := len(json) - 1; j >= 0; j-- {
-// 			if json[j] == '}' {
-// 				end = j
-// 				break
-// 			}
-// 		}
-// 		json, _ = IndentFmt(json[start : end+1])
-// 		if !sHasSuffix(json, "\n") {
-// 			json += "\n"
-// 		}
-// 		return []string{json}
-// 	}
-
-// 	// multi-elements array
-// 	wg := sync.WaitGroup{}
-// 	wg.Add(L)
-// 	for i := 0; i < L; i++ {
-// 		go func(i int) {
-// 			defer wg.Done()
-// 			switch i {
-// 			case 0:
-// 				arr[i], _ = IndentFmt(arr[i][4:] + "}")
-// 			case L - 1:
-// 				arr[i], _ = IndentFmt("{" + arr[i][:len(arr[i])-2])
-// 			default:
-// 				arr[i], _ = IndentFmt("{" + arr[i] + "}")
-// 			}
-// 			if !sHasSuffix(arr[i], "\n") {
-// 				arr[i] += "\n"
-// 			}
-// 		}(i)
-// 	}
-// 	wg.Wait()
-// 	return arr
-// }
-
 // MakeJSONArray :
 func MakeJSONArray(jsonlist ...string) (arrstr string) {
 	combine := "[\n" + sJoin(jsonlist, ",\n")
@@ -551,11 +497,9 @@ func (jkv *JKV) wrapDefault(root string, must bool) *JKV {
 
 	jsonInd, _ := Indent(json, 2, true)
 	rooted1 := fSf("{\n  \"%s\": %s}\n", root, jsonInd)
-	// rooted2 := fSf("{\n  \"%s\": %s}", root, json)
-	// rooted2 = pp.FmtJSONStr(rooted2, "/mnt/ramdisk/")
-	// if rooted1 != rooted2 {
-	// 	FailOnErr("%v @ wrapDefault", fEf("error rooted"))
-	// }
+	rooted2 := fSf("{\n  \"%s\": %s}", root, json)
+	rooted2 = FmtJSON(rooted2, 2)
+	cmn.FailOnErrWhen(rooted1 != rooted2, "%v", fEf("error rooted"))
 
 	// fPln(" ----------------------------------------------- ")
 	jkvR := NewJKV(rooted1, "", must)
@@ -591,11 +535,9 @@ func (jkv *JKV) UnwrapDefault() *JKV {
 	unRooted1, _ := IndentFmt(json[i-1 : j+2])
 	unRooted1 += "\n"
 	// fPln(unRooted1)
-	// unRooted2 := pp.FmtJSONStr(json[i-1:j+2], "/mnt/ramdisk/")
+	unRooted2 := FmtJSON(json[i-1:j+2], 2)
 	// fPln(unRooted2)
-	// if unRooted1 != unRooted2 {
-	// 	FailOnErr("%v @ UnwrapDefault", fEf("error unRooted"))
-	// }
+	cmn.FailOnErrWhen(unRooted1 != unRooted2, "%v", fEf("error unRooted"))
 
 	jkvUnR := NewJKV(unRooted1, "", false)
 	jkvUnR.Wrapped = false
