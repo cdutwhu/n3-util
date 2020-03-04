@@ -9,23 +9,6 @@ import (
 	cmn "github.com/cdutwhu/json-util/common"
 )
 
-type (
-	b        = byte
-	JSONTYPE int
-)
-
-var (
-	StartTrait = []byte{
-		b('"'), // [array : string] OR [object : field]
-		// b('{'), // [array : object]
-		// b('n'),         // [array : null]
-		// b('t'), b('f'), // [array : bool]
-		// b('1'), b('2'), b('3'), b('4'), b('5'), b('6'), b('7'), b('8'), b('9'), b('-'), b('0'), // [array : number]
-	}
-
-	LF, SP, DQ = byte('\n'), byte(' '), byte('"')
-)
-
 var (
 	fPf         = fmt.Printf
 	fPln        = fmt.Println
@@ -44,6 +27,24 @@ var (
 	sTrimRight  = strings.TrimRight
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
+	sRepeat     = strings.Repeat
+)
+
+type (
+	b        = byte
+	JSONTYPE int
+)
+
+var (
+	StartTrait = []byte{
+		b('"'), // [array : string] OR [object : field]
+		// b('{'), // [array : object]
+		// b('n'),         // [array : null]
+		// b('t'), b('f'), // [array : bool]
+		// b('1'), b('2'), b('3'), b('4'), b('5'), b('6'), b('7'), b('8'), b('9'), b('-'), b('0'), // [array : number]
+	}
+
+	LF, SP, DQ = byte('\n'), byte(' '), byte('"')
 )
 
 var (
@@ -55,35 +56,60 @@ var (
 	hashRExp = cmn.RExpSHA1 // compiled with ""
 )
 
-const (
-	TraitScan = "\n                                                                " // 64 spaces
+var (
+	Trait4Scan = fSf("\n%s", sRepeat(" ", 64))
 
-	AOS0  = "[\n  {\n    "                                                 // 2, 4
-	AOE0  = "\n  }\n]"                                                     // 2, 0
-	AOS1  = "[\n    {\n      "                                             // 4, 6
-	AOE1  = "\n    }\n  ]"                                                 // 4, 2
-	AOS2  = "[\n      {\n        "                                         // 6, 8
-	AOE2  = "\n      }\n    ]"                                             // 6, 4
-	AOS3  = "[\n        {\n          "                                     // 8, 10
-	AOE3  = "\n        }\n      ]"                                         // 8, 6
-	AOS4  = "[\n          {\n            "                                 // 10, 12
-	AOE4  = "\n          }\n        ]"                                     // 10, 8
-	AOS5  = "[\n            {\n              "                             // 12, 14
-	AOE5  = "\n            }\n          ]"                                 // 12, 10
-	AOS6  = "[\n              {\n                "                         // 14, 16
-	AOE6  = "\n              }\n            ]"                             // 14, 12
-	AOS7  = "[\n                {\n                  "                     // 16, 18
-	AOE7  = "\n                }\n              ]"                         // 16, 14
-	AOS8  = "[\n                  {\n                    "                 // 18, 20
-	AOE8  = "\n                  }\n                ]"                     // 18, 16
-	AOS9  = "[\n                    {\n                      "             // 20, 22
-	AOE9  = "\n                    }\n                  ]"                 // 20, 18
-	AOS10 = "[\n                      {\n                        "         // 22, 24
-	AOE10 = "\n                      }\n                    ]"             // 22, 20
-	AOS11 = "[\n                        {\n                          "     // 24, 26
-	AOE11 = "\n                        }\n                      ]"         // 24, 22
-	AOS12 = "[\n                          {\n                            " // 26, 28
-	AOE12 = "\n                          }\n                        ]"     // 26, 24
+	StartOfObjArr = func(nGrp ...int) []string {
+		starts := make([]string, len(nGrp))
+		for i, n := range nGrp {
+			spaceLen1 := n*2 + 2
+			spaceLen2 := spaceLen1 + 2
+			maxSpace := sRepeat(" ", spaceLen2)
+			starts[i] = fSf("[\n%s{\n%s", maxSpace[:spaceLen1], maxSpace)
+		}
+		return starts
+	}
+	EndOfObjArr = func(nGrp ...int) []string {
+		ends := make([]string, len(nGrp))
+		for i, n := range nGrp {
+			spaceLen1 := n*2 + 2
+			spaceLen2 := spaceLen1 - 2
+			maxSpace := sRepeat(" ", spaceLen1)
+			ends[i] = fSf("\n%s}\n%s]", maxSpace, maxSpace[:spaceLen2])
+		}
+		return ends
+	}
+)
+
+const (
+	// TraitScan = "\n                                                                " // 64 spaces
+
+	// AOS0  = "[\n  {\n    "                                                 // 2, 4
+	// AOE0  = "\n  }\n]"                                                     // 2, 0
+	// AOS1  = "[\n    {\n      "                                             // 4, 6
+	// AOE1  = "\n    }\n  ]"                                                 // 4, 2
+	// AOS2  = "[\n      {\n        "                                         // 6, 8
+	// AOE2  = "\n      }\n    ]"                                             // 6, 4
+	// AOS3  = "[\n        {\n          "                                     // 8, 10
+	// AOE3  = "\n        }\n      ]"                                         // 8, 6
+	// AOS4  = "[\n          {\n            "                                 // 10, 12
+	// AOE4  = "\n          }\n        ]"                                     // 10, 8
+	// AOS5  = "[\n            {\n              "                             // 12, 14
+	// AOE5  = "\n            }\n          ]"                                 // 12, 10
+	// AOS6  = "[\n              {\n                "                         // 14, 16
+	// AOE6  = "\n              }\n            ]"                             // 14, 12
+	// AOS7  = "[\n                {\n                  "                     // 16, 18
+	// AOE7  = "\n                }\n              ]"                         // 16, 14
+	// AOS8  = "[\n                  {\n                    "                 // 18, 20
+	// AOE8  = "\n                  }\n                ]"                     // 18, 16
+	// AOS9  = "[\n                    {\n                      "             // 20, 22
+	// AOE9  = "\n                    }\n                  ]"                 // 20, 18
+	// AOS10 = "[\n                      {\n                        "         // 22, 24
+	// AOE10 = "\n                      }\n                    ]"             // 22, 20
+	// AOS11 = "[\n                        {\n                          "     // 24, 26
+	// AOE11 = "\n                        }\n                      ]"         // 24, 22
+	// AOS12 = "[\n                          {\n                            " // 26, 28
+	// AOE12 = "\n                          }\n                        ]"     // 26, 24
 
 	TraitFV    = "\": "
 	Trait1EndV = ",\n"
@@ -97,9 +123,9 @@ const (
 
 // readonly var
 var (
-	sTAOStart = []string{AOS0, AOS1, AOS2, AOS3, AOS4, AOS5, AOS6, AOS7, AOS8, AOS9, AOS10, AOS11, AOS12}
-	sTAOEnd   = []string{AOE0, AOE1, AOE2, AOE3, AOE4, AOE5, AOE6, AOE7, AOE8, AOE9, AOE10, AOE11, AOE12}
-	pLinker   = PathLinker
+	// sTAOStart = []string{AOS0, AOS1, AOS2, AOS3, AOS4, AOS5, AOS6, AOS7, AOS8, AOS9, AOS10, AOS11, AOS12}
+	// sTAOEnd   = []string{AOE0, AOE1, AOE2, AOE3, AOE4, AOE5, AOE6, AOE7, AOE8, AOE9, AOE10, AOE11, AOE12}
+	pLinker = PathLinker
 )
 
 // JKV :
@@ -122,17 +148,17 @@ type JKV struct {
 
 // T : JSON line Search Feature.
 func T(lvl int) string {
-	return TraitScan[0 : 2*lvl+1]
+	return Trait4Scan[:2*lvl+1]
 }
 
 // PT :
 func PT(T string) string {
-	return T[0 : len(T)-2]
+	return T[:len(T)-2]
 }
 
 // NT :
 func NT(T string) string {
-	return T[0 : len(T)+2]
+	return T[:len(T)+2]
 }
 
 // TL : get T & L by nchar

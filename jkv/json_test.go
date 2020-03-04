@@ -31,7 +31,7 @@ func TestScan(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
 	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	jkv := NewJKV(json, "", false)
-	LVL, mLvlFParr, mFPosLvl, _ := jkv.scan()
+	LVL, mLvlFParr, mFPosLvl, _ := jkv.scan(13)
 	fPln("levels:", LVL)
 	for k, v := range mLvlFParr {
 		fPln(k, v)
@@ -45,7 +45,7 @@ func TestFieldByPos(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
 	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	jkv := NewJKV(json, "", false)
-	LVL, mLvlFParr, _, _ := jkv.scan()
+	LVL, mLvlFParr, _, _ := jkv.scan(13)
 	// for k, v := range mLvlFParr {
 	// 	fPln(k, v)
 	// }

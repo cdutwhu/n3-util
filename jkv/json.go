@@ -104,8 +104,8 @@ func (jkv *JKV) isJSON() bool {
 	return cmn.IsJSON(jkv.JSON)
 }
 
-// scan :                        L   posarr     pos L
-func (jkv *JKV) scan() (int, map[int][]int, map[int]int, error) {
+// scan :                                 L   posarr     pos L
+func (jkv *JKV) scan(depth int) (int, map[int][]int, map[int]int, error) {
 	Lm, offset := -1, 0
 	if s := jkv.JSON; jkv.isJSON() {
 		mLvlFParr := make(map[int][]int)
@@ -113,6 +113,10 @@ func (jkv *JKV) scan() (int, map[int][]int, map[int]int, error) {
 			mLvlFParr[i] = []int{}
 		}
 		mFPosLvl := make(map[int]int)
+
+		indices := cmn.Iter2Slc(depth)
+		sTAOStart := StartOfObjArr(indices...)
+		sTAOEnd := EndOfObjArr(indices...)
 
 		// L0 : object
 		if s[0] == '{' {
@@ -353,7 +357,8 @@ func (jkv *JKV) pathType(fPath string, psSort []int, mFPosFPath map[int]string) 
 
 // init : prepare <>
 func (jkv *JKV) init() error {
-	if _, mLvlFParr, _, err := jkv.scan(); err == nil {
+	const scanDepth = 13
+	if _, mLvlFParr, _, err := jkv.scan(scanDepth); err == nil {
 		lsMapFPosFName := jkv.fields(mLvlFParr)
 
 		for iL, mPN := range lsMapFPosFName {
@@ -469,17 +474,11 @@ func (jkv *JKV) aoID2oIDlist(aoID string) string {
 func oIDlistStr2oIDlist(aoIDStr string) (oidlist []string) {
 	nComma := sCount(aoIDStr, ",")
 	oidlist = hashRExp.FindAllString(aoIDStr, -1)
-
-	// if aoIDStr[0] != '[' || aoIDStr[len(aoIDStr)-1] != ']' || (oidlist != nil && len(oidlist) != nComma+1) {
-	// 	panic("error format @ oIDlistStr2oIDlist")
-	// }
-
 	cmn.FailOnErrWhen(
 		aoIDStr[0] != '[' || aoIDStr[len(aoIDStr)-1] != ']' || (oidlist != nil && len(oidlist) != nComma+1),
 		"%v",
 		fEf("error format"),
 	)
-
 	return
 }
 
@@ -500,8 +499,8 @@ func (jkv *JKV) wrapDefault(root string, must bool) *JKV {
 	rooted2 := fSf("{\n  \"%s\": %s}\n", root, json)
 	rooted2 = FmtJSON(rooted2, 2) + "\n"
 	if rooted1 != rooted2 {
-		cmn.MustWriteFile("./root1.json", []byte(rooted1), 0666)
-		cmn.MustWriteFile("./root2.json", []byte(rooted2), 0666)
+		cmn.MustWriteFile("./root1.json", []byte(rooted1))
+		cmn.MustWriteFile("./root2.json", []byte(rooted2))
 	}
 	cmn.FailOnErrWhen(rooted1 != rooted2, "%v", fEf("error rooted"))
 
@@ -543,8 +542,8 @@ func (jkv *JKV) UnwrapDefault() *JKV {
 	unRooted2 += "\n"
 	// fPln(unRooted2)
 	if unRooted1 != unRooted2 {
-		cmn.MustWriteFile("./unroot1.json", []byte(unRooted1), 0666)
-		cmn.MustWriteFile("./unroot2.json", []byte(unRooted2), 0666)
+		cmn.MustWriteFile("./unroot1.json", []byte(unRooted1))
+		cmn.MustWriteFile("./unroot2.json", []byte(unRooted2))
 	}
 	cmn.FailOnErrWhen(unRooted1 != unRooted2, "%v", fEf("error unRooted"))
 
