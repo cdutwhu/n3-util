@@ -1,4 +1,4 @@
-// ********** ALL Based On JQ Formatted JSON ********** //
+// ********** ALL Based On Formatted JSON ********** //
 
 package jkv
 

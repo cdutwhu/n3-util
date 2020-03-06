@@ -133,7 +133,7 @@ func FmtJSONArr(jsonArr string, nSpace int) string {
 		jsonGrp = append(jsonGrp, json)
 	}
 	if len(jsonGrp) > 0 {
-		return MakeJSONArray(jsonGrp...)
+		return MakeJSONArr(jsonGrp...)
 	}
 	return ""
 }

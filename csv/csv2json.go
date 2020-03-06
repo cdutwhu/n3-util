@@ -12,12 +12,12 @@ import (
 	cmn "github.com/cdutwhu/json-util/common"
 )
 
-// ReadCSVFile : read the content of CSV File
-func ReadCSVFile(path string, save bool, savePaths ...string) string {
+// File2JSON : read the content of CSV File
+func File2JSON(path string, save bool, savePaths ...string) string {
 	csvFile, err := os.Open(path)
 	cmn.FailOnErr("The file is not found || wrong root : %v", err)
 	defer csvFile.Close()
-	bytes := ReadCSV(csvFile)
+	bytes := Reader2JSON(csvFile)
 	if save {
 		if len(savePaths) == 0 {
 			newFileName := filepath.Base(path)
@@ -32,10 +32,10 @@ func ReadCSVFile(path string, save bool, savePaths ...string) string {
 	return string(bytes)
 }
 
-// ReadCSV to
-func ReadCSV(r io.Reader) []byte {
+// Reader2JSON to
+func Reader2JSON(r io.Reader) []byte {
 	content, _ := csv.NewReader(r).ReadAll()
-	cmn.FailOnErrWhen(len(content) < 1, "%v", fEf("Something wrong, the file maybe empty or length of the lines are not the same"))
+	cmn.FailOnErrWhen(len(content) < 1, "%v", fEf("Failed, the file may be empty or length of the lines are not the same"))
 
 	headersArr := make([]string, 0)
 	for _, headE := range content[0] {
