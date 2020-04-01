@@ -82,35 +82,6 @@ var (
 )
 
 const (
-	// TraitScan = "\n                                                                " // 64 spaces
-
-	// AOS0  = "[\n  {\n    "                                                 // 2, 4
-	// AOE0  = "\n  }\n]"                                                     // 2, 0
-	// AOS1  = "[\n    {\n      "                                             // 4, 6
-	// AOE1  = "\n    }\n  ]"                                                 // 4, 2
-	// AOS2  = "[\n      {\n        "                                         // 6, 8
-	// AOE2  = "\n      }\n    ]"                                             // 6, 4
-	// AOS3  = "[\n        {\n          "                                     // 8, 10
-	// AOE3  = "\n        }\n      ]"                                         // 8, 6
-	// AOS4  = "[\n          {\n            "                                 // 10, 12
-	// AOE4  = "\n          }\n        ]"                                     // 10, 8
-	// AOS5  = "[\n            {\n              "                             // 12, 14
-	// AOE5  = "\n            }\n          ]"                                 // 12, 10
-	// AOS6  = "[\n              {\n                "                         // 14, 16
-	// AOE6  = "\n              }\n            ]"                             // 14, 12
-	// AOS7  = "[\n                {\n                  "                     // 16, 18
-	// AOE7  = "\n                }\n              ]"                         // 16, 14
-	// AOS8  = "[\n                  {\n                    "                 // 18, 20
-	// AOE8  = "\n                  }\n                ]"                     // 18, 16
-	// AOS9  = "[\n                    {\n                      "             // 20, 22
-	// AOE9  = "\n                    }\n                  ]"                 // 20, 18
-	// AOS10 = "[\n                      {\n                        "         // 22, 24
-	// AOE10 = "\n                      }\n                    ]"             // 22, 20
-	// AOS11 = "[\n                        {\n                          "     // 24, 26
-	// AOE11 = "\n                        }\n                      ]"         // 24, 22
-	// AOS12 = "[\n                          {\n                            " // 26, 28
-	// AOE12 = "\n                          }\n                        ]"     // 26, 24
-
 	TraitFV    = "\": "
 	Trait1EndV = ",\n"
 	Trait2EndV = "\n"
@@ -123,8 +94,6 @@ const (
 
 // readonly var
 var (
-	// sTAOStart = []string{AOS0, AOS1, AOS2, AOS3, AOS4, AOS5, AOS6, AOS7, AOS8, AOS9, AOS10, AOS11, AOS12}
-	// sTAOEnd   = []string{AOE0, AOE1, AOE2, AOE3, AOE4, AOE5, AOE6, AOE7, AOE8, AOE9, AOE10, AOE11, AOE12}
 	pLinker = PathLinker
 )
 
