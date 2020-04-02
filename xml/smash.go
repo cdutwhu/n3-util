@@ -1,12 +1,36 @@
 package xml
 
 import (
+	"io/ioutil"
+	"os"
 	"regexp"
 
 	cmn "github.com/cdutwhu/json-util/common"
 )
 
-func smash(xml string) (lsSub []string) {
+// SmashSave :
+func SmashSave(xml, saveDir string) []string {
+	if _, err := os.Stat(saveDir); os.IsNotExist(err) {
+		cmn.FailOnErr("%v", os.MkdirAll(saveDir, os.ModePerm))
+	}
+	saveDir = sTrimRight(saveDir, `/\`) + "/"
+	mObjCnt := make(map[string]int)
+	SubRoots, Subs := Smash(xml)
+	for i, subRoot := range SubRoots {
+		filename := fSf("%s%s_%d.xml", saveDir, subRoot, mObjCnt[subRoot])
+		// fPln(filename)
+
+		// Subs[i] = xmlfmt.FormatXML(Subs[i], "", "  ")
+		// fPln(Subs[i])
+
+		cmn.FailOnErr("%v", ioutil.WriteFile(filename, []byte(Subs[i]), os.ModePerm))
+		mObjCnt[subRoot]++
+	}
+	return Subs
+}
+
+// Smash :
+func Smash(xml string) (SubRoots, Subs []string) {
 	cmn.FailOnErrWhen(!cmn.IsXML(xml), "%v", fEf("Invalid XML"))
 
 	root := cmn.XMLRoot(xml)
@@ -14,12 +38,14 @@ func smash(xml string) (lsSub []string) {
 	remain := xml[offset:]
 	r := regexp.MustCompile(`<[^> /]+[ >]`)
 
-	I := 1
+	// I := 1
 
 AGAIN:
 	if start := r.FindString(remain); start != "" {
 		subroot := sTrim(start, "<> \n\t\r")
-		fPln(I, subroot)
+		// fPln(I, subroot)
+
+		SubRoots = append(SubRoots, subroot)
 
 		endMark := fSf("</%s>", subroot)
 		endPos := sIndex(remain, endMark)
@@ -27,16 +53,14 @@ AGAIN:
 		offset += length
 
 		sub := remain[:length]
-		// cmn.FailOnErrWhen(!cmn.IsXML(sub), "%v", fEf("Invalid XML"))
-		lsSub = append(lsSub, sub)
+		cmn.FailOnErrWhen(!cmn.IsXML(sub), "%v", fEf("Invalid XML"))
+		Subs = append(Subs, sub)
 
 		remain = xml[offset:]
 
-		I++
+		// I++
 		goto AGAIN
 	}
 
-	// fPln(lsSub[0])
-
-	return lsSub
+	return SubRoots, Subs
 }

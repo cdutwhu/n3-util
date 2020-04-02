@@ -6,9 +6,10 @@ import (
 )
 
 var (
-	fEf    = fmt.Errorf
-	fPln   = fmt.Println
-	fSf    = fmt.Sprintf
-	sTrim  = strings.Trim
-	sIndex = strings.Index
+	fEf        = fmt.Errorf
+	fPln       = fmt.Println
+	fSf        = fmt.Sprintf
+	sTrim      = strings.Trim
+	sTrimRight = strings.TrimRight
+	sIndex     = strings.Index
 )
