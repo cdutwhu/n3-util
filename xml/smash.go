@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	cmn "github.com/cdutwhu/json-util/common"
+	"github.com/go-xmlfmt/xmlfmt"
 )
 
 // SmashSave :
@@ -15,12 +16,14 @@ func SmashSave(xml, saveDir string) []string {
 	}
 	saveDir = sTrimRight(saveDir, `/\`) + "/"
 	mObjCnt := make(map[string]int)
-	SubRoots, Subs := Smash(xml)
+
+	SubRoots, Subs := Smash(RmComment(xml))
 	for i, subRoot := range SubRoots {
 		filename := fSf("%s%s_%d.xml", saveDir, subRoot, mObjCnt[subRoot])
 		// fPln(filename)
 
-		// Subs[i] = xmlfmt.FormatXML(Subs[i], "", "  ")
+		Subs[i] = xmlfmt.FormatXML(Subs[i], "", "    ")
+		Subs[i] = sTrim(Subs[i], " \n\r\t")
 		// fPln(Subs[i])
 
 		cmn.FailOnErr("%v", ioutil.WriteFile(filename, []byte(Subs[i]), os.ModePerm))
