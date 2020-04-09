@@ -45,6 +45,24 @@ func Reader2JSON(r io.Reader) []byte {
 	//Remove the header row
 	content = content[1:]
 
+	// Set Column Type
+	mColType := make(map[int]string)
+	for _, d := range content {
+		for j, y := range d {
+			_, fErr := strconv.ParseFloat(y, 32)
+			_, bErr := strconv.ParseBool(y)
+			switch {
+			case fErr == nil:
+				mColType[j] = "numeric"
+			case bErr == nil:
+				mColType[j] = "bool"
+			default:
+				mColType[j] = "string"
+			}
+		}
+	}
+	//
+
 	// var buffer bytes.Buffer
 	var buffer strings.Builder
 	buffer.WriteString("[")
@@ -52,15 +70,26 @@ func Reader2JSON(r io.Reader) []byte {
 		buffer.WriteString("{")
 		for j, y := range d {
 			buffer.WriteString(`"` + headersArr[j] + `":`)
-			_, fErr := strconv.ParseFloat(y, 32)
-			_, bErr := strconv.ParseBool(y)
-			if fErr == nil {
+
+			// _, fErr := strconv.ParseFloat(y, 32)
+			// _, bErr := strconv.ParseBool(y)
+			// if fErr == nil {
+			// 	buffer.WriteString(y)
+			// } else if bErr == nil {
+			// 	buffer.WriteString(strings.ToLower(y))
+			// } else {
+			// 	buffer.WriteString((`"` + y + `"`))
+			// }
+
+			switch mColType[j] {
+			case "numeric":
 				buffer.WriteString(y)
-			} else if bErr == nil {
+			case "bool":
 				buffer.WriteString(strings.ToLower(y))
-			} else {
+			case "string":
 				buffer.WriteString((`"` + y + `"`))
 			}
+
 			//end of property
 			if j < len(d)-1 {
 				buffer.WriteString(",")

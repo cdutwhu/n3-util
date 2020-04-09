@@ -1,7 +1,12 @@
 package csv
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 var (
-	fEf = fmt.Errorf
+	fPln        = fmt.Println
+	fEf         = fmt.Errorf
+	sReplaceAll = strings.ReplaceAll
 )
