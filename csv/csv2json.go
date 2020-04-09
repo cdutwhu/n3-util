@@ -10,30 +10,36 @@ import (
 	"strings"
 
 	cmn "github.com/cdutwhu/json-util/common"
+	jkv "github.com/cdutwhu/json-util/jkv"
 )
 
 // File2JSON : read the content of CSV File
-func File2JSON(path string, save bool, savePaths ...string) string {
+func File2JSON(path string, vertical, save bool, savePaths ...string) (string, []string) {
 	csvFile, err := os.Open(path)
 	cmn.FailOnErr("The file is not found || wrong root : %v", err)
 	defer csvFile.Close()
-	bytes := Reader2JSON(csvFile)
+	jsonstr, headers := Reader2JSON(csvFile)
+
+	if vertical {
+		jsonstr = jkv.JSONScalarSelX(jsonstr, headers...)
+	}
+
 	if save {
 		if len(savePaths) == 0 {
 			newFileName := filepath.Base(path)
 			newFileName = newFileName[0:len(newFileName)-len(filepath.Ext(newFileName))] + ".json"
 			savepath := filepath.Join(filepath.Dir(path), newFileName)
-			cmn.MustWriteFile(savepath, bytes)
+			cmn.MustWriteFile(savepath, []byte(jsonstr))
 		}
 		for _, savepath := range savePaths {
-			cmn.MustWriteFile(savepath, bytes)
+			cmn.MustWriteFile(savepath, []byte(jsonstr))
 		}
 	}
-	return string(bytes)
+	return jsonstr, headers
 }
 
 // Reader2JSON to
-func Reader2JSON(r io.Reader) []byte {
+func Reader2JSON(r io.Reader) (string, []string) {
 	content, _ := csv.NewReader(r).ReadAll()
 	cmn.FailOnErrWhen(len(content) < 1, "%v", fEf("Failed, the file may be empty or length of the lines are not the same"))
 
@@ -106,5 +112,5 @@ func Reader2JSON(r io.Reader) []byte {
 	rawMessage := json.RawMessage(buffer.String())
 	jsonstr, err := json.MarshalIndent(rawMessage, "", "  ")
 	cmn.FailOnErr("%v", err)
-	return jsonstr
+	return string(jsonstr), headersArr
 }

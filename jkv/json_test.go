@@ -26,8 +26,8 @@ func TestSplitJSONArr(t *testing.T) {
 }
 
 func TestJSONScalarSel(t *testing.T) {
-	json := FmtJSONFile("../csv/data1.json", 2)
-	result := JSONScalarSelX(json, "Id", "Name", "Age")
+	json := FmtJSONFile("../csv/data/Questions.json", 2)
+	result := JSONScalarSelX(json, "module_version_id", "question_id", "category", "display_order", "question_type", "actual_answer")
 	fPln(result)
 }
 

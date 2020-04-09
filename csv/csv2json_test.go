@@ -21,7 +21,8 @@ func TestCSV2JSON(t *testing.T) {
 		if !strings.HasSuffix(file.Name(), ".csv") {
 			continue
 		}
-		File2JSON(fName, true, sReplaceAll(fName, ".csv", ".json"))
+		File2JSON(fName, false, true, sReplaceAll(fName, ".csv", ".json"))
+		File2JSON(fName, true, true, sReplaceAll(fName, ".csv", "1.json"))
 	}
 
 	// path := flag.String("path", "./data/ModulePrerequisites.csv", "Path of the file")
