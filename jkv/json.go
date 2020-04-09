@@ -8,6 +8,24 @@ import (
 	cmn "github.com/cdutwhu/json-util/common"
 )
 
+// JSONInnerFmt :
+func JSONInnerFmt(str string) (string, bool) {
+	str = sTrim(str, BLANK)
+	str = sReplaceAll(str, "\t", "    ")
+	i := len(str) - 1
+	N := 0
+	if str[i] == '}' {
+		for i = i - 1; i >= 0; i-- {
+			if str[i] == ' ' {
+				N++
+				continue
+			}
+			break
+		}
+	}
+	return cmn.Indent(str, -N, true)
+}
+
 // MaybeJSONArr : before using this, make sure it is valid json
 func MaybeJSONArr(str string) bool {
 	return sTrimLeft(str, " \t\n\r")[0] == '['
@@ -62,7 +80,7 @@ func SplitJSONArr(json string, nSpace int) []string {
 // MakeJSONArr :
 func MakeJSONArr(jsonlist ...string) (arrstr string) {
 	combine := "[\n" + sJoin(jsonlist, ",\n")
-	fmtArr, _ := Indent(combine, 2, true)
+	fmtArr, _ := cmn.Indent(combine, 2, true)
 	return fmtArr + "\n]"
 }
 

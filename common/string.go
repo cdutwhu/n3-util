@@ -127,3 +127,67 @@ func ReplByPosGrp(s string, posGrp [][]int, newStrGrp []string) (ret string) {
 
 	return
 }
+
+// ProjectV :
+func ProjectV(strlist []string, sep, trimToL, trimFromR string) [][]string {
+	nSep := 0
+	for _, str := range strlist {
+		if n := sCount(str, sep); n > nSep {
+			nSep = n
+		}
+	}
+	rtStrList := make([][]string, nSep+1)
+	for _, str := range strlist {
+		for i, s := range sSpl(str, sep) {
+			if trimToL != "" {
+				if fd := sIndex(s, trimToL); fd >= 0 {
+					s = s[fd+1:]
+				}
+			}
+			if trimFromR != "" {
+				if fd := sLastIndex(s, trimFromR); fd >= 0 {
+					s = s[:fd]
+				}
+			}
+			rtStrList[i] = append(rtStrList[i], s)
+		}
+	}
+	for i := 0; i < len(rtStrList); i++ {
+		rtStrList[i] = ToSet(rtStrList[i]).([]string)
+	}
+	return rtStrList
+}
+
+// Indent :
+func Indent(str string, n int, ignoreFirstLine bool) (string, bool) {
+	if n == 0 {
+		return str, false
+	}
+	S := 0
+	if ignoreFirstLine {
+		S = 1
+	}
+	lines := sSpl(str, "\n")
+	if n > 0 {
+		space := ""
+		for i := 0; i < n; i++ {
+			space += " "
+		}
+		for i := S; i < len(lines); i++ {
+			if sTrim(lines[i], " \n\t") != "" {
+				lines[i] = space + lines[i]
+			}
+		}
+	} else {
+		for i := S; i < len(lines); i++ {
+			if len(lines[i]) == 0 { //                                         ignore empty string line
+				continue
+			}
+			if len(lines[i]) <= -n || sTrimLeft(lines[i][:-n], " ") != "" { // cannot be indented as <n>, give up indent
+				return str, false
+			}
+			lines[i] = lines[i][-n:]
+		}
+	}
+	return sJoin(lines, "\n"), true
+}

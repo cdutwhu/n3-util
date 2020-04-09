@@ -435,7 +435,7 @@ func (jkv *JKV) wrapDefault(root string, must bool) *JKV {
 		json += "\n"
 	}
 
-	jsonInd, _ := Indent(json, 2, true)
+	jsonInd, _ := cmn.Indent(json, 2, true)
 	rooted1 := fSf("{\n  \"%s\": %s}\n", root, jsonInd)
 	rooted2 := fSf("{\n  \"%s\": %s}\n", root, json)
 	rooted2 = FmtJSON(rooted2, 2) + "\n"
@@ -476,7 +476,7 @@ func (jkv *JKV) UnwrapDefault() *JKV {
 		}
 	}
 
-	unRooted1, _ := IndentFmt(json[i-1 : j+2])
+	unRooted1, _ := JSONInnerFmt(json[i-1 : j+2])
 	unRooted1 += "\n"
 	// fPln(unRooted1)
 	unRooted2 := FmtJSON(json[i-1:j+2], 2)
@@ -508,7 +508,7 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 		frame = fSf("{\n  \"%s\": %s\n}", lvl1path, oid)
 	}
 
-	//	maskLvlFields := ProjectV(MapKeys(mask.MapIPathValue).([]string), pLinker, "", "@")
+	//	maskLvlFields := cmn.ProjectV(MapKeys(mask.MapIPathValue).([]string), pLinker, "", "@")
 
 	// expanding ...
 	iExp := 0
@@ -560,7 +560,7 @@ func Mask(name, obj string, mask *JKV) string {
 	}
 
 	// check current mask path is valid for current objTmp fields, P1/2
-	objTmp, _ := IndentFmt(obj)
+	objTmp, _ := JSONInnerFmt(obj)
 	jkvTmp := NewJKV(objTmp, name, true)
 	pathlistTmp := func(name, linker string, fields []string) (pathlist []string) {
 		for _, f := range fields {

@@ -7,6 +7,16 @@ import (
 	cmn "github.com/cdutwhu/json-util/common"
 )
 
+func TestJSONInnerFmt(t *testing.T) {
+	s := `{
+	      a,
+	      b
+	    }`
+
+	s, did := JSONInnerFmt(s)
+	fPln(s, did)
+}
+
 func TestSplitJSONArr(t *testing.T) {
 	defer cmn.TrackTime(time.Now())
 
