@@ -84,7 +84,7 @@ func MakeJSONArr(jsonlist ...string) (arrstr string) {
 	return fmtArr + "\n]"
 }
 
-// ****************************************************** //
+// ---------------------------------------------------- //
 
 // JSONMerge4Async :
 func JSONMerge4Async(chGrp ...<-chan string) string {
@@ -163,4 +163,44 @@ func JSONScalarSelX(json string, attrGrp ...string) string {
 		chans[i] = AsyncJSONScalarSel(json, attr)
 	}
 	return JSONMerge4Async(chans...)
+}
+
+// ---------------------------------------------------- //
+
+// JSONJoin :
+func JSONJoin(jsonL, fkey, jsonR, name, pkey string) (string, bool) {
+
+	inputs, keys, keyTypes := []string{jsonL, jsonR}, []string{fkey, pkey}, []string{"foreign", "primary"}
+	starts, ends := []int{0, 0}, []int{0, 0}
+	keyLines, keyValues := []string{"", ""}, []string{"", ""}
+	posGrp := [][]int{}
+
+	for i := 0; i < 2; i++ {
+		jkv := NewJKV(inputs[i], "", false)
+		lsAttr := jkv.LsL12Fields[1]
+		cmn.FailOnErrWhen(!xin(keys[i], lsAttr), "%v", fEf("NO %s key attribute [%s]", keyTypes[i], keys[i]))
+
+		r := regexp.MustCompile(fSf(`\n  "%s": .+[,]?\n`, keys[i]))
+		pSEs := r.FindAllStringIndex(inputs[i], 1)
+		cmn.FailOnErrWhen(len(pSEs) == 0, "%v", fEf("%s key's value error", keyTypes[i]))
+		starts[i], ends[i] = pSEs[0][0], pSEs[0][1]
+		keyLines[i] = sTrim(inputs[i][starts[i]:ends[i]], ", \t\r\n")
+		keyValues[i] = keyLines[i][len(fkey)+4:]
+
+		if i == 0 {
+			posGrp = pSEs
+			cmn.FailOnErrWhen(xin(name, lsAttr), "%v", fEf("[%s] already exists in left json", name))
+		}
+	}
+
+	if keyValues[0] == keyValues[1] {
+		comma := ","
+		if jsonL[posGrp[0][1]] == '}' {
+			comma = ""
+		}
+		insert := fSf(`"%s": %s%s`, name, jsonR, comma)
+		return FmtJSON(cmn.ReplByPosGrp(jsonL, posGrp, []string{insert}), 2), true
+	}
+
+	return jsonL, false
 }

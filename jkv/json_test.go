@@ -47,3 +47,17 @@ func BenchmarkJSONScalarSelX(b *testing.B) {
 		JSONScalarSelX(json, "Id", "Name", "Age1")
 	}
 }
+
+// -------------------------- //
+
+func TestJSONJoin(t *testing.T) {
+	jsonArr := FmtJSONFile("../csv/data/Modules.json", 2)
+	jsonL := SplitJSONArr(jsonArr, 2)[0]
+	jsonArr = FmtJSONFile("../csv/data/Substrands.json", 2)
+	jsonR := SplitJSONArr(jsonArr, 2)[0]
+	// fPln(json1)
+	// fPln(json2)
+
+	join, ok := JSONJoin(jsonL, "substrand_id", jsonR, "substrand", "substrand_ID")
+	fPln(join, ok)
+}

@@ -28,6 +28,8 @@ var (
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
 	sRepeat     = strings.Repeat
+
+	xin = cmn.XIn
 )
 
 type (
