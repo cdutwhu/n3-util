@@ -168,7 +168,7 @@ func JSONScalarSelX(json string, attrGrp ...string) string {
 // ---------------------------------------------------- //
 
 // JSONJoin :
-func JSONJoin(jsonL, fkey, jsonR, name, pkey string) (string, bool) {
+func JSONJoin(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 
 	inputs, keys, keyTypes := []string{jsonL, jsonR}, []string{fkey, pkey}, []string{"foreign", "primary"}
 	starts, ends := []int{0, 0}, []int{0, 0}
@@ -203,4 +203,21 @@ func JSONJoin(jsonL, fkey, jsonR, name, pkey string) (string, bool) {
 	}
 
 	return jsonL, false
+}
+
+// JSONArrJoin :
+func JSONArrJoin(jsonarrL, fkey, jsonarrR, pkey, name string) (ret string, pairs [][2]int) {
+	jsonLarr := SplitJSONArr(jsonarrL, 2)
+	jsonRarr := SplitJSONArr(jsonarrR, 2)
+	joined := []string{}
+	for i, jsonL := range jsonLarr {
+		for j, jsonR := range jsonRarr {
+			if join, ok := JSONJoin(jsonL, fkey, jsonR, pkey, name); ok {
+				// fPln(ok, i, j)
+				pairs = append(pairs, [2]int{i, j})
+				joined = append(joined, join)
+			}
+		}
+	}
+	return MakeJSONArr(joined...), pairs
 }
