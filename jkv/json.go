@@ -170,6 +170,12 @@ func JSONScalarSelX(json string, attrGrp ...string) string {
 // JSONJoin :
 func JSONJoin(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 
+	if name == "" {
+		if cmn.HasAnySuffix(pkey, "-ID", "-id", "-Id", "_ID", "_id", "_Id") {
+			name = pkey[:len(pkey)-3]
+		}
+	}
+
 	inputs, keys, keyTypes := []string{jsonL, jsonR}, []string{fkey, pkey}, []string{"foreign", "primary"}
 	starts, ends := []int{0, 0}, []int{0, 0}
 	keyLines, keyValues := []string{"", ""}, []string{"", ""}

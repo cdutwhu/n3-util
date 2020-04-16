@@ -17,7 +17,7 @@ func TestRmTailFromFirst(t *testing.T) {
 }
 
 func TestRmHeadToLast(t *testing.T) {
-	fPln(RmHeadToLast("##AB##CD##F", "#"))
+	fPln(RmHeadToLast("##AB##CD##F", "D"))
 }
 
 func TestRmHeadToFirst(t *testing.T) {

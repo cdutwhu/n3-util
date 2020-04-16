@@ -13,6 +13,17 @@ func HasAnyPrefix(s string, lsPrefix ...string) bool {
 	return false
 }
 
+// HasAnySuffix :
+func HasAnySuffix(s string, lsSuffix ...string) bool {
+	FailOnErrWhen(len(lsSuffix) == 0, "%v", fEf("at least one suffix for input"))
+	for _, suffix := range lsSuffix {
+		if sHasSuffix(s, suffix) {
+			return true
+		}
+	}
+	return false
+}
+
 // RmTailFromLast :
 func RmTailFromLast(s, mark string) string {
 	if i := sLastIndex(s, mark); i >= 0 {
@@ -59,7 +70,7 @@ func RmTailFromFirstAny(s string, marks ...string) string {
 // RmHeadToLast :
 func RmHeadToLast(s, mark string) string {
 	if i := sLastIndex(s, mark); i >= 0 {
-		return s[i+len(mark) : len(s)]
+		return s[i+len(mark):]
 	}
 	return s
 }

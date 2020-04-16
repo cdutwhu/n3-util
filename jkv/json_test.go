@@ -53,7 +53,7 @@ func BenchmarkJSONScalarSelX(b *testing.B) {
 func TestJSONJoin(t *testing.T) {
 	jastrL := FmtJSONFile("../csv/data/Modules.json", 2)
 	jastrR := FmtJSONFile("../csv/data/Substrands.json", 2)
-	result, pairs := JSONArrJoin(jastrL, "substrand_id", jastrR, "substrand_id", "substrand")
+	result, pairs := JSONArrJoin(jastrL, "substrand_id", jastrR, "substrand_id", "")
 	for _, pair := range pairs {
 		fPln(pair, "joined")
 	}
