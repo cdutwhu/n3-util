@@ -2,8 +2,6 @@ package jkv
 
 import (
 	"testing"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 func TestNewTraits(t *testing.T) {
@@ -12,15 +10,15 @@ func TestNewTraits(t *testing.T) {
 	// 	panic("error 0")
 	// }
 
-	for i := range cmn.N(13) {
+	for i := range iterN(130) {
 		fPln(i)
 	}
 
-	// for i, s := range StartOfObjArr(cmn.Iter2Slc(13)...) {
-	// 	cmn.FailOnErrWhen(s != sTAOStart[i], "%v", fEf("err 1"))
+	// for i, s := range StartOfObjArr(iter2Slc(13)...) {
+	// 	failOnErrWhen(s != sTAOStart[i], "%v", fEf("err 1"))
 	// }
 
-	// for i, s := range EndOfObjArr(cmn.Iter2Slc(13)...) {
-	// 	cmn.FailOnErrWhen(s != sTAOEnd[i], "%v", fEf("err 2"))
+	// for i, s := range EndOfObjArr(iter2Slc(13)...) {
+	// 	failOnErrWhen(s != sTAOEnd[i], "%v", fEf("err 2"))
 	// }
 }

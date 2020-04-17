@@ -3,6 +3,8 @@ package preprocess
 import (
 	"fmt"
 	"strings"
+
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 var (
@@ -12,4 +14,6 @@ var (
 	sReplaceAll = strings.ReplaceAll
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
+
+	failOnErr = cmn.FailOnErr
 )

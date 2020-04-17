@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"testing"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 // func MakeRTJQ() {
@@ -37,8 +35,8 @@ func TestJQ(t *testing.T) {
 	// ioutil.WriteFile("./whyfmt.json", []byte(formatted), 0666)
 	// fmt.Println("OK1")
 
-	bytes, err := ioutil.ReadFile("../_data/why.json")
-	cmn.FailOnErr("%v", err)
+	bytes, err := ioutil.ReadFile("../_data/NAPCodeFrame.json")
+	failOnErr("%v", err)
 	fmtted := FmtJSONStr(string(bytes), "./utils/")
 	// fmt.Println(fmtted)
 	ioutil.WriteFile("why.json", []byte(fmtted), 0666)

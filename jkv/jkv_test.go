@@ -3,12 +3,10 @@ package jkv
 import (
 	"testing"
 	"time"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 func TestScan(t *testing.T) {
-	defer cmn.TrackTime(time.Now())
+	defer trackTime(time.Now())
 	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	jkv := NewJKV(json, "", false)
 	LVL, mLvlFParr, mFPosLvl, _ := jkv.scan(13)
@@ -22,7 +20,7 @@ func TestScan(t *testing.T) {
 }
 
 func TestFieldByPos(t *testing.T) {
-	defer cmn.TrackTime(time.Now())
+	defer trackTime(time.Now())
 	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	jkv := NewJKV(json, "", false)
 	LVL, mLvlFParr, _, _ := jkv.scan(13)
@@ -46,7 +44,7 @@ func TestFieldByPos(t *testing.T) {
 }
 
 func TestFType(t *testing.T) {
-	defer cmn.TrackTime(time.Now())
+	defer trackTime(time.Now())
 	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	jkv := NewJKV(json, "", false)
 	value, typ := jkv.fValueType(1617)
@@ -57,14 +55,14 @@ func TestFType(t *testing.T) {
 }
 
 func TestInit(t *testing.T) {
-	defer cmn.TrackTime(time.Now())
+	defer trackTime(time.Now())
 	json := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	NewJKV(json, "", false)
 	fPln("break")
 }
 
 func TestWrap(t *testing.T) {
-	defer cmn.TrackTime(time.Now())
+	defer trackTime(time.Now())
 	json := FmtJSONFile("../_data/xapi1.json", 2)
 	jkv := NewJKV(json, "root", false)
 	fPln("--- Init ---")
@@ -72,7 +70,7 @@ func TestWrap(t *testing.T) {
 }
 
 func TestUnfold(t *testing.T) {
-	defer cmn.TrackTime(time.Now())
+	defer trackTime(time.Now())
 
 	json := FmtJSONFile("../_data/xapi1.json", 2)
 	jkv := NewJKV(json, "root", false)

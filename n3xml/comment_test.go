@@ -1,4 +1,4 @@
-package xml
+package n3xml
 
 import "testing"
 

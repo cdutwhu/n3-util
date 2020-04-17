@@ -5,20 +5,18 @@ import (
 	"sync"
 	"testing"
 	"time"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 func TestJSONPolicy(t *testing.T) {
-	defer cmn.TrackTime(time.Now())
+	defer trackTime(time.Now())
 
 	data := FmtJSONFile("../_data/NAPCodeFrame.json", 2)
 	mask1 := FmtJSONFile("../_data/NAPCodeFrameMaskP.json", 2)
 	mask2 := FmtJSONFile("../_data/NAPCodeFrameMaskPcopy.json", 2)
 
-	cmn.FailOnErrWhen(data == "", "%v", fEf("input data is empty, check its path"))
-	cmn.FailOnErrWhen(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
-	cmn.FailOnErrWhen(mask2 == "", "%v", fEf("input mask2 is empty, check its path"))
+	failOnErrWhen(data == "", "%v", fEf("input data is empty, check its path"))
+	failOnErrWhen(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
+	failOnErrWhen(mask2 == "", "%v", fEf("input mask2 is empty, check its path"))
 
 	jkvM1 := NewJKV(mask1, "root", false)
 	jkvM2 := NewJKV(mask2, "root", false)
@@ -62,13 +60,13 @@ func TestJSONPolicy(t *testing.T) {
 }
 
 func TestJSONPolicy1(t *testing.T) {
-	defer cmn.TrackTime(time.Now())
+	defer trackTime(time.Now())
 
 	data := FmtJSONFile("../_data/test.json", 2)
 	mask1 := FmtJSONFile("../_data/1.json", 2)
 
-	cmn.FailOnErrWhen(data == "", "%v", fEf("input data is empty, check its path"))
-	cmn.FailOnErrWhen(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
+	failOnErrWhen(data == "", "%v", fEf("input data is empty, check its path"))
+	failOnErrWhen(mask1 == "", "%v", fEf("input mask1 is empty, check its path"))
 
 	jkvM1 := NewJKV(mask1, "root", false)
 

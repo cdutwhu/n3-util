@@ -4,8 +4,6 @@ package jkv
 
 import (
 	"math"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 // NewJKV :
@@ -42,7 +40,7 @@ func NewJKV(jsonstr, defroot string, mustWrap bool) *JKV {
 
 // isJSON :
 func (jkv *JKV) isJSON() bool {
-	return cmn.IsJSON(jkv.JSON)
+	return isJSON(jkv.JSON)
 }
 
 // scan :                                 L   posarr     pos L
@@ -55,7 +53,7 @@ func (jkv *JKV) scan(depth int) (int, map[int][]int, map[int]int, error) {
 		}
 		mFPosLvl := make(map[int]int)
 
-		indices := cmn.Iter2Slc(depth)
+		indices := iter2Slc(depth)
 		sTAOStart := StartOfObjArr(indices...)
 		sTAOEnd := EndOfObjArr(indices...)
 
@@ -64,10 +62,10 @@ func (jkv *JKV) scan(depth int) (int, map[int][]int, map[int]int, error) {
 		NEXT:
 			for i := 0; i < len(s); i++ {
 				// modify levels for array-object
-				if cmn.HasAnyPrefix(s[i:], sTAOStart...) {
+				if hasAnyPrefix(s[i:], sTAOStart...) {
 					offset++
 				}
-				if cmn.HasAnyPrefix(s[i:], sTAOEnd...) {
+				if hasAnyPrefix(s[i:], sTAOEnd...) {
 					offset--
 				}
 
@@ -112,7 +110,7 @@ func (jkv *JKV) scan(depth int) (int, map[int][]int, map[int]int, error) {
 
 // fields :
 func (jkv *JKV) fields(mLvlFPos map[int][]int) []map[int]string {
-	s, keys := jkv.JSON, cmn.MapKeys(mLvlFPos).([]int)
+	s, keys := jkv.JSON, mapKeys(mLvlFPos).([]int)
 	nLVL := keys[len(keys)-1]
 	mFPosFNameList := []map[int]string{map[int]string{}} // L0 is empty
 	for L := 1; L <= nLVL; L++ {                         // from L1 to Ln
@@ -132,7 +130,7 @@ func (jkv *JKV) fields(mLvlFPos map[int][]int) []map[int]string {
 // pl2 -> pl1. pl1, pl2 are sorted.
 func merge2fields(mFPosFName1, mFPosFName2 map[int]string) map[int]string {
 	pl2Parent, pl2Path, iPos := make(map[int]string), make(map[int]string), 0
-	pl1, pl2 := cmn.MapKeys(mFPosFName1).([]int), cmn.MapKeys(mFPosFName2).([]int)
+	pl1, pl2 := mapKeys(mFPosFName1).([]int), mapKeys(mFPosFName2).([]int)
 	for _, p2 := range pl2 {
 		for i := iPos; i < len(pl1)-1; i++ {
 			if p2 > pl1[i] && p2 < pl1[i+1] {
@@ -146,7 +144,7 @@ func merge2fields(mFPosFName1, mFPosFName2 map[int]string) map[int]string {
 		}
 		pl2Path[p2] = pl2Parent[p2] + pLinker + mFPosFName2[p2]
 	}
-	return cmn.MapsJoin(mFPosFName1, pl2Path).(map[int]string)
+	return mapsJoin(mFPosFName1, pl2Path).(map[int]string)
 }
 
 // rely on "fields outcome"
@@ -158,7 +156,7 @@ func fPaths(mFPosFNameList ...map[int]string) map[int]string {
 		if len(mFPosFName) == 0 {
 			continue
 		}
-		posList := cmn.MapKeys(mFPosFName).([]int)
+		posList := mapKeys(mFPosFName).([]int)
 		posLists[i] = posList
 	}
 	mFPosFNameMerge := mFPosFNameList[1]
@@ -197,7 +195,7 @@ func fValuesOnObjList(strObjlist string) (objlist []string) {
 func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 	getV := func(str string, s int) string {
 		for i := s + 1; i < len(str); i++ {
-			if cmn.HasAnyPrefix(str[i:], Trait1EndV, Trait2EndV) {
+			if hasAnyPrefix(str[i:], Trait1EndV, Trait2EndV) {
 				return str[s:i]
 			}
 		}
@@ -212,7 +210,7 @@ func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 			case '}':
 				nRCB++
 			}
-			if nLCB == nRCB && cmn.HasAnyPrefix(str[i:], "},\n", "}\n") {
+			if nLCB == nRCB && hasAnyPrefix(str[i:], "},\n", "}\n") {
 				return str[s : i+1]
 			}
 		}
@@ -227,7 +225,7 @@ func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 			case ']':
 				nRBB++
 			}
-			if nLBB == nRBB && cmn.HasAnyPrefix(str[i:], "],\n", "]\n") {
+			if nLBB == nRBB && hasAnyPrefix(str[i:], "],\n", "]\n") {
 				return str[s : i+1]
 			}
 		}
@@ -325,12 +323,12 @@ func (jkv *JKV) init() error {
 			return err
 		}
 
-		for _, p := range cmn.MapKeys(mFPath).([]int) {
+		for _, p := range mapKeys(mFPath).([]int) {
 			v, t := jkv.fValueType(p)
 
 			oid := ""
 			if !t.IsLeafValue() {
-				cmn.FailOnErrWhen(!cmn.IsJSON(v), "%v", fEf("fetching value error"))
+				failOnErrWhen(!isJSON(v), "%v", fEf("fetching value error"))
 				oid = hash(v)
 				jkv.mOIDObj[oid] = v
 				v = oid
@@ -362,7 +360,7 @@ func (jkv *JKV) init() error {
 		for i := 1; i < len(jkv.lsLvlIPaths); i++ {
 			if Ls, LsPrev := jkv.lsLvlIPaths[i], jkv.lsLvlIPaths[i-1]; len(Ls) > 0 && len(LsPrev) > 0 {
 				for _, iPathP := range LsPrev {
-					pathP := cmn.RmTailFromLast(iPathP, "@")
+					pathP := rmTailFromLast(iPathP, "@")
 					chk := pathP + pLinker
 					for _, iPath := range Ls {
 						if sHasPrefix(iPath, chk) {
@@ -415,7 +413,7 @@ func (jkv *JKV) aoID2oIDlist(aoID string) string {
 func oIDlistStr2oIDlist(aoIDStr string) (oidlist []string) {
 	nComma := sCount(aoIDStr, ",")
 	oidlist = hashRExp.FindAllString(aoIDStr, -1)
-	cmn.FailOnErrWhen(
+	failOnErrWhen(
 		aoIDStr[0] != '[' || aoIDStr[len(aoIDStr)-1] != ']' || (oidlist != nil && len(oidlist) != nComma+1),
 		"%v",
 		fEf("error format"),
@@ -435,15 +433,15 @@ func (jkv *JKV) wrapDefault(root string, must bool) *JKV {
 		json += "\n"
 	}
 
-	jsonInd, _ := cmn.Indent(json, 2, true)
+	jsonInd, _ := indent(json, 2, true)
 	rooted1 := fSf("{\n  \"%s\": %s}\n", root, jsonInd)
 	rooted2 := fSf("{\n  \"%s\": %s}\n", root, json)
 	rooted2 = FmtJSON(rooted2, 2) + "\n"
 	if rooted1 != rooted2 {
-		cmn.MustWriteFile("./root1.json", []byte(rooted1))
-		cmn.MustWriteFile("./root2.json", []byte(rooted2))
+		mustWriteFile("./root1.json", []byte(rooted1))
+		mustWriteFile("./root2.json", []byte(rooted2))
 	}
-	cmn.FailOnErrWhen(rooted1 != rooted2, "%v", fEf("error rooted"))
+	failOnErrWhen(rooted1 != rooted2, "%v", fEf("error rooted"))
 
 	// fPln(" ----------------------------------------------- ")
 	jkvR := NewJKV(rooted1, "", must)
@@ -483,10 +481,10 @@ func (jkv *JKV) UnwrapDefault() *JKV {
 	unRooted2 += "\n"
 	// fPln(unRooted2)
 	if unRooted1 != unRooted2 {
-		cmn.MustWriteFile("./unroot1.json", []byte(unRooted1))
-		cmn.MustWriteFile("./unroot2.json", []byte(unRooted2))
+		mustWriteFile("./unroot1.json", []byte(unRooted1))
+		mustWriteFile("./unroot2.json", []byte(unRooted2))
 	}
-	cmn.FailOnErrWhen(unRooted1 != unRooted2, "%v", fEf("error unRooted"))
+	failOnErrWhen(unRooted1 != unRooted2, "%v", fEf("error unRooted"))
 
 	jkvUnR := NewJKV(unRooted1, "", false)
 	jkvUnR.Wrapped = false
@@ -503,12 +501,12 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 		frame = jkv.JSON
 	} else {
 		firstField := jkv.lsLvlIPaths[1][0]
-		lvl1path := cmn.RmTailFromLast(firstField, "@")
+		lvl1path := rmTailFromLast(firstField, "@")
 		oid := jkv.MapIPathValue[firstField]
 		frame = fSf("{\n  \"%s\": %s\n}", lvl1path, oid)
 	}
 
-	//	maskLvlFields := cmn.ProjectV(MapKeys(mask.MapIPathValue).([]string), pLinker, "", "@")
+	//	maskLvlFields := projectV(MapKeys(mask.MapIPathValue).([]string), pLinker, "", "@")
 
 	// expanding ...
 	iExp := 0
@@ -549,7 +547,7 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 		}
 	}
 
-	cmn.FailOnErrWhen(!cmn.IsJSON(frame), "%v", fEf("UNFOLD ERROR, NOT VALID JSON"))
+	failOnErrWhen(!isJSON(frame), "%v", fEf("UNFOLD ERROR, NOT VALID JSON"))
 	return frame, iExp
 }
 
@@ -571,7 +569,7 @@ func Mask(name, obj string, mask *JKV) string {
 	// END -- P1/2 //
 
 	for path, valMask := range mask.MapIPathValue {
-		path = cmn.RmTailFromLast(path, "@")
+		path = rmTailFromLast(path, "@")
 
 		// check current mask path is valid for current objTmp fields,
 		// if AT LEAST ONE mask path is valid, let this path go through and make effect. P2/2
@@ -588,7 +586,7 @@ func Mask(name, obj string, mask *JKV) string {
 		}
 		// END -- P2/2 //
 
-		field := cmn.RmHeadToLast(path, pLinker)
+		field := rmHeadToLast(path, pLinker)
 		lookfor := fSf("\"%s%s", field, TraitFV)
 
 		if i := sIndex(obj, lookfor); i > 0 {
@@ -641,7 +639,7 @@ func Mask(name, obj string, mask *JKV) string {
 					if valData[0] == '.' { // deal with like ".5" format digits
 						valData = "0" + valData // convert it to "0.5"
 					}
-					if cmn.IsNumeric(valData) {
+					if isNumeric(valData) {
 						obj = obj[:pvS] + valData + obj[pvS+pvE:]
 					}
 				default:

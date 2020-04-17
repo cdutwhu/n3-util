@@ -3,12 +3,10 @@ package jkv
 import (
 	"testing"
 	"time"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 func TestQuery(t *testing.T) {
-	defer cmn.TrackTime(time.Now())
+	defer trackTime(time.Now())
 	param := "NAPTestItemLocalId"
 	value := "x00101935"
 

@@ -13,7 +13,7 @@ func TestFailLog(t *testing.T) {
 	LogWhen(1 < 3, "hello when")
 
 	WarnOnErr("aa %v", fEf(""))
-	FailOnErr("AA %v", fEf(""))
+	FailOnErr("AA %v", nil)
 	// FailOnErrWhen(1 > 0, "AA %v", fEf(""))
 	// ResetLog()
 

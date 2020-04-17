@@ -1,19 +1,17 @@
-package csv
+package n3csv
 
 import (
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 func TestCSV2JSON(t *testing.T) {
 
 	dir := "./data/"
 	files, err := ioutil.ReadDir(dir)
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 
 	for _, file := range files {
 		fName := dir + file.Name()

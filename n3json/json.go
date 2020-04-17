@@ -1,15 +1,13 @@
-package jkv
+package n3json
 
 import (
 	"regexp"
 	"strings"
 	"sync"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
-// JSONInnerFmt :
-func JSONInnerFmt(str string) (string, bool) {
+// InnerFmt :
+func InnerFmt(str string) (string, bool) {
 	str = sTrim(str, BLANK)
 	str = sReplaceAll(str, "\t", "    ")
 	i := len(str) - 1
@@ -23,17 +21,17 @@ func JSONInnerFmt(str string) (string, bool) {
 			break
 		}
 	}
-	return cmn.Indent(str, -N, true)
+	return indent(str, -N, true)
 }
 
-// MaybeJSONArr : before using this, make sure it is valid json
-func MaybeJSONArr(str string) bool {
+// MaybeArr : before using this, make sure it is valid json
+func MaybeArr(str string) bool {
 	return sTrimLeft(str, " \t\n\r")[0] == '['
 }
 
-// SplitJSONArr : json doesn't need to be Formatted
-func SplitJSONArr(json string, nSpace int) []string {
-	if !MaybeJSONArr(json) {
+// SplitArr : json doesn't need to be Formatted
+func SplitArr(json string, nSpace int) []string {
+	if !MaybeArr(json) {
 		return nil
 	}
 	psGrp, peGrp := []int{}, []int{}
@@ -53,7 +51,7 @@ func SplitJSONArr(json string, nSpace int) []string {
 		}
 		lvlCntPrev = lvlCnt
 	}
-	cmn.FailOnErrWhen(len(psGrp) != len(peGrp), "%v", fEf("Fatal, is valid JSON array?"))
+	failOnErrWhen(len(psGrp) != len(peGrp), "%v", fEf("Fatal, is valid JSON array?"))
 
 	// [parallel mode]
 	wg := sync.WaitGroup{}
@@ -67,7 +65,7 @@ func SplitJSONArr(json string, nSpace int) []string {
 		// [parallel mode]
 		go func(i, ps, pe int) {
 			defer wg.Done()
-			jsonGrp[i] = FmtJSON(json[ps:pe+1], nSpace)
+			jsonGrp[i] = Fmt(json[ps:pe+1], nSpace)
 		}(i, ps, pe)
 	}
 
@@ -77,26 +75,26 @@ func SplitJSONArr(json string, nSpace int) []string {
 	return jsonGrp
 }
 
-// MakeJSONArr :
-func MakeJSONArr(jsonlist ...string) (arrstr string) {
+// MakeArr :
+func MakeArr(jsonlist ...string) (arrstr string) {
 	combine := "[\n" + sJoin(jsonlist, ",\n")
-	fmtArr, _ := cmn.Indent(combine, 2, true)
+	fmtArr, _ := indent(combine, 2, true)
 	return fmtArr + "\n]"
 }
 
 // ---------------------------------------------------- //
 
-// JSONMerge4Async :
-func JSONMerge4Async(chGrp ...<-chan string) string {
+// Merge4Async :
+func Merge4Async(chGrp ...<-chan string) string {
 	var jsonGrp []string
 	for _, ch := range chGrp {
 		jsonGrp = append(jsonGrp, <-ch)
 	}
-	return JSONMerge(jsonGrp...)
+	return Merge(jsonGrp...)
 }
 
-// JSONMerge :
-func JSONMerge(jsonGrp ...string) string {
+// Merge :
+func Merge(jsonGrp ...string) string {
 	switch {
 	case len(jsonGrp) >= 3:
 		var builder strings.Builder
@@ -126,8 +124,8 @@ func JSONMerge(jsonGrp ...string) string {
 	return ""
 }
 
-// AsyncJSONScalarSel :
-func AsyncJSONScalarSel(json, attr string) <-chan string {
+// AsyncScalarSel :
+func AsyncScalarSel(json, attr string) <-chan string {
 	c := make(chan string)
 	go func() {
 		var builder strings.Builder
@@ -146,7 +144,7 @@ func AsyncJSONScalarSel(json, attr string) <-chan string {
 
 		r = regexp.MustCompile(`,\n[ ]+\]`)
 		pairs := r.FindAllStringIndex(ret, -1)
-		cmn.FailOnErrWhen(len(pairs) > 1, "%v", fEf("Error"))
+		failOnErrWhen(len(pairs) > 1, "%v", fEf("Error"))
 		if len(pairs) == 1 {
 			rmPos := pairs[0][0]
 			ret = ret[:rmPos] + ret[rmPos+1:]
@@ -156,22 +154,34 @@ func AsyncJSONScalarSel(json, attr string) <-chan string {
 	return c
 }
 
-// JSONScalarSelX :
-func JSONScalarSelX(json string, attrGrp ...string) string {
+// ScalarSelX :
+func ScalarSelX(json string, attrGrp ...string) string {
 	chans := make([]<-chan string, len(attrGrp))
 	for i, attr := range attrGrp {
-		chans[i] = AsyncJSONScalarSel(json, attr)
+		chans[i] = AsyncScalarSel(json, attr)
 	}
-	return JSONMerge4Async(chans...)
+	return Merge4Async(chans...)
 }
 
 // ---------------------------------------------------- //
 
-// JSONJoin :
-func JSONJoin(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
+// L1Attrs : Level-1 attributes
+func L1Attrs(json string) (attrs []string) {
+	failOnErrWhen(!isJSON(json), "%v", fEf("input is invalid json"))
+	json = Fmt(json, 2)
+	r := regexp.MustCompile(`\n  "[^"]+": [\[\{"-1234567890ntf]`)
+	found := r.FindAllString(json, -1)
+	for _, a := range found {
+		attrs = append(attrs, a[4:len(a)-4])
+	}
+	return
+}
+
+// Join :
+func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 
 	if name == "" {
-		if cmn.HasAnySuffix(pkey, "-ID", "-id", "-Id", "_ID", "_id", "_Id") {
+		if hasAnySuffix(pkey, "-ID", "-id", "-Id", "_ID", "_id", "_Id") {
 			name = pkey[:len(pkey)-3]
 		}
 	}
@@ -182,20 +192,19 @@ func JSONJoin(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 	posGrp := [][]int{}
 
 	for i := 0; i < 2; i++ {
-		jkv := NewJKV(inputs[i], "", false)
-		lsAttr := jkv.LsL12Fields[1]
-		cmn.FailOnErrWhen(!xin(keys[i], lsAttr), "%v", fEf("NO %s key attribute [%s]", keyTypes[i], keys[i]))
+		lsAttr := L1Attrs(inputs[i])
+		failOnErrWhen(!xin(keys[i], lsAttr), "%v", fEf("NO %s key attribute [%s]", keyTypes[i], keys[i]))
 
 		r := regexp.MustCompile(fSf(`\n  "%s": .+[,]?\n`, keys[i]))
 		pSEs := r.FindAllStringIndex(inputs[i], 1)
-		cmn.FailOnErrWhen(len(pSEs) == 0, "%v", fEf("%s key's value error", keyTypes[i]))
+		failOnErrWhen(len(pSEs) == 0, "%v", fEf("%s key's value error", keyTypes[i]))
 		starts[i], ends[i] = pSEs[0][0], pSEs[0][1]
 		keyLines[i] = sTrim(inputs[i][starts[i]:ends[i]], ", \t\r\n")
 		keyValues[i] = keyLines[i][len(fkey)+4:]
 
 		if i == 0 {
 			posGrp = pSEs
-			cmn.FailOnErrWhen(xin(name, lsAttr), "%v", fEf("[%s] already exists in left json", name))
+			failOnErrWhen(xin(name, lsAttr), "%v", fEf("[%s] already exists in left json", name))
 		}
 	}
 
@@ -205,25 +214,25 @@ func JSONJoin(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 			comma = ""
 		}
 		insert := fSf(`"%s": %s%s`, name, jsonR, comma)
-		return FmtJSON(cmn.ReplByPosGrp(jsonL, posGrp, []string{insert}), 2), true
+		return Fmt(replByPosGrp(jsonL, posGrp, []string{insert}), 2), true
 	}
 
 	return jsonL, false
 }
 
-// JSONArrJoin :
-func JSONArrJoin(jsonarrL, fkey, jsonarrR, pkey, name string) (ret string, pairs [][2]int) {
-	jsonLarr := SplitJSONArr(jsonarrL, 2)
-	jsonRarr := SplitJSONArr(jsonarrR, 2)
+// ArrJoin :
+func ArrJoin(jsonarrL, fkey, jsonarrR, pkey, name string) (ret string, pairs [][2]int) {
+	jsonLarr := SplitArr(jsonarrL, 2)
+	jsonRarr := SplitArr(jsonarrR, 2)
 	joined := []string{}
 	for i, jsonL := range jsonLarr {
 		for j, jsonR := range jsonRarr {
-			if join, ok := JSONJoin(jsonL, fkey, jsonR, pkey, name); ok {
+			if join, ok := Join(jsonL, fkey, jsonR, pkey, name); ok {
 				// fPln(ok, i, j)
 				pairs = append(pairs, [2]int{i, j})
 				joined = append(joined, join)
 			}
 		}
 	}
-	return MakeJSONArr(joined...), pairs
+	return MakeArr(joined...), pairs
 }

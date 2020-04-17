@@ -1,9 +1,7 @@
-package jkv
+package n3json
 
 import (
 	"testing"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 const jsonStr = `
@@ -111,9 +109,9 @@ const jsonStr2 = `[    {
         }
     } ]`
 
-func TestFormatJSON(t *testing.T) {
-	// jsonFmt := FmtJSONFile("./json_fmt_test.json", 2)
-	jsonFmt := FmtJSON(jsonStr2, 2)
-	fPln(cmn.IsJSON(jsonFmt))
+func TestFormat(t *testing.T) {
+	// jsonFmt := FmtFile("./json_fmt_test.json", 2)
+	jsonFmt := Fmt(jsonStr2, 2)
+	fPln(isJSON(jsonFmt))
 	fPln(jsonFmt)
 }

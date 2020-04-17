@@ -1,10 +1,8 @@
-package jkv
+package n3json
 
 import (
 	"encoding/json"
 	"io/ioutil"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 var (
@@ -81,7 +79,7 @@ var (
 // 	// recursively iterate map[string]interface{}, formatted with error comma
 // 	SPACE = mSpace[nSpace]
 // 	jsonMap := make(map[string]interface{})
-// 	cmn.FailOnErr("%v", json.Unmarshal([]byte(jsonStr), &jsonMap))
+// 	failOnErr("%v", json.Unmarshal([]byte(jsonStr), &jsonMap))
 
 // 	fmtJSON := fSf("{\n")
 // 	dumpMap(&fmtJSON, SPACE, jsonMap)
@@ -93,7 +91,7 @@ var (
 // 	for _, pos := range posGrp {
 // 		posCommaGrp = append(posCommaGrp, []int{pos[0], pos[0] + 1})
 // 	}
-// 	return cmn.ReplByPosGrp(fmtJSON, posCommaGrp, []string{""})
+// 	return replByPosGrp(fmtJSON, posCommaGrp, []string{""})
 
 //  // use ReplByPosGrp instead of below code
 // 	// 	in, out := []rune(fmtJSON), []rune{}
@@ -112,38 +110,38 @@ var (
 
 // ---------------------------------------------------------- //
 
-// FmtJSON :
-func FmtJSON(jsonstr string, nSpace int) string {
-	if MaybeJSONArr(jsonstr) {
-		return FmtJSONArr(jsonstr, nSpace)
+// Fmt :
+func Fmt(jsonstr string, nSpace int) string {
+	if MaybeArr(jsonstr) {
+		return FmtArr(jsonstr, nSpace)
 	}
 
 	jsonMap := make(map[string]interface{})
-	cmn.FailOnErr("%v", json.Unmarshal([]byte(jsonstr), &jsonMap))
+	failOnErr("%v", json.Unmarshal([]byte(jsonstr), &jsonMap))
 
 	bytes, err := json.MarshalIndent(&jsonMap, "", mSpace[nSpace])
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	return string(bytes)
 }
 
-// FmtJSONArr :
-func FmtJSONArr(jsonArr string, nSpace int) string {
+// FmtArr :
+func FmtArr(jsonArr string, nSpace int) string {
 	jsonGrp := []string{}
-	for _, json := range SplitJSONArr(jsonArr, nSpace) {
+	for _, json := range SplitArr(jsonArr, nSpace) {
 		jsonGrp = append(jsonGrp, json)
 	}
 	if len(jsonGrp) > 0 {
-		return MakeJSONArr(jsonGrp...)
+		return MakeArr(jsonGrp...)
 	}
 	return ""
 }
 
-// FmtJSONFile :
-func FmtJSONFile(filename string, nSpace int) string {
+// FmtFile :
+func FmtFile(filename string, nSpace int) string {
 	bytes, err := ioutil.ReadFile(filename)
-	cmn.FailOnErr("%v", err)
-	if json := string(bytes); cmn.IsJSON(json) {
-		return FmtJSON(json, nSpace)
+	failOnErr("%v", err)
+	if json := string(bytes); isJSON(json) {
+		return Fmt(json, nSpace)
 	}
 	return ""
 }

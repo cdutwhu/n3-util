@@ -1,9 +1,5 @@
 package jkv
 
-import (
-	cmn "github.com/cdutwhu/json-util/common"
-)
-
 // QueryPV : value ("*.*") for no path checking
 func (jkv *JKV) QueryPV(path string, value interface{}) (mLvlOIDs map[int][]string, maxLvl int) {
 	mLvlOIDs = make(map[int][]string)
@@ -20,7 +16,7 @@ func (jkv *JKV) QueryPV(path string, value interface{}) (mLvlOIDs map[int][]stri
 		if v, ok := jkv.MapIPathValue[iPath]; ok && v == valstr {
 			pos, PIPath := jkv.mIPathPos[iPath], ""
 			for upGen := 1; upGen <= nGen; upGen++ {
-				pPath := cmn.RmTailFromLastN(iPath, pLinker, upGen)
+				pPath := rmTailFromLastN(iPath, pLinker, upGen)
 				for j := 0; j < jkv.mPathMAXIdx[pPath]; j++ {
 					piPath := fSf("%s@%d", pPath, j)
 					pPos := jkv.mIPathPos[piPath]
@@ -32,7 +28,7 @@ func (jkv *JKV) QueryPV(path string, value interface{}) (mLvlOIDs map[int][]stri
 				if pid, ok := jkv.MapIPathValue[PIPath]; ok {
 					if _, ok := jkv.mOIDObj[pid]; ok {
 						iLvl := nGen - upGen + 1
-						if !cmn.XIn(pid, mLvlOIDs[iLvl]) {
+						if !xin(pid, mLvlOIDs[iLvl]) {
 							mLvlOIDs[iLvl] = append(mLvlOIDs[iLvl], pid)
 							if iLvl > maxLvl {
 								maxLvl = iLvl

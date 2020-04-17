@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cmn "github.com/cdutwhu/json-util/common"
+	n3json "github.com/cdutwhu/json-util/n3json"
 )
 
 var (
@@ -29,7 +30,29 @@ var (
 	sHasSuffix  = strings.HasSuffix
 	sRepeat     = strings.Repeat
 
-	xin = cmn.XIn
+	xin             = cmn.XIn
+	trackTime       = cmn.TrackTime
+	rmTailFromLastN = cmn.RmTailFromLastN
+	rmTailFromLast  = cmn.RmTailFromLast
+	rmHeadToLast    = cmn.RmHeadToLast
+	failOnErrWhen   = cmn.FailOnErrWhen
+	isJSON          = cmn.IsJSON
+	isNumeric       = cmn.IsNumeric
+	indent          = cmn.Indent
+	iter2Slc        = cmn.Iter2Slc
+	iterN           = cmn.N
+	hasAnyPrefix    = cmn.HasAnyPrefix
+	mapKeys         = cmn.MapKeys
+	mapsJoin        = cmn.MapsJoin
+	mustWriteFile   = cmn.MustWriteFile
+	projectV        = cmn.ProjectV
+
+	MaybeJSONArr = n3json.MaybeArr
+	SplitJSONArr = n3json.SplitArr
+	MakeJSONArr  = n3json.MakeArr
+	FmtJSON      = n3json.Fmt
+	FmtJSONFile  = n3json.FmtFile
+	JSONInnerFmt = n3json.InnerFmt
 )
 
 type (

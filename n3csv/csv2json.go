@@ -1,4 +1,4 @@
-package csv
+package n3csv
 
 import (
 	"encoding/csv"
@@ -8,20 +8,17 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	cmn "github.com/cdutwhu/json-util/common"
-	jkv "github.com/cdutwhu/json-util/jkv"
 )
 
 // File2JSON : read the content of CSV File
 func File2JSON(path string, vertical, save bool, savePaths ...string) (string, []string) {
 	csvFile, err := os.Open(path)
-	cmn.FailOnErr("The file is not found || wrong root : %v", err)
+	failOnErr("The file is not found || wrong root : %v", err)
 	defer csvFile.Close()
 	jsonstr, headers := Reader2JSON(csvFile)
 
 	if vertical {
-		jsonstr = jkv.JSONScalarSelX(jsonstr, headers...)
+		jsonstr = JSONScalarSelX(jsonstr, headers...)
 	}
 
 	if save {
@@ -29,10 +26,10 @@ func File2JSON(path string, vertical, save bool, savePaths ...string) (string, [
 			newFileName := filepath.Base(path)
 			newFileName = newFileName[0:len(newFileName)-len(filepath.Ext(newFileName))] + ".json"
 			savepath := filepath.Join(filepath.Dir(path), newFileName)
-			cmn.MustWriteFile(savepath, []byte(jsonstr))
+			mustWriteFile(savepath, []byte(jsonstr))
 		}
 		for _, savepath := range savePaths {
-			cmn.MustWriteFile(savepath, []byte(jsonstr))
+			mustWriteFile(savepath, []byte(jsonstr))
 		}
 	}
 	return jsonstr, headers
@@ -41,7 +38,7 @@ func File2JSON(path string, vertical, save bool, savePaths ...string) (string, [
 // Reader2JSON to
 func Reader2JSON(r io.Reader) (string, []string) {
 	content, _ := csv.NewReader(r).ReadAll()
-	cmn.FailOnErrWhen(len(content) < 1, "%v", fEf("Failed, the file may be empty or length of the lines are not the same"))
+	failOnErrWhen(len(content) < 1, "%v", fEf("Failed, the file may be empty or length of the lines are not the same"))
 
 	headersArr := make([]string, 0)
 	for _, headE := range content[0] {
@@ -111,6 +108,6 @@ func Reader2JSON(r io.Reader) (string, []string) {
 	buffer.WriteString(`]`)
 	rawMessage := json.RawMessage(buffer.String())
 	jsonstr, err := json.MarshalIndent(rawMessage, "", "  ")
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	return string(jsonstr), headersArr
 }
