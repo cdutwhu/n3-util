@@ -47,12 +47,12 @@ var (
 	mustWriteFile   = cmn.MustWriteFile
 	projectV        = cmn.ProjectV
 
-	MaybeJSONArr = n3json.MaybeArr
-	SplitJSONArr = n3json.SplitArr
-	MakeJSONArr  = n3json.MakeArr
-	FmtJSON      = n3json.Fmt
-	FmtJSONFile  = n3json.FmtFile
-	JSONInnerFmt = n3json.InnerFmt
+	maybeJSONArr = n3json.MaybeArr
+	splitJSONArr = n3json.SplitArr
+	makeJSONArr  = n3json.MakeArr
+	fmtJSON      = n3json.Fmt
+	fmtJSONFile  = n3json.FmtFile
+	fmtInnerJSON = n3json.InnerFmt
 )
 
 type (

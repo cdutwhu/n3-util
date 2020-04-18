@@ -112,8 +112,8 @@ func (jkv *JKV) scan(depth int) (int, map[int][]int, map[int]int, error) {
 func (jkv *JKV) fields(mLvlFPos map[int][]int) []map[int]string {
 	s, keys := jkv.JSON, mapKeys(mLvlFPos).([]int)
 	nLVL := keys[len(keys)-1]
-	mFPosFNameList := []map[int]string{map[int]string{}} // L0 is empty
-	for L := 1; L <= nLVL; L++ {                         // from L1 to Ln
+	mFPosFNameList := []map[int]string{{}} // L0 is empty
+	for L := 1; L <= nLVL; L++ {           // from L1 to Ln
 		mFPosFName := make(map[int]string)
 		for _, p := range mLvlFPos[L] {
 			pe := p + 1
@@ -436,7 +436,7 @@ func (jkv *JKV) wrapDefault(root string, must bool) *JKV {
 	jsonInd, _ := indent(json, 2, true)
 	rooted1 := fSf("{\n  \"%s\": %s}\n", root, jsonInd)
 	rooted2 := fSf("{\n  \"%s\": %s}\n", root, json)
-	rooted2 = FmtJSON(rooted2, 2) + "\n"
+	rooted2 = fmtJSON(rooted2, 2) + "\n"
 	if rooted1 != rooted2 {
 		mustWriteFile("./root1.json", []byte(rooted1))
 		mustWriteFile("./root2.json", []byte(rooted2))
@@ -474,10 +474,10 @@ func (jkv *JKV) UnwrapDefault() *JKV {
 		}
 	}
 
-	unRooted1, _ := JSONInnerFmt(json[i-1 : j+2])
+	unRooted1, _ := fmtInnerJSON(json[i-1 : j+2])
 	unRooted1 += "\n"
 	// fPln(unRooted1)
-	unRooted2 := FmtJSON(json[i-1:j+2], 2)
+	unRooted2 := fmtJSON(json[i-1:j+2], 2)
 	unRooted2 += "\n"
 	// fPln(unRooted2)
 	if unRooted1 != unRooted2 {
@@ -558,7 +558,7 @@ func Mask(name, obj string, mask *JKV) string {
 	}
 
 	// check current mask path is valid for current objTmp fields, P1/2
-	objTmp, _ := JSONInnerFmt(obj)
+	objTmp, _ := fmtInnerJSON(obj)
 	jkvTmp := NewJKV(objTmp, name, true)
 	pathlistTmp := func(name, linker string, fields []string) (pathlist []string) {
 		for _, f := range fields {
