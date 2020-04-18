@@ -1,4 +1,4 @@
 #!/bin/bash
 
-rm -f *.json
+rm -f *.json *.log
 rm -f ./data/*.json

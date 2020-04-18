@@ -15,10 +15,10 @@ func File2JSON(path string, vertical, save bool, savePaths ...string) (string, [
 	csvFile, err := os.Open(path)
 	failOnErr("The file is not found || wrong root : %v", err)
 	defer csvFile.Close()
-	jsonstr, headers := Reader2JSON(csvFile)
+	jsonstr, headers := Reader2JSON(csvFile, path)
 
 	if vertical {
-		jsonstr = JSONScalarSelX(jsonstr, headers...)
+		jsonstr = jsonScalarSelX(jsonstr, headers...)
 	}
 
 	if save {
@@ -36,12 +36,16 @@ func File2JSON(path string, vertical, save bool, savePaths ...string) (string, [
 }
 
 // Reader2JSON to
-func Reader2JSON(r io.Reader) (string, []string) {
+func Reader2JSON(r io.Reader, description string) (string, []string) {
 	content, _ := csv.NewReader(r).ReadAll()
 	failOnErrWhen(len(content) < 1, "%v", fEf("Failed, the file may be empty or length of the lines are not the same"))
 
 	headersArr := make([]string, 0)
-	for _, headE := range content[0] {
+	for i, headE := range content[0] {
+		if headE == "" {
+			headE = fSf("column_%d", i)
+			warnOnErr("%v", fEf("%s - the column[%d] is empty, mark as [%s]", description, i, headE))
+		}
 		headersArr = append(headersArr, headE)
 	}
 
@@ -49,18 +53,18 @@ func Reader2JSON(r io.Reader) (string, []string) {
 	content = content[1:]
 
 	// Set Column Type
-	mColType := make(map[int]string)
+	mColType := make(map[int]rune)
 	for _, d := range content {
 		for j, y := range d {
 			_, fErr := strconv.ParseFloat(y, 32)
 			_, bErr := strconv.ParseBool(y)
 			switch {
 			case fErr == nil:
-				mColType[j] = "numeric"
+				mColType[j] = 'N'
 			case bErr == nil:
-				mColType[j] = "bool"
+				mColType[j] = 'B'
 			default:
-				mColType[j] = "string"
+				mColType[j] = 'S'
 			}
 		}
 	}
@@ -85,11 +89,11 @@ func Reader2JSON(r io.Reader) (string, []string) {
 			// }
 
 			switch mColType[j] {
-			case "numeric":
+			case 'N':
 				buffer.WriteString(y)
-			case "bool":
+			case 'B':
 				buffer.WriteString(strings.ToLower(y))
-			case "string":
+			case 'S':
 				buffer.WriteString((`"` + y + `"`))
 			}
 

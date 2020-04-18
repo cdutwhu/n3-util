@@ -11,10 +11,15 @@ import (
 var (
 	fPln        = fmt.Println
 	fEf         = fmt.Errorf
+	fSf         = fmt.Sprintf
 	sReplaceAll = strings.ReplaceAll
 
-	failOnErr      = cmn.FailOnErr
-	failOnErrWhen  = cmn.FailOnErrWhen
-	mustWriteFile  = cmn.MustWriteFile
-	JSONScalarSelX = n3json.ScalarSelX
+	failOnErr     = cmn.FailOnErr
+	failOnErrWhen = cmn.FailOnErrWhen
+	warnOnErr     = cmn.WarnOnErr
+	mustWriteFile = cmn.MustWriteFile
+	setLog        = cmn.SetLog
+	resetLog      = cmn.ResetLog
+
+	jsonScalarSelX = n3json.ScalarSelX
 )

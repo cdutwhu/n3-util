@@ -6,7 +6,7 @@ import (
 )
 
 func TestSmash(t *testing.T) {
-	bytes, err := ioutil.ReadFile("./siftest.xml")
+	bytes, err := ioutil.ReadFile("../_data/siftest.xml")
 	failOnErr("%v", err)
 	SmashSave(string(bytes), "./sif")
 }

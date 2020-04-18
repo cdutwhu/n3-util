@@ -8,6 +8,7 @@ import (
 )
 
 func TestCSV2JSON(t *testing.T) {
+	setLog("./err.log")
 
 	dir := "./data/"
 	files, err := ioutil.ReadDir(dir)
@@ -33,7 +34,7 @@ func BenchmarkCSV2JSON(b *testing.B) {
 	path := "./data/data.csv"
 	for n := 0; n < b.N; n++ {
 		csv, _ := os.Open(path)
-		Reader2JSON(csv)
+		Reader2JSON(csv, path)
 		csv.Close()
 	}
 }
