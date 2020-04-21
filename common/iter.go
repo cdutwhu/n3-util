@@ -1,5 +1,7 @@
 package common
 
+import eg "github.com/cdutwhu/json-util/n3errs"
+
 // N : for i := range N()
 func N(n int) []struct{} {
 	return make([]struct{}, n)
@@ -16,13 +18,13 @@ func Iter(params ...int) <-chan int {
 	case 3:
 		start, step, end = params[0], params[1], params[2]
 	default:
-		FailOnErr("invalid params %v", fEf("@Iter"))
+		FailOnErr("%v: params' count is [1,2,3]", eg.PARAM_INVALID)
 	}
 	if end <= start {
-		FailOnErr("[end](%d) must be greater than [start](%d) %v", end, start, fEf("@Iter"))
+		FailOnErr("%v: [end](%d) must be greater than [start](%d)", eg.PARAM_INVALID, end, start)
 	}
 	if step < 1 {
-		FailOnErr("[step](%d) must be greater than 0 %v", step, fEf("@Iter"))
+		FailOnErr("%v: [step](%d) must be greater than 0", eg.PARAM_INVALID, step)
 	}
 
 	ch := make(chan int)

@@ -5,6 +5,7 @@ import (
 	"os"
 	"regexp"
 
+	eg "github.com/cdutwhu/json-util/n3errs"
 	"github.com/go-xmlfmt/xmlfmt"
 )
 
@@ -33,7 +34,7 @@ func SmashSave(xml, saveDir string) []string {
 
 // Smash :
 func Smash(xml string) (SubRoots, Subs []string) {
-	failOnErrWhen(!isXML(xml), "%v", fEf("Invalid XML"))
+	failOnErrWhen(!isXML(xml), "%v", eg.XML_INVALID)
 
 	root := xmlRoot(xml)
 	offset := len(fSf("<%s>", root)) + 1
@@ -55,7 +56,7 @@ AGAIN:
 		offset += length
 
 		sub := remain[:length]
-		failOnErrWhen(!isXML(sub), "%v", fEf("Invalid XML"))
+		failOnErrWhen(!isXML(sub), "%v", eg.XML_INVALID)
 		Subs = append(Subs, sub)
 
 		remain = xml[offset:]

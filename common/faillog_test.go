@@ -1,6 +1,10 @@
 package common
 
-import "testing"
+import (
+	"testing"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
+)
 
 func TestFailLog(t *testing.T) {
 	logfile := "./error.log"
@@ -12,9 +16,9 @@ func TestFailLog(t *testing.T) {
 
 	LogWhen(1 < 3, "hello when")
 
-	WarnOnErr("aa %v", fEf(""))
+	WarnOnErr("aa %v", eg.FOR_TEST)
 	FailOnErr("AA %v", nil)
-	// FailOnErrWhen(1 > 0, "AA %v", fEf(""))
+	// FailOnErrWhen(1 > 0, "AA %v", eg.FOR_TEST)
 	// ResetLog()
 
 	// logfile = "./log1.log"
@@ -22,9 +26,9 @@ func TestFailLog(t *testing.T) {
 
 	// logfile = "./log1.log"
 	// SetLog(logfile)
-	// // FailOnErr("%v", fEf("test panic"))
+	// // FailOnErr("%v", eg.FOR_TEST)
 
-	// if e := WarnOnErrWhen(1 < 2, "%v", fEf("test")); e != nil {
+	// if e := WarnOnErrWhen(1 < 2, "%v", eg.FOR_TEST); e != nil {
 	// 	fPln(e.Error())
 	// }
 }

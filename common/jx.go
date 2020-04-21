@@ -3,6 +3,8 @@ package common
 import (
 	"encoding/json"
 	"encoding/xml"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
 // IsXML :
@@ -13,7 +15,7 @@ func IsXML(str string) bool {
 // XMLRoot :
 func XMLRoot(xml string) (root string) {
 	xml = sTrim(xml, " \t\n\r")
-	FailOnErrWhen(!IsXML(xml), "%v", fEf("Invalid XML"))
+	FailOnErrWhen(!IsXML(xml), "%v", eg.XML_INVALID)
 
 	start, end := 0, 0
 	for i := len(xml) - 1; i >= 0; i-- {
@@ -32,7 +34,7 @@ func XMLRoot(xml string) (root string) {
 	// check, flag (?s) let . includes "NewLine"
 	// re1 := regexp.MustCompile(fSf(`(?s)^<%s .+</%s>$`, root, root))
 	// re2 := regexp.MustCompile(fSf(`(?s)^<%s>.+</%s>$`, root, root))
-	// FailOnErrWhen(!re1.MatchString(xml) && !re2.MatchString(xml), "%v", fEf("Invalid XML"))
+	// FailOnErrWhen(!re1.MatchString(xml) && !re2.MatchString(xml), "%v", eg.XML_INVALID)
 	// return
 }
 

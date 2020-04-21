@@ -4,12 +4,14 @@ import (
 	"reflect"
 	"regexp"
 	"sort"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
 // MapKeys :
 func MapKeys(m interface{}) interface{} {
 	v := reflect.ValueOf(m)
-	FailOnErrWhen(v.Kind() != reflect.Map, "%v", fEf("NOT A MAP!"))
+	FailOnErrWhen(v.Kind() != reflect.Map, "%v", eg.MAP_INVALID)
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := reflect.TypeOf(keys[0].Interface())
@@ -35,7 +37,7 @@ func MapKeys(m interface{}) interface{} {
 // MapKVs :
 func MapKVs(m interface{}) (interface{}, interface{}) {
 	v := reflect.ValueOf(m)
-	FailOnErrWhen(v.Kind() != reflect.Map, "%v", fEf("NOT A MAP!"))
+	FailOnErrWhen(v.Kind() != reflect.Map, "%v", eg.MAP_INVALID)
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := reflect.TypeOf(keys[0].Interface())
@@ -54,15 +56,15 @@ func MapKVs(m interface{}) (interface{}, interface{}) {
 // MapsJoin : overwritted by the 2nd params
 func MapsJoin(m1, m2 interface{}) interface{} {
 	v1, v2 := reflect.ValueOf(m1), reflect.ValueOf(m2)
-	FailOnErrWhen(v1.Kind() != reflect.Map, "%v", fEf("m1 is NOT A MAP!"))
-	FailOnErrWhen(v2.Kind() != reflect.Map, "%v", fEf("m2 is NOT A MAP!"))
+	FailOnErrWhen(v1.Kind() != reflect.Map, "%v: m1", eg.MAP_INVALID)
+	FailOnErrWhen(v2.Kind() != reflect.Map, "%v: m2", eg.MAP_INVALID)
 	keys1, keys2 := v1.MapKeys(), v2.MapKeys()
 	if len(keys1) > 0 && len(keys2) > 0 {
 		k1, k2 := keys1[0], keys2[0]
 		k1Type, k2Type := reflect.TypeOf(k1.Interface()), reflect.TypeOf(k2.Interface())
 		v1Type, v2Type := reflect.TypeOf(v1.MapIndex(k1).Interface()), reflect.TypeOf(v2.MapIndex(k2).Interface())
-		FailOnErrWhen(k1Type != k2Type, "%v", fEf("different maps' key type!"))
-		FailOnErrWhen(v1Type != v2Type, "%v", fEf("different maps' value type!"))
+		FailOnErrWhen(k1Type != k2Type, "%v", eg.MAPS_DIF_KEY_TYPE)
+		FailOnErrWhen(v1Type != v2Type, "%v", eg.MAPS_DIF_VALUE_TYPE)
 		aMap := reflect.MakeMap(reflect.MapOf(k1Type, v1Type))
 		for _, k := range keys1 {
 			aMap.SetMapIndex(reflect.ValueOf(k.Interface()), reflect.ValueOf(v1.MapIndex(k).Interface()))

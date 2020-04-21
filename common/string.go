@@ -1,10 +1,14 @@
 package common
 
-import "sort"
+import (
+	"sort"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
+)
 
 // HasAnyPrefix :
 func HasAnyPrefix(s string, lsPrefix ...string) bool {
-	FailOnErrWhen(len(lsPrefix) == 0, "%v", fEf("at least one prefix for input"))
+	FailOnErrWhen(len(lsPrefix) == 0, "%v: at least input one prefix", eg.PARAM_INVALID)
 	for _, prefix := range lsPrefix {
 		if sHasPrefix(s, prefix) {
 			return true
@@ -15,7 +19,7 @@ func HasAnyPrefix(s string, lsPrefix ...string) bool {
 
 // HasAnySuffix :
 func HasAnySuffix(s string, lsSuffix ...string) bool {
-	FailOnErrWhen(len(lsSuffix) == 0, "%v", fEf("at least one suffix for input"))
+	FailOnErrWhen(len(lsSuffix) == 0, "%v: at least input one suffix", eg.PARAM_INVALID)
 	for _, suffix := range lsSuffix {
 		if sHasSuffix(s, suffix) {
 			return true
@@ -91,8 +95,9 @@ func ReplByPosGrp(s string, posGrp [][]int, newStrGrp []string) (ret string) {
 	}
 
 	FailOnErrWhen(len(posGrp) != len(newStrGrp) && len(newStrGrp) != 1,
-		"%v",
-		fEf("posGrp's length must be equal to newStrGrp's length OR newStrGrp only has 1 element for filling into all posGrp"))
+		"%v: [posGrp]-[newStrGrp] OR %v: newStrGrp can only have 1 element for filling into all posGrp",
+		eg.SLICES_DIF_LEN,
+		eg.SLICE_INCORRECT_COUNT)
 
 	wrapper := make([]struct {
 		posPair []int
@@ -127,7 +132,7 @@ func ReplByPosGrp(s string, posGrp [][]int, newStrGrp []string) (ret string) {
 	keepStrGrp := make([]string, len(complement))
 	for i := 0; i < len(keepStrGrp); i++ {
 		start, end := complement[i][0], complement[i][1]
-		FailOnErrWhen(end < start, "%v", fEf("end must be greater than start"))
+		FailOnErrWhen(end < start, "%v: [end] must be greater than [start]", eg.VAR_INVALID)
 		keepStrGrp[i] = s[start:end]
 	}
 

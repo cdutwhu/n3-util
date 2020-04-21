@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"strconv"
 	"time"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
 // IsNumeric :
@@ -29,7 +31,7 @@ func IF(condition bool, block1, block2 interface{}) interface{} {
 // XIn :
 func XIn(e, s interface{}) bool {
 	v := reflect.ValueOf(s)
-	FailOnErrWhen(v.Kind() != reflect.Slice, "%v", fEf("s is NOT a SLICE!"))
+	FailOnErrWhen(v.Kind() != reflect.Slice, "%v: [s]", eg.SLICE_INVALID)
 	l := v.Len()
 	for i := 0; i < l; i++ {
 		if v.Index(i).Interface() == e {
@@ -42,7 +44,7 @@ func XIn(e, s interface{}) bool {
 // MatchAssign : NO ShortCut, MUST all valid, e.g. type assert, nil pointer, out of index
 func MatchAssign(chkCasesValues ...interface{}) interface{} {
 	l := len(chkCasesValues)
-	FailOnErrWhen(l < 4 || l%2 == 1, "%v", fEf("Invalid parameters"))
+	FailOnErrWhen(l < 4 || l%2 == 1, "%v: ", eg.PARAM_INVALID)
 	_, l1, l2 := 1, (l-1)/2, (l-1)/2
 	check := chkCasesValues[0]
 	cases := chkCasesValues[1 : 1+l1]

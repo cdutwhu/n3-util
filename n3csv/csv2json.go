@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
 // File2JSON : read the content of CSV File
@@ -38,13 +40,13 @@ func File2JSON(path string, vertical, save bool, savePaths ...string) (string, [
 // Reader2JSON to
 func Reader2JSON(r io.Reader, description string) (string, []string) {
 	content, _ := csv.NewReader(r).ReadAll()
-	failOnErrWhen(len(content) < 1, "%v", fEf("Failed, the file may be empty or length of the lines are not the same"))
+	failOnErrWhen(len(content) < 1, "%v: OR length of the lines are not the same?", eg.FILE_EMPTY)
 
 	headersArr := make([]string, 0)
 	for i, headE := range content[0] {
 		if headE == "" {
 			headE = fSf("column_%d", i)
-			warnOnErr("%v", fEf("%s - the column[%d] is empty, mark as [%s]", description, i, headE))
+			warnOnErr("%v: %s - column[%d] is empty, mark [%s]", eg.CSV_COLUMN_HEADER_EMPTY, description, i, headE)
 		}
 		headersArr = append(headersArr, headE)
 	}

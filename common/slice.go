@@ -3,13 +3,15 @@ package common
 import (
 	"math"
 	"reflect"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
 // SliceAttach :
 func SliceAttach(s1, s2 interface{}, pos int) interface{} {
 	v1, v2 := reflect.ValueOf(s1), reflect.ValueOf(s2)
-	FailOnErrWhen(v1.Kind() != reflect.Slice, "%v", fEf("s1 is NOT a SLICE!"))
-	FailOnErrWhen(v2.Kind() != reflect.Slice, "%v", fEf("s2 is NOT a SLICE!"))
+	FailOnErrWhen(v1.Kind() != reflect.Slice, "%v: s1", eg.SLICE_INVALID)
+	FailOnErrWhen(v2.Kind() != reflect.Slice, "%v: s2", eg.SLICE_INVALID)
 	l1, l2 := v1.Len(), v2.Len()
 	if l1 > 0 && l2 > 0 {
 		if pos > l1 {
@@ -46,7 +48,7 @@ func SliceCover(ss ...interface{}) interface{} {
 func CanSetCover(setA, setB interface{}) (bool, int) {
 	tA, tB := reflect.TypeOf(setA), reflect.TypeOf(setB)
 	if tA != tB || (tA.Kind() != reflect.Slice && tA.Kind() != reflect.Array) {
-		FailOnErr("%v", fEf("parameters only can be [slice] or [array]"))
+		FailOnErr("%v: only can be [slice, array]", eg.PARAM_INVALID)
 	}
 	vA, vB := reflect.ValueOf(setA), reflect.ValueOf(setB)
 	if vA.Len() < vB.Len() {
@@ -71,7 +73,7 @@ NEXT:
 func SetIntersect(setA, setB interface{}) interface{} {
 	tA, tB := reflect.TypeOf(setA), reflect.TypeOf(setB)
 	if tA != tB || (tA.Kind() != reflect.Slice && tA.Kind() != reflect.Array) {
-		FailOnErr("%v", fEf("parameters only can be [slice] or [array]"))
+		FailOnErr("%v: only can be [slice, array]", eg.PARAM_INVALID)
 	}
 	vA, vB := reflect.ValueOf(setA), reflect.ValueOf(setB)
 	set := reflect.MakeSlice(tA, 0, vA.Len())
@@ -92,7 +94,7 @@ NEXT:
 func SetUnion(setA, setB interface{}) interface{} {
 	tA, tB := reflect.TypeOf(setA), reflect.TypeOf(setB)
 	if tA != tB || (tA.Kind() != reflect.Slice && tA.Kind() != reflect.Array) {
-		FailOnErr("%v", fEf("parameters only can be [slice] or [array]"))
+		FailOnErr("%v: only can be [slice, array]", eg.PARAM_INVALID)
 	}
 	vA, vB := reflect.ValueOf(setA), reflect.ValueOf(setB)
 	set := reflect.MakeSlice(tA, 0, vA.Len()+vB.Len())
@@ -105,7 +107,7 @@ func SetUnion(setA, setB interface{}) interface{} {
 func ToSet(slc interface{}) interface{} {
 	t := reflect.TypeOf(slc)
 	if t.Kind() != reflect.Slice && t.Kind() != reflect.Array {
-		FailOnErr("%v", fEf("parameter only can be [slice] or [array]"))
+		FailOnErr("%v: only can be [slice, array]", eg.PARAM_INVALID)
 	}
 	v := reflect.ValueOf(slc)
 	if v.Len() == 0 {

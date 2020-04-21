@@ -4,6 +4,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
 func prepareJQ(jqDirs ...string) (jqWD, oriWD string, err error) {
@@ -21,7 +23,7 @@ func prepareJQ(jqDirs ...string) (jqWD, oriWD string, err error) {
 			return jqWD, oriWD, nil
 		}
 	}
-	failOnErr("Fatal: %v", fEf("%s is not found", jq))
+	failOnErr("%v: %s", eg.FILE_NOT_FOUND, jq)
 	return "", "", nil
 }
 
