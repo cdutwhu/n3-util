@@ -28,6 +28,11 @@ func trackCaller() string {
 	return fSf("\n%s:%d\n%s\n", frame.File, frame.Line, frame.Function)
 }
 
+// IsFLog : is logging into local file
+func IsFLog() bool {
+	return log2file
+}
+
 // SetLog :
 func SetLog(logpath string) {
 	if abspath, err := filepath.Abs(logpath); err == nil {
@@ -104,25 +109,22 @@ func FailOnErrWhen(condition bool, format string, v ...interface{}) {
 }
 
 // Log :
-func Log(format string, v ...interface{}) (logItem string) {
-	logItem = fSf("INFO: "+format+"%s\n", append(v, trackCaller())...)
+func Log(format string, v ...interface{}) string {
+	tc := trackCaller()
+	logItem := fSf("INFO: "+format+"%s\n", append(v, tc)...)
 	log.Printf("%s", logItem)
-	if log2file {
-		logItem = time.Now().Format("2006/01/02 15:04:05 ") + logItem
-	}
-	return
+	return time.Now().Format("2006/01/02 15:04:05 ") + RmTailFromLast(logItem, tc)
 }
 
 // LogWhen :
-func LogWhen(condition bool, format string, v ...interface{}) (logItem string) {
+func LogWhen(condition bool, format string, v ...interface{}) string {
 	if condition {
-		logItem = fSf("INFO: "+format+"%s\n", append(v, trackCaller())...)
+		tc := trackCaller()
+		logItem := fSf("INFO: "+format+"%s\n", append(v, tc)...)
 		log.Printf("%s", logItem)
-		if log2file {
-			logItem = time.Now().Format("2006/01/02 15:04:05 ") + logItem
-		}
+		return time.Now().Format("2006/01/02 15:04:05 ") + RmTailFromLast(logItem, tc)
 	}
-	return
+	return ""
 }
 
 // WarnOnErr :
@@ -132,8 +134,10 @@ func WarnOnErr(format string, v ...interface{}) error {
 		case error:
 			{
 				if p != nil {
-					log.Printf("WARN: "+format+"%s\n", append(v, trackCaller())...)
-					return p.(error)
+					tc := trackCaller()
+					warnItem := fSf("WARN: "+format+"%s\n", append(v, tc)...)
+					log.Printf(warnItem)
+					return fEf("%v", time.Now().Format("2006/01/02 15:04:05 ")+RmTailFromLast(warnItem, tc))
 				}
 			}
 		}
@@ -149,8 +153,10 @@ func WarnOnErrWhen(condition bool, format string, v ...interface{}) error {
 			case error:
 				{
 					if p != nil {
-						log.Printf("WARN: "+format+"%s\n", append(v, trackCaller())...)
-						return p.(error)
+						tc := trackCaller()
+						warnItem := fSf("WARN: "+format+"%s\n", append(v, tc)...)
+						log.Printf(warnItem)
+						return fEf("%v", time.Now().Format("2006/01/02 15:04:05 ")+RmTailFromLast(warnItem, tc))
 					}
 				}
 			}
