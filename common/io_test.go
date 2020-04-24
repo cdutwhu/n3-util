@@ -4,9 +4,10 @@ import (
 	"testing"
 )
 
-func TestIO(t *testing.T) {
-	// err := ioutil.WriteFile("./a/b/c.txt", []byte("hello"), 0666)
-	// FailOnErr("%v", err)
-
+func TestMustWriteFile(t *testing.T) {
 	MustWriteFile("./a/b/c.txt", []byte("hello"))
+}
+
+func TestMustAppendFile(t *testing.T) {
+	MustAppendFile("./a/b/d.txt", []byte("hello"), true)
 }
