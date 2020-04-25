@@ -23,7 +23,14 @@ func TestFailLog(t *testing.T) {
 		fPf("*** %v\n", e)
 	}
 
-	FailOnErr("%v", nil)
+	FailOnErr("%v", eg.FOR_TEST)
 
 	FailOnErrWhen(1 == 0, "%v", eg.FOR_TEST)
+}
+
+func TestExtractLog(t *testing.T) {
+	logs := ExtractLog("./error.log", "WARN", 10000, 36000)
+	for _, ln := range logs {
+		fPln(ln)
+	}
 }

@@ -81,7 +81,7 @@ func RmHeadToLast(s, mark string) string {
 
 // RmHeadToFirst :
 func RmHeadToFirst(s, mark string) string {
-	segs := sSpl(s, mark)
+	segs := sSplit(s, mark)
 	if len(segs) > 1 {
 		return sJoin(segs[1:], mark)
 	}
@@ -154,7 +154,7 @@ func ProjectV(strlist []string, sep, trimToL, trimFromR string) [][]string {
 	}
 	rtStrList := make([][]string, nSep+1)
 	for _, str := range strlist {
-		for i, s := range sSpl(str, sep) {
+		for i, s := range sSplit(str, sep) {
 			if trimToL != "" {
 				if fd := sIndex(s, trimToL); fd >= 0 {
 					s = s[fd+1:]
@@ -183,7 +183,7 @@ func Indent(str string, n int, ignoreFirstLine bool) (string, bool) {
 	if ignoreFirstLine {
 		S = 1
 	}
-	lines := sSpl(str, "\n")
+	lines := sSplit(str, "\n")
 	if n > 0 {
 		space := ""
 		for i := 0; i < n; i++ {

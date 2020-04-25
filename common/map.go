@@ -105,7 +105,7 @@ func MapPrint(m interface{}) {
 	fPln(mapstr)
 	I := 0
 	rmIdxList := []int{}
-	ss := sSpl(mapstr, " ")
+	ss := sSplit(mapstr, " ")
 	for i, s := range ss {
 		if re.MatchString(s) {
 			I = i

@@ -12,7 +12,7 @@ var (
 	fSf         = fmt.Sprintf
 	fSp         = fmt.Sprint
 	fEf         = fmt.Errorf
-	sSpl        = strings.Split
+	sSplit      = strings.Split
 	sJoin       = strings.Join
 	sCount      = strings.Count
 	sReplace    = strings.Replace

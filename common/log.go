@@ -2,17 +2,56 @@ package common
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"time"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
 )
+
+const tmFmt = "2006/01/02 15:04:05"
 
 var (
 	log2file                      = false
 	mPathFile map[string]*os.File = make(map[string]*os.File)
 )
+
+// ExtractLog : logType [INFO, WARN, FAIL]; tmBackwards second unit
+func ExtractLog(logFile, logType string, tmBackwards, tmOffset int) (logs []string) {
+	logTypes := []string{"INFO", "WARN", "FAIL"}
+	FailOnErrWhen(!XIn(logType, logTypes), "%v: [%s]", eg.PARAM_NOT_SUPPORTED, logType)
+
+	bytes, err := ioutil.ReadFile(logFile)
+	// FailOnErr("%v", err)
+	if err != nil {
+		return nil
+	}
+
+	now := time.Now().UTC()
+	// zone, offset := now.Zone()
+	// fPln(now)
+
+	past := now.Add(-time.Second * time.Duration(tmBackwards))
+	// fPln(past)
+
+	re := regexp.MustCompile(fSf(`^[0-9/: ]{20}[ ]*(%s): `, logType))
+	for _, ln := range sSplit(string(bytes), "\n") {
+		if re.MatchString(ln) {
+			tm, err := time.Parse(tmFmt, ln[:19])
+			FailOnErr("%v", err)
+			if tm.After(past) {
+				tm = tm.Add(time.Second * time.Duration(tmOffset))
+				ln = tm.Format(tmFmt) + ln[19:]
+				logs = append(logs, ln)
+			}
+		}
+	}
+	return logs
+}
 
 // FuncTrack : full path of func name
 // func FuncTrack(i interface{}) string {
@@ -37,7 +76,7 @@ func IsFLog() bool {
 func SetLog(logpath string) {
 	if abspath, err := filepath.Abs(logpath); err == nil {
 		if f, ok := mPathFile[abspath]; ok {
-			log.SetFlags(log.LstdFlags)
+			log.SetFlags(log.LstdFlags | log.LUTC)
 			log.SetOutput(f)
 			log2file = true
 			return
@@ -45,7 +84,7 @@ func SetLog(logpath string) {
 		if _, err := os.Stat(abspath); err == nil || os.IsNotExist(err) {
 			if f, err := os.OpenFile(abspath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666); err == nil {
 				mPathFile[abspath] = f
-				log.SetFlags(log.LstdFlags)
+				log.SetFlags(log.LstdFlags | log.LUTC)
 				log.SetOutput(f)
 				log2file = true
 			}
@@ -79,7 +118,7 @@ func FailOnErr(format string, v ...interface{}) {
 				if p != nil {
 					fatalInfo := fSf("FAIL: "+format+"%s\n", append(v, trackCaller())...)
 					if log2file {
-						fPln(time.Now().Format("2006/01/02 15:04:05 ") + fatalInfo)
+						fPln(time.Now().Format(tmFmt) + " " + fatalInfo)
 					}
 					log.Fatalf(fatalInfo)
 				}
@@ -98,7 +137,7 @@ func FailOnErrWhen(condition bool, format string, v ...interface{}) {
 					if p != nil {
 						fatalInfo := fSf("FAIL: "+format+"%s\n", append(v, trackCaller())...)
 						if log2file {
-							fPln(time.Now().Format("2006/01/02 15:04:05 ") + fatalInfo)
+							fPln(time.Now().Format(tmFmt) + " " + fatalInfo)
 						}
 						log.Fatalf(fatalInfo)
 					}
@@ -113,7 +152,7 @@ func Log(format string, v ...interface{}) string {
 	tc := trackCaller()
 	logItem := fSf("INFO: "+format+"%s\n", append(v, tc)...)
 	log.Printf("%s", logItem)
-	return time.Now().Format("2006/01/02 15:04:05 ") + RmTailFromLast(logItem, tc)
+	return time.Now().Format(tmFmt) + " " + RmTailFromLast(logItem, tc)
 }
 
 // LogWhen :
@@ -122,7 +161,7 @@ func LogWhen(condition bool, format string, v ...interface{}) string {
 		tc := trackCaller()
 		logItem := fSf("INFO: "+format+"%s\n", append(v, tc)...)
 		log.Printf("%s", logItem)
-		return time.Now().Format("2006/01/02 15:04:05 ") + RmTailFromLast(logItem, tc)
+		return time.Now().Format(tmFmt) + " " + RmTailFromLast(logItem, tc)
 	}
 	return ""
 }
@@ -137,7 +176,7 @@ func WarnOnErr(format string, v ...interface{}) error {
 					tc := trackCaller()
 					warnItem := fSf("WARN: "+format+"%s\n", append(v, tc)...)
 					log.Printf(warnItem)
-					return fEf("%v", time.Now().Format("2006/01/02 15:04:05 ")+RmTailFromLast(warnItem, tc))
+					return fEf("%v", time.Now().Format(tmFmt)+" "+RmTailFromLast(warnItem, tc))
 				}
 			}
 		}
@@ -156,7 +195,7 @@ func WarnOnErrWhen(condition bool, format string, v ...interface{}) error {
 						tc := trackCaller()
 						warnItem := fSf("WARN: "+format+"%s\n", append(v, tc)...)
 						log.Printf(warnItem)
-						return fEf("%v", time.Now().Format("2006/01/02 15:04:05 ")+RmTailFromLast(warnItem, tc))
+						return fEf("%v", time.Now().Format(tmFmt)+" "+RmTailFromLast(warnItem, tc))
 					}
 				}
 			}

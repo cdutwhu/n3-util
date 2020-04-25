@@ -527,8 +527,8 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 
 		if oIDlist := hashRExp.FindAllString(frame, -1); oIDlist != nil {
 			for _, oid := range oIDlist {
-				ss := sSpl(jkv.mOIDiPath[oid], pLinker)
-				name := sSpl(ss[len(ss)-1], "@")[0]
+				ss := sSplit(jkv.mOIDiPath[oid], pLinker)
+				name := sSplit(ss[len(ss)-1], "@")[0]
 				obj := jkv.mOIDObj[oid]
 				objMasked := Mask(name, obj, mask)
 				frame = sReplaceAll(frame, oid, objMasked)
