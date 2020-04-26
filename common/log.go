@@ -20,8 +20,17 @@ var (
 	mPathFile map[string]*os.File = make(map[string]*os.File)
 )
 
+// ExtractLog2File :
+func ExtractLog2File(logFile, logType string, tmBackwards, tmOffset int, desc bool) string {
+	warns := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
+	content := sJoin(warns, "\n")
+	file := RmTailFromLast(logFile, ".") + "-" + logType + "." + RmHeadToLast(logFile, ".")
+	MustWriteFile(file, []byte(content))
+	return file
+}
+
 // ExtractLog : logType [INFO, WARN, FAIL]; tmBackwards second unit
-func ExtractLog(logFile, logType string, tmBackwards, tmOffset int) (logs []string) {
+func ExtractLog(logFile, logType string, tmBackwards, tmOffset int, desc bool) (logs []string) {
 	logTypes := []string{"INFO", "WARN", "FAIL"}
 	FailOnErrWhen(!XIn(logType, logTypes), "%v: [%s]", eg.PARAM_NOT_SUPPORTED, logType)
 
@@ -50,6 +59,13 @@ func ExtractLog(logFile, logType string, tmBackwards, tmOffset int) (logs []stri
 			}
 		}
 	}
+
+	if desc {
+		for l, r := 0, len(logs)-1; l < r; l, r = l+1, r-1 {
+			logs[l], logs[r] = logs[r], logs[l]
+		}
+	}
+
 	return logs
 }
 
