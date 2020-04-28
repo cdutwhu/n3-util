@@ -5,7 +5,7 @@ find . -type f -executable -exec sh -c "file -i '{}' | grep -q 'x-executable; ch
 
 cd ./preprocess && ./clean.sh && cd ..
 cd ./jkv && ./clean.sh && cd ..
-cd ./common && rm -f *.txt *.log && cd ..
+cd ./common && rm -f *.txt *.log *.csv && cd ..
 cd ./n3csv && ./clean.sh && cd ..
 cd ./n3xml && ./clean.sh && cd ..
 cd ./n3json && ./clean.sh && cd ..

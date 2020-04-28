@@ -34,4 +34,5 @@ func TestExtractLog(t *testing.T) {
 		fPln(ln)
 	}
 	ExtractLog2File("./error.log", "FAIL", 10000, 36000, true)
+	ExtractLog2CSV("./error.log", "FAIL", 10000, 36000, true)
 }

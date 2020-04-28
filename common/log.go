@@ -20,10 +20,26 @@ var (
 	mPathFile map[string]*os.File = make(map[string]*os.File)
 )
 
+// ExtractLog2CSV :
+func ExtractLog2CSV(logFile, logType string, tmBackwards, tmOffset int, desc bool) string {
+	logs := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
+	if len(logs) == 0 {
+		return ""
+	}
+	content := "Time,Type,Desc\n"
+	content += sReplaceAll(sJoin(logs, "\n"), " \t", ",")
+	file := RmTailFromLast(logFile, ".") + "-" + logType + ".csv"
+	MustWriteFile(file, []byte(content))
+	return file
+}
+
 // ExtractLog2File :
 func ExtractLog2File(logFile, logType string, tmBackwards, tmOffset int, desc bool) string {
-	warns := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
-	content := sJoin(warns, "\n")
+	logs := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
+	if len(logs) == 0 {
+		return ""
+	}
+	content := sJoin(logs, "\n")
 	file := RmTailFromLast(logFile, ".") + "-" + logType + "." + RmHeadToLast(logFile, ".")
 	MustWriteFile(file, []byte(content))
 	return file
@@ -47,7 +63,7 @@ func ExtractLog(logFile, logType string, tmBackwards, tmOffset int, desc bool) (
 	past := now.Add(-time.Second * time.Duration(tmBackwards))
 	// fPln(past)
 
-	re := regexp.MustCompile(fSf(`^[0-9/: ]{20}[ ]*(%s): `, logType))
+	re := regexp.MustCompile(fSf(`^[0-9/: ]{20}\t%s \t`, logType))
 	for _, ln := range sSplit(string(bytes), "\n") {
 		if re.MatchString(ln) {
 			tm, err := time.Parse(tmFmt, ln[:19])
@@ -132,9 +148,9 @@ func FailOnErr(format string, v ...interface{}) {
 		case error:
 			{
 				if p != nil {
-					fatalInfo := fSf("FAIL: "+format+"%s\n", append(v, trackCaller())...)
+					fatalInfo := fSf("\tFAIL \t\""+format+"\"%s\n", append(v, trackCaller())...)
 					if log2file {
-						fPln(time.Now().Format(tmFmt) + " " + fatalInfo)
+						fPln(time.Now().Format(tmFmt) + fatalInfo)
 					}
 					log.Fatalf(fatalInfo)
 				}
@@ -151,9 +167,9 @@ func FailOnErrWhen(condition bool, format string, v ...interface{}) {
 			case error:
 				{
 					if p != nil {
-						fatalInfo := fSf("FAIL: "+format+"%s\n", append(v, trackCaller())...)
+						fatalInfo := fSf("\tFAIL \t\""+format+"\"%s\n", append(v, trackCaller())...)
 						if log2file {
-							fPln(time.Now().Format(tmFmt) + " " + fatalInfo)
+							fPln(time.Now().Format(tmFmt) + fatalInfo)
 						}
 						log.Fatalf(fatalInfo)
 					}
@@ -166,18 +182,18 @@ func FailOnErrWhen(condition bool, format string, v ...interface{}) {
 // Log :
 func Log(format string, v ...interface{}) string {
 	tc := trackCaller()
-	logItem := fSf("INFO: "+format+"%s\n", append(v, tc)...)
+	logItem := fSf("\tINFO \t\""+format+"\"%s\n", append(v, tc)...)
 	log.Printf("%s", logItem)
-	return time.Now().Format(tmFmt) + " " + RmTailFromLast(logItem, tc)
+	return time.Now().Format(tmFmt) + RmTailFromLast(logItem, tc)
 }
 
 // LogWhen :
 func LogWhen(condition bool, format string, v ...interface{}) string {
 	if condition {
 		tc := trackCaller()
-		logItem := fSf("INFO: "+format+"%s\n", append(v, tc)...)
+		logItem := fSf("\tINFO \t\""+format+"\"%s\n", append(v, tc)...)
 		log.Printf("%s", logItem)
-		return time.Now().Format(tmFmt) + " " + RmTailFromLast(logItem, tc)
+		return time.Now().Format(tmFmt) + RmTailFromLast(logItem, tc)
 	}
 	return ""
 }
@@ -190,9 +206,9 @@ func WarnOnErr(format string, v ...interface{}) error {
 			{
 				if p != nil {
 					tc := trackCaller()
-					warnItem := fSf("WARN: "+format+"%s\n", append(v, tc)...)
+					warnItem := fSf("\tWARN \t\""+format+"\"%s\n", append(v, tc)...)
 					log.Printf(warnItem)
-					return fEf("%v", time.Now().Format(tmFmt)+" "+RmTailFromLast(warnItem, tc))
+					return fEf("%v", time.Now().Format(tmFmt)+RmTailFromLast(warnItem, tc))
 				}
 			}
 		}
@@ -209,9 +225,9 @@ func WarnOnErrWhen(condition bool, format string, v ...interface{}) error {
 				{
 					if p != nil {
 						tc := trackCaller()
-						warnItem := fSf("WARN: "+format+"%s\n", append(v, tc)...)
+						warnItem := fSf("\tWARN \t\""+format+"\"%s\n", append(v, tc)...)
 						log.Printf(warnItem)
-						return fEf("%v", time.Now().Format(tmFmt)+" "+RmTailFromLast(warnItem, tc))
+						return fEf("%v", time.Now().Format(tmFmt)+RmTailFromLast(warnItem, tc))
 					}
 				}
 			}
