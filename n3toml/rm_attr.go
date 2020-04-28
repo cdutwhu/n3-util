@@ -6,7 +6,9 @@ import "io/ioutil"
 func RmFileAttrL1(inputfile, outname string, attrs ...string) string {
 	bytes, err := ioutil.ReadFile(inputfile)
 	failOnErr("%v", err)
-	outname = sTrimRight(outname, ".toml")
+	if sHasSuffix(outname, ".toml") {
+		outname = outname[:len(outname)-5]
+	}
 	outfile := rmTailFromLast(inputfile, "/") + "/" + outname + ".toml"
 	mustWriteFile(outfile, []byte(RmAttrL1(string(bytes), attrs...)))
 	return outfile
