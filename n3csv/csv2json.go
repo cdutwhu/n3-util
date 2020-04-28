@@ -46,7 +46,7 @@ func Reader2JSON(r io.Reader, description string) (string, []string) {
 	for i, headE := range content[0] {
 		if headE == "" {
 			headE = fSf("column_%d", i)
-			warnOnErr("%v: %s - column[%d] is empty, mark [%s]", eg.CSV_COLUMN_HEADER_EMPTY, description, i, headE)
+			fPln(warnOnErr("%v: %s - column[%d] is empty, mark [%s]", eg.CSV_COLUMN_HEADER_EMPTY, description, i, headE))
 		}
 		headersArr = append(headersArr, headE)
 	}

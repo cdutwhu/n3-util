@@ -23,7 +23,7 @@ func TestFailLog(t *testing.T) {
 		fPf("*** %v\n", e)
 	}
 
-	FailOnErr("%v", eg.FOR_TEST)
+	// FailOnErr("%v", eg.FOR_TEST)
 
 	FailOnErrWhen(1 == 0, "%v", eg.FOR_TEST)
 }
