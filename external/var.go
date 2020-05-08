@@ -14,6 +14,7 @@ var (
 	sReplaceAll = strings.ReplaceAll
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
+	sTrimRight  = strings.TrimRight
 
 	failOnErr = cmn.FailOnErr
 )

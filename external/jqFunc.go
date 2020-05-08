@@ -8,29 +8,27 @@ import (
 	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
-func prepareJQ(jqDirs ...string) (jqWD, oriWD string, err error) {
+func prepare(exe string, wkDirs ...string) (cWD, oriWD string, err error) {
 	oriWD, err = os.Getwd()
 	failOnErr("%v", err)
-	jqDirs = append(jqDirs, "./", "../", "../../")
-	for _, jqWD = range jqDirs {
-		if !sHasSuffix(jqWD, "/") {
-			jqWD += "/"
-		}
-		if _, err = os.Stat(jqWD + jq); err == nil {
-			failOnErr("%v", os.Chdir(jqWD))
-			jqWD, err = os.Getwd()
+	wkDirs = append(wkDirs, "./", "../", "../../")
+	for _, cWD = range wkDirs {
+		cWD = sTrimRight(cWD, "/") + "/"
+		if _, err = os.Stat(cWD + exe); err == nil {
+			failOnErr("%v", os.Chdir(cWD))
+			cWD, err = os.Getwd()
 			failOnErr("%v", err)
-			return jqWD, oriWD, nil
+			return cWD, oriWD, nil
 		}
 	}
-	failOnErr("%v: %s", eg.FILE_NOT_FOUND, jq)
+	failOnErr("%v: %s", eg.FILE_NOT_FOUND, exe)
 	return "", "", nil
 }
 
 // FmtJSONStr : May have 'Argument list too long' issue !
 func FmtJSONStr(json string, jqDirs ...string) string {
-	_, oriWD, err := prepareJQ(jqDirs...)
-	failOnErr("prepareJQ error @ %v", err)
+	_, oriWD, err := prepare(jq, jqDirs...)
+	failOnErr("prepare jq error @ %v", err)
 	defer func() { os.Chdir(oriWD) }()
 
 	json = sReplaceAll(json, `\`, `\\`)
@@ -55,8 +53,8 @@ func FmtJSONFile(file string, jqDirs ...string) string {
 		file = absfile
 	}
 
-	_, oriWD, err := prepareJQ(jqDirs...)
-	failOnErr("prepareJQ error @ %v", err)
+	_, oriWD, err := prepare(jq, jqDirs...)
+	failOnErr("prepare jq error @ %v", err)
 	defer func() { os.Chdir(oriWD) }()
 
 	cmdstr := "cat " + file + ` | ./` + jq + " ."
@@ -69,8 +67,8 @@ func FmtJSONFile(file string, jqDirs ...string) string {
 
 // FmtJSONFile : <file> is the <relative path> to <jq>
 // func FmtJSONFile(file string, jqDirs ...string) string {
-// 	_, oriWD, err := prepareJQ(jqDirs...)
-// 	failOnErr("prepareJQ error @ %v", err)
+// 	_, oriWD, err := prepare(jq, jqDirs...)
+// 	failOnErr("prepare jq error @ %v", err)
 // 	_, err = os.Stat(file)
 // 	failOnErr("file cannot be loaded @ %v", err)
 // 	defer func() { os.Chdir(oriWD) }()

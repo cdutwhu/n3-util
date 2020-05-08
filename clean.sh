@@ -4,7 +4,7 @@
 find . -type f -executable -exec sh -c "file -i '{}' | grep -q 'x-executable; charset=binary'" \; -print | xargs rm -f
 
 rm -rf .vscode
-cd ./preprocess && ./clean.sh && cd ..
+cd ./external && ./clean.sh && cd ..
 cd ./jkv && ./clean.sh && cd ..
 cd ./common && rm -f *.txt *.log *.csv && cd ..
 cd ./n3csv && ./clean.sh && cd ..

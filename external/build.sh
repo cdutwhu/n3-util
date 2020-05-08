@@ -6,7 +6,7 @@ set -e
 GOPATH=`go env GOPATH`
 ORIGINALPATH=`pwd`
 
-UPATH="../preprocess/utils"
+UPATH="../external/utils"
 
 rm -rf ./build
 rm -rf $UPATH
