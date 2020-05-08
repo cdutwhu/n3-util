@@ -8,7 +8,8 @@ import (
 	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
-func prepare(exe string, wkDirs ...string) (cWD, oriWD string, err error) {
+// Prepare :
+func Prepare(exe string, wkDirs ...string) (cWD, oriWD string, err error) {
 	oriWD, err = os.Getwd()
 	failOnErr("%v", err)
 	wkDirs = append(wkDirs, "./", "../", "../../")
@@ -27,8 +28,8 @@ func prepare(exe string, wkDirs ...string) (cWD, oriWD string, err error) {
 
 // FmtJSONStr : May have 'Argument list too long' issue !
 func FmtJSONStr(json string, jqDirs ...string) string {
-	_, oriWD, err := prepare(jq, jqDirs...)
-	failOnErr("prepare jq error @ %v", err)
+	_, oriWD, err := Prepare(jq, jqDirs...)
+	failOnErr("Prepare jq error @ %v", err)
 	defer func() { os.Chdir(oriWD) }()
 
 	json = sReplaceAll(json, `\`, `\\`)
@@ -53,8 +54,8 @@ func FmtJSONFile(file string, jqDirs ...string) string {
 		file = absfile
 	}
 
-	_, oriWD, err := prepare(jq, jqDirs...)
-	failOnErr("prepare jq error @ %v", err)
+	_, oriWD, err := Prepare(jq, jqDirs...)
+	failOnErr("Prepare jq error @ %v", err)
 	defer func() { os.Chdir(oriWD) }()
 
 	cmdstr := "cat " + file + ` | ./` + jq + " ."
@@ -67,8 +68,8 @@ func FmtJSONFile(file string, jqDirs ...string) string {
 
 // FmtJSONFile : <file> is the <relative path> to <jq>
 // func FmtJSONFile(file string, jqDirs ...string) string {
-// 	_, oriWD, err := prepare(jq, jqDirs...)
-// 	failOnErr("prepare jq error @ %v", err)
+// 	_, oriWD, err := Prepare(jq, jqDirs...)
+// 	failOnErr("Prepare jq error @ %v", err)
 // 	_, err = os.Stat(file)
 // 	failOnErr("file cannot be loaded @ %v", err)
 // 	defer func() { os.Chdir(oriWD) }()
