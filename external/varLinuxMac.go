@@ -1,6 +1,6 @@
 // +build linux darwin
 
-package preprocess
+package external
 
 const (
 	execCmdName = "bash"

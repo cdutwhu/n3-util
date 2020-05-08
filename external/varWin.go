@@ -1,6 +1,6 @@
 // +build windows
 
-package preprocess
+package external
 
 const (
 	execCmdName = "PowerShell"
