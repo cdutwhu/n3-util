@@ -1,5 +1,5 @@
 Path = ""
-LogFile = "./error.log"
+LogFile = "./[DATE].log"
 
 # ************************ Server ************************ #
 # ********** Client User DO NOT Modify This Part ********* #
@@ -16,15 +16,15 @@ LogFile = "./error.log"
 
 [Route]                                   # Shared with Client #
   ROOT = "/"
-  GetID = "/#s/#v/id"
-  GetHash = "/#s/#v/hash"
-  Get = "/#s/#v/policy"
-  Update = "/#s/#v/update"
-  Delete = "/#s/#v/delete"
-  LsID = "/#s/#v/list/policyid"
-  LsUser = "/#s/#v/list/user"
-  LsContext = "/#s/#v/list/context"
-  LsObject = "/#s/#v/list/object"
+  GetID = "/[s]/[v]/id"
+  GetHash = "/[s]/[v]/hash"
+  Get = "/[s]/[v]/policy"
+  Update = "/[s]/[v]/update"
+  Delete = "/[s]/[v]/delete"
+  LsID = "/[s]/[v]/list/policyid"
+  LsUser = "/[s]/[v]/list/user"
+  LsContext = "/[s]/[v]/list/context"
+  LsObject = "/[s]/[v]/list/object"
 
 [File]
   ClientLinux64 = "../../../Client/build/Linux64/client"
@@ -41,7 +41,8 @@ LogFile = "./error.log"
 
 [Server]
   Protocol = "http" 
-  IP = "192.168.92.143"
+  IP = "[IP]"
+  Port = "[PORT]"
 
 [Access]
   Timeout = 3

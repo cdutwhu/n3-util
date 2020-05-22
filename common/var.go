@@ -23,4 +23,5 @@ var (
 	sTrimLeft   = strings.TrimLeft
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
+	sContains   = strings.Contains
 )

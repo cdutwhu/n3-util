@@ -3,13 +3,16 @@ package n3toml
 import "io/ioutil"
 
 // RmFileAttrL1 :
-func RmFileAttrL1(inputfile, outname string, attrs ...string) string {
-	bytes, err := ioutil.ReadFile(inputfile)
+func RmFileAttrL1(infile, outfile string, attrs ...string) string {
+	bytes, err := ioutil.ReadFile(infile)
 	failOnErr("%v", err)
-	if sHasSuffix(outname, ".toml") {
-		outname = outname[:len(outname)-5]
+	// if sHasSuffix(outfile, ".toml") {
+	// 	outfile = outfile[:len(outfile)-5]
+	// }
+	// outfile = rmTailFromLast(infile, "/") + "/" + outfile + ".toml"
+	if !sHasSuffix(outfile, ".toml") {
+		outfile += ".toml"
 	}
-	outfile := rmTailFromLast(inputfile, "/") + "/" + outname + ".toml"
 	mustWriteFile(outfile, []byte(RmAttrL1(string(bytes), attrs...)))
 	return outfile
 }
