@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
 // IsNumeric :

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
 // File2JSON : read the content of CSV File

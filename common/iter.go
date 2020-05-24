@@ -1,6 +1,6 @@
 package common
 
-import eg "github.com/cdutwhu/json-util/n3errs"
+import eg "github.com/cdutwhu/n3-util/n3errs"
 
 // N : for i := range N()
 func N(n int) []struct{} {

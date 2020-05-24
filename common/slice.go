@@ -4,7 +4,7 @@ import (
 	"math"
 	"reflect"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
 // SliceAttach :

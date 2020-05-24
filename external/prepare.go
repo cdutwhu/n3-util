@@ -3,7 +3,7 @@ package external
 import (
 	"os"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
 // Prepare : // append `defer func() { os.Chdir(oriWD) }()` after this function

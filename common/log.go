@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"time"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
 const tmFmt = "2006/01/02 15:04:05"
