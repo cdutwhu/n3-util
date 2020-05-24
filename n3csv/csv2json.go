@@ -42,13 +42,13 @@ func Reader2JSON(r io.Reader, description string) (string, []string) {
 	content, _ := csv.NewReader(r).ReadAll()
 	failOnErrWhen(len(content) < 1, "%v: OR length of the lines are not the same?", eg.FILE_EMPTY)
 
-	headersArr := make([]string, 0)
+	headers := make([]string, 0)
 	for i, headE := range content[0] {
 		if headE == "" {
 			headE = fSf("column_%d", i)
 			fPln(warnOnErr("%v: %s - column[%d] is empty, mark [%s]", eg.CSV_COLUMN_HEADER_EMPTY, description, i, headE))
 		}
-		headersArr = append(headersArr, headE)
+		headers = append(headers, headE)
 	}
 
 	//Remove the header row
@@ -78,7 +78,7 @@ func Reader2JSON(r io.Reader, description string) (string, []string) {
 	for i, d := range content {
 		buffer.WriteString("{")
 		for j, y := range d {
-			buffer.WriteString(`"` + headersArr[j] + `":`)
+			buffer.WriteString(`"` + headers[j] + `":`)
 
 			// _, fErr := strconv.ParseFloat(y, 32)
 			// _, bErr := strconv.ParseBool(y)
@@ -115,5 +115,5 @@ func Reader2JSON(r io.Reader, description string) (string, []string) {
 	rawMessage := json.RawMessage(buffer.String())
 	jsonstr, err := json.MarshalIndent(rawMessage, "", "  ")
 	failOnErr("%v", err)
-	return string(jsonstr), headersArr
+	return string(jsonstr), headers
 }
