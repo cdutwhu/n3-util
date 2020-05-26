@@ -8,10 +8,10 @@ import (
 	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
-// MapKeys :
+// MapKeys : only apply to single type key
 func MapKeys(m interface{}) interface{} {
 	v := reflect.ValueOf(m)
-	FailOnErrWhen(v.Kind() != reflect.Map, "%v", eg.MAP_INVALID)
+	FailOnErrWhen(v.Kind() != reflect.Map, "%v", eg.PARAM_INVALID_MAP)
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := reflect.TypeOf(keys[0].Interface())
@@ -34,10 +34,10 @@ func MapKeys(m interface{}) interface{} {
 	return nil
 }
 
-// MapKVs :
+// MapKVs : only apply to single type key and single type value
 func MapKVs(m interface{}) (interface{}, interface{}) {
 	v := reflect.ValueOf(m)
-	FailOnErrWhen(v.Kind() != reflect.Map, "%v", eg.MAP_INVALID)
+	FailOnErrWhen(v.Kind() != reflect.Map, "%v", eg.PARAM_INVALID_MAP)
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := reflect.TypeOf(keys[0].Interface())
@@ -119,4 +119,18 @@ func MapPrint(m interface{}) {
 			fPln(i, s)
 		}
 	}
+}
+
+// MapFromStruct : each field name MUST be exportable
+func MapFromStruct(s interface{}) map[string]interface{} {
+	FailOnErrWhen(reflect.ValueOf(s).Kind() != reflect.Struct, "%v", eg.PARAM_INVALID_STRUCT)
+	ret := make(map[string]interface{})
+	v := reflect.ValueOf(s)
+	val := reflect.Indirect(v)
+	for i := 0; i < v.NumField(); i++ {
+		name := val.Type().Field(i).Name
+		field := v.Field(i).Interface()
+		ret[name] = field
+	}
+	return ret
 }
