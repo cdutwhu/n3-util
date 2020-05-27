@@ -46,10 +46,11 @@ func Struct2Env(key string, s interface{}) {
 }
 
 // Env2Struct :
-func Env2Struct(key string, s interface{}) {
+func Env2Struct(key string, s interface{}) interface{} {
 	FailOnErrWhen(reflect.ValueOf(s).Kind() != reflect.Ptr, "%v", eg.PARAM_INVALID_PTR)
 	FailOnErrWhen(reflect.ValueOf(s).Elem().Kind() != reflect.Struct, "%v", eg.PARAM_INVALID_STRUCT)
 	jsonstr := os.Getenv(key)
 	FailOnErrWhen(!IsJSON(jsonstr), "%v", eg.JSON_INVALID)
 	FailOnErr("%v", json.Unmarshal([]byte(jsonstr), s))
+	return s
 }

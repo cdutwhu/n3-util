@@ -24,13 +24,13 @@ func TestStruct2Env(t *testing.T) {
 
 	user1 := &User{}
 	fPf("%+v\n", *user1)
-	Env2Struct("MyUser", user1)
-	fPf("%+v\n", *user1)
+	user2 := Env2Struct("MyUser", &User{}).(*User)
+	fPf("%+v\n", *user2)
 }
 
 func TestEnv2Struct(t *testing.T) {
 	user1 := &User{}
 	fPf("%+v\n", *user1)
-	Env2Struct("MyUser", user1)
-	fPf("%+v\n", *user1)
+	user2 := Env2Struct("MyUser", &User{}).(*User)
+	fPf("%+v\n", *user2)
 }
