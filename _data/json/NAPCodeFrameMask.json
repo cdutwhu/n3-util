@@ -1,7 +1,9 @@
 {
   "NAPCodeFrame": {
     "TestContent": {
-      "DomainBands": "----------",
+      "DomainBands": {
+        "Band1Lower"   :   "000000000000000"
+      },
       "DomainProficiency": "----------"
     },
     "TestletList": {

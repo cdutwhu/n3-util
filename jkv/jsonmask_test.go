@@ -64,20 +64,19 @@ func TestJSONPolicy(t *testing.T) {
 func TestJSONPolicy1(t *testing.T) {
 	defer trackTime(time.Now())
 
-	data := fmtJSONFile("../_data/json/test.json", 2)
-	mask1 := fmtJSONFile("../_data/json/1.json", 2)
+	data := fmtJSONFile("../_data/json/NAPCodeFrame.json", 2)
+	mask := fmtJSONFile("../_data/json/NAPCodeFrameMask.json", 2)
+	failOnErrWhen(data == "", "%v: data empty, check path", eg.PARAM_INVALID)
+	failOnErrWhen(mask == "", "%v: mask empty, check path", eg.PARAM_INVALID)
 
-	failOnErrWhen(data == "", "%v: input empty, check path", eg.PARAM_INVALID)
-	failOnErrWhen(mask1 == "", "%v: mask1 empty, check path", eg.PARAM_INVALID)
-
-	jkvM1 := NewJKV(mask1, "root", false)
-
-	jkvD := NewJKV(data, "root", false)
-	maskroot, _ := jkvD.Unfold(0, jkvM1)
+	jkvD := NewJKV(data, "root", true) // data must wrap a level to do "simple" data & mask
+	jkvM := NewJKV(mask, "", false)
+	maskroot, _ := jkvD.Unfold(0, jkvM)
 	jkvMR := NewJKV(maskroot, "", false)
 	jkvMR.Wrapped = jkvD.Wrapped
 	json := jkvMR.UnwrapDefault().JSON
 	json = fmtJSON(json, 2)
 
+	fPln(json)
 	ioutil.WriteFile("single.json", []byte(json), 0666)
 }
