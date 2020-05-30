@@ -120,17 +120,3 @@ func MapPrint(m interface{}) {
 		}
 	}
 }
-
-// MapFromStruct : each field name MUST be exportable
-func MapFromStruct(s interface{}) map[string]interface{} {
-	FailOnErrWhen(reflect.ValueOf(s).Kind() != reflect.Struct, "%v", eg.PARAM_INVALID_STRUCT)
-	ret := make(map[string]interface{})
-	v := reflect.ValueOf(s)
-	val := reflect.Indirect(v)
-	for i := 0; i < v.NumField(); i++ {
-		name := val.Type().Field(i).Name
-		field := v.Field(i).Interface()
-		ret[name] = field
-	}
-	return ret
-}
