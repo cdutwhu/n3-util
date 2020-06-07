@@ -17,7 +17,8 @@ func SmashSave(xml, saveDir string) []string {
 	saveDir = sTrimRight(saveDir, `/\`) + "/"
 	mObjCnt := make(map[string]int)
 
-	SubRoots, Subs := Smash(RmComment(xml))
+	SubRoots, Subs, err := Smash(RmComment(xml))
+	failOnErr("%v", err)
 	for i, subRoot := range SubRoots {
 		filename := fSf("%s%s_%d.xml", saveDir, subRoot, mObjCnt[subRoot])
 		// fPln(filename)
@@ -33,10 +34,13 @@ func SmashSave(xml, saveDir string) []string {
 }
 
 // Smash :
-func Smash(xml string) (SubRoots, Subs []string) {
-	failOnErrWhen(!isXML(xml), "%v", eg.XML_INVALID)
+func Smash(xml string) (SubRoots, Subs []string, err error) {
+	if !isXML(xml) {
+		return nil, nil, eg.PARAM_INVALID_XML
+	}
 
-	root := xmlRoot(xml)
+	root, err := xmlRoot(xml)
+	failOnErr("%v", err)
 	offset := len(fSf("<%s>", root)) + 1
 	remain := xml[offset:]
 	r := regexp.MustCompile(`<[^> /]+[ >]`)
@@ -65,5 +69,5 @@ AGAIN:
 		goto AGAIN
 	}
 
-	return SubRoots, Subs
+	return SubRoots, Subs, nil
 }

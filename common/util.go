@@ -29,32 +29,76 @@ func IF(condition bool, block1, block2 interface{}) interface{} {
 }
 
 // XIn :
-func XIn(e, s interface{}) bool {
+func XIn(e, s interface{}) (bool, error) {
 	v := reflect.ValueOf(s)
-	FailOnErrWhen(v.Kind() != reflect.Slice, "%v: [s]", eg.SLICE_INVALID)
+	if v.Kind() != reflect.Slice {
+		return false, eg.PARAM_INVALID_SLICE
+	}
+
 	l := v.Len()
 	for i := 0; i < l; i++ {
 		if v.Index(i).Interface() == e {
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
 
 // MatchAssign : NO ShortCut, MUST all valid, e.g. type assert, nil pointer, out of index
-func MatchAssign(chkCasesValues ...interface{}) interface{} {
+func MatchAssign(chkCasesValues ...interface{}) (interface{}, error) {
 	l := len(chkCasesValues)
-	FailOnErrWhen(l < 4 || l%2 == 1, "%v: ", eg.PARAM_INVALID)
+	if l < 4 || l%2 == 1 {
+		return nil, eg.PARAM_INVALID
+	}
 	_, l1, l2 := 1, (l-1)/2, (l-1)/2
 	check := chkCasesValues[0]
 	cases := chkCasesValues[1 : 1+l1]
 	values := chkCasesValues[1+l1 : 1+l1+l2]
 	for i, c := range cases {
 		if check == c {
-			return values[i]
+			return values[i], nil
 		}
 	}
-	return chkCasesValues[l-1]
+	return chkCasesValues[l-1], nil
+}
+
+// TryInvoke :
+func TryInvoke(st interface{}, name string, args ...interface{}) (rets []interface{}, ok bool, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			rets, ok, err = nil, false, fEf("%v", r)
+		}
+	}()
+
+	stVal := reflect.ValueOf(st)
+	if stVal.Kind() != reflect.Ptr ||
+		stVal.Elem().Kind() != reflect.Struct {
+		return nil, false, eg.PARAM_INVALID_STRUCT_PTR
+	}
+
+	inputs := make([]reflect.Value, len(args))
+	for i := range args {
+		inputs[i] = reflect.ValueOf(args[i])
+	}
+	if _, ok := reflect.TypeOf(st).MethodByName(name); ok {
+		for _, ret := range stVal.MethodByName(name).Call(inputs) {
+			rets = append(rets, ret.Interface())
+		}
+		return rets, true, nil
+	}
+	return rets, false, nil
+}
+
+// InvRst :
+func InvRst(rets interface{}, idx int) (ret interface{}, err error) {
+	slc, ok := rets.([]interface{})
+	if !ok {
+		return nil, eg.PARAM_INVALID
+	}
+	if idx >= len(slc) {
+		return nil, eg.PARAM_INVALID_INDEX
+	}
+	return slc[idx], nil
 }
 
 // var (

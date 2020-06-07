@@ -25,7 +25,8 @@ func TestRmHeadToFirst(t *testing.T) {
 }
 
 func TestStrReplByPos(t *testing.T) {
-	s := ReplByPosGrp("0123456789ABCDEF", [][]int{{11, 15}, {4, 6}, {1, 2}, {3, 4}}, []string{"aaa", "bbb", "ccc", "ddd"})
+	s, err := ReplByPosGrp("0123456789ABCDEF", [][]int{{11, 15}, {4, 6}, {1, 2}, {3, 4}}, []string{"aaa", "bbb", "ccc", "ddd"})
+	FailOnErr("%v", err)
 	fPln(s) //         0CCC2*****BBB6789ATTTF
 	//                 0CCC2*****BBB6789ATTTF
 }

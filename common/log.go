@@ -21,39 +21,47 @@ var (
 )
 
 // ExtractLog2CSV :
-func ExtractLog2CSV(logFile, logType string, tmBackwards, tmOffset int, desc bool) string {
-	logs := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
+func ExtractLog2CSV(logFile, logType string, tmBackwards, tmOffset int, desc bool) (string, error) {
+	logs, err := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
+	if err != nil {
+		return "", err
+	}
 	if len(logs) == 0 {
-		return ""
+		return "", nil
 	}
 	content := "Time,Type,Desc\n"
 	content += sReplaceAll(sJoin(logs, "\n"), " \t", ",")
 	file := RmTailFromLast(logFile, ".") + "-" + logType + ".csv"
 	MustWriteFile(file, []byte(content))
-	return file
+	return file, nil
 }
 
 // ExtractLog2File :
-func ExtractLog2File(logFile, logType string, tmBackwards, tmOffset int, desc bool) string {
-	logs := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
+func ExtractLog2File(logFile, logType string, tmBackwards, tmOffset int, desc bool) (string, error) {
+	logs, err := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
+	if err != nil {
+		return "", err
+	}
 	if len(logs) == 0 {
-		return ""
+		return "", nil
 	}
 	content := sJoin(logs, "\n")
 	file := RmTailFromLast(logFile, ".") + "-" + logType + "." + RmHeadToLast(logFile, ".")
 	MustWriteFile(file, []byte(content))
-	return file
+	return file, nil
 }
 
 // ExtractLog : logType [INFO, WARN, FAIL]; tmBackwards second unit
-func ExtractLog(logFile, logType string, tmBackwards, tmOffset int, desc bool) (logs []string) {
+func ExtractLog(logFile, logType string, tmBackwards, tmOffset int, desc bool) ([]string, error) {
 	logTypes := []string{"INFO", "WARN", "FAIL"}
-	FailOnErrWhen(!XIn(logType, logTypes), "%v: [%s]", eg.PARAM_NOT_SUPPORTED, logType)
+	if ok, err := XIn(logType, logTypes); err != nil || !ok {
+		return nil, eg.PARAM_NOT_SUPPORTED
+	}
 
 	bytes, err := ioutil.ReadFile(logFile)
 	// FailOnErr("%v", err)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	now := time.Now().UTC()
@@ -64,6 +72,7 @@ func ExtractLog(logFile, logType string, tmBackwards, tmOffset int, desc bool) (
 	// fPln(past)
 
 	re := regexp.MustCompile(fSf(`^[0-9/: ]{20}\t%s \t`, logType))
+	logs := []string{}
 	for _, ln := range sSplit(string(bytes), "\n") {
 		if re.MatchString(ln) {
 			tm, err := time.Parse(tmFmt, ln[:19])
@@ -82,7 +91,7 @@ func ExtractLog(logFile, logType string, tmBackwards, tmOffset int, desc bool) (
 		}
 	}
 
-	return logs
+	return logs, nil
 }
 
 // FuncTrack : full path of func name

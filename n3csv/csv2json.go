@@ -17,7 +17,8 @@ func File2JSON(path string, vertical, save bool, savePaths ...string) (string, [
 	csvFile, err := os.Open(path)
 	failOnErr("The file is not found || wrong root : %v", err)
 	defer csvFile.Close()
-	jsonstr, headers := Reader2JSON(csvFile, path)
+	jsonstr, headers, err := Reader2JSON(csvFile, path)
+	failOnErr("%v", err)
 
 	if vertical {
 		jsonstr = jsonScalarSelX(jsonstr, headers...)
@@ -38,9 +39,11 @@ func File2JSON(path string, vertical, save bool, savePaths ...string) (string, [
 }
 
 // Reader2JSON to
-func Reader2JSON(r io.Reader, description string) (string, []string) {
+func Reader2JSON(r io.Reader, description string) (string, []string, error) {
 	content, _ := csv.NewReader(r).ReadAll()
-	failOnErrWhen(len(content) < 1, "%v: OR length of the lines are not the same?", eg.FILE_EMPTY)
+	if len(content) < 1 {
+		return "", nil, eg.FILE_EMPTY
+	}
 
 	headers := make([]string, 0)
 	for i, headE := range content[0] {
@@ -115,5 +118,5 @@ func Reader2JSON(r io.Reader, description string) (string, []string) {
 	rawMessage := json.RawMessage(buffer.String())
 	jsonstr, err := json.MarshalIndent(rawMessage, "", "  ")
 	failOnErr("%v", err)
-	return string(jsonstr), headers
+	return string(jsonstr), headers, nil
 }

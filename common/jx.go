@@ -13,9 +13,11 @@ func IsXML(str string) bool {
 }
 
 // XMLRoot :
-func XMLRoot(xml string) (root string) {
+func XMLRoot(xml string) (string, error) {
 	xml = sTrim(xml, " \t\n\r")
-	FailOnErrWhen(!IsXML(xml), "%v", eg.XML_INVALID)
+	if !IsXML(xml) {
+		return "", eg.PARAM_INVALID_XML
+	}
 
 	start, end := 0, 0
 	for i := len(xml) - 1; i >= 0; i-- {
@@ -29,7 +31,7 @@ func XMLRoot(xml string) (root string) {
 			break
 		}
 	}
-	return xml[start:end]
+	return xml[start:end], nil
 
 	// check, flag (?s) let . includes "NewLine"
 	// re1 := regexp.MustCompile(fSf(`(?s)^<%s .+</%s>$`, root, root))

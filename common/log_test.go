@@ -29,7 +29,8 @@ func TestFailLog(t *testing.T) {
 }
 
 func TestExtractLog(t *testing.T) {
-	logs := ExtractLog("./error.log", "WARN", 10000, 36000, true)
+	logs, err := ExtractLog("./error.log", "WARN", 10000, 36000, true)
+	FailOnErr("%v", err)
 	for _, ln := range logs {
 		fPln(ln)
 	}

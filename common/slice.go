@@ -8,26 +8,28 @@ import (
 )
 
 // SliceAttach :
-func SliceAttach(s1, s2 interface{}, pos int) interface{} {
+func SliceAttach(s1, s2 interface{}, pos int) (interface{}, error) {
 	v1, v2 := reflect.ValueOf(s1), reflect.ValueOf(s2)
-	FailOnErrWhen(v1.Kind() != reflect.Slice, "%v: s1", eg.SLICE_INVALID)
-	FailOnErrWhen(v2.Kind() != reflect.Slice, "%v: s2", eg.SLICE_INVALID)
+	if v1.Kind() != reflect.Slice || v2.Kind() != reflect.Slice {
+		return nil, eg.PARAM_INVALID_SLICE
+	}
+
 	l1, l2 := v1.Len(), v2.Len()
 	if l1 > 0 && l2 > 0 {
 		if pos > l1 {
-			return s1
+			return s1, nil
 		}
 		lm := int(math.Max(float64(l1), float64(l2+pos)))
 		v := reflect.AppendSlice(v1.Slice(0, pos), v2)
-		return v.Slice(0, lm).Interface()
+		return v.Slice(0, lm).Interface(), nil
 	}
 	if l1 > 0 && l2 == 0 {
-		return s1
+		return s1, nil
 	}
 	if l1 == 0 && l2 > 0 {
-		return s2
+		return s2, nil
 	}
-	return s1
+	return s1, nil
 }
 
 // SliceCover :
@@ -38,7 +40,9 @@ func SliceCover(ss ...interface{}) interface{} {
 	attached := ss[0]
 	for i, s := range ss {
 		if i >= 1 {
-			attached = SliceAttach(attached, s, 0)
+			var err error
+			attached, err = SliceAttach(attached, s, 0)
+			FailOnErr("%v: ", err)
 		}
 	}
 	return attached

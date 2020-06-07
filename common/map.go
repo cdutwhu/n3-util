@@ -9,9 +9,11 @@ import (
 )
 
 // MapKeys : only apply to single type key
-func MapKeys(m interface{}) interface{} {
+func MapKeys(m interface{}) (interface{}, error) {
 	v := reflect.ValueOf(m)
-	FailOnErrWhen(v.Kind() != reflect.Map, "%v", eg.PARAM_INVALID_MAP)
+	if v.Kind() != reflect.Map {
+		return nil, eg.PARAM_INVALID_MAP
+	}
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := reflect.TypeOf(keys[0].Interface())
@@ -29,15 +31,18 @@ func MapKeys(m interface{}) interface{} {
 		case string:
 			sort.Strings(rst.([]string))
 		}
-		return rst
+		return rst, nil
 	}
-	return nil
+	return nil, nil
 }
 
 // MapKVs : only apply to single type key and single type value
-func MapKVs(m interface{}) (interface{}, interface{}) {
+func MapKVs(m interface{}) (interface{}, interface{}, error) {
 	v := reflect.ValueOf(m)
-	FailOnErrWhen(v.Kind() != reflect.Map, "%v", eg.PARAM_INVALID_MAP)
+	if v.Kind() != reflect.Map {
+		return nil, nil, eg.PARAM_INVALID_MAP
+	}
+
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := reflect.TypeOf(keys[0].Interface())
@@ -48,16 +53,17 @@ func MapKVs(m interface{}) (interface{}, interface{}) {
 			kRst.Index(i).Set(reflect.ValueOf(k.Interface()))
 			vRst.Index(i).Set(reflect.ValueOf(v.MapIndex(k).Interface()))
 		}
-		return kRst.Interface(), vRst.Interface()
+		return kRst.Interface(), vRst.Interface(), nil
 	}
-	return nil, nil
+	return nil, nil, nil
 }
 
 // MapsJoin : overwritted by the 2nd params
-func MapsJoin(m1, m2 interface{}) interface{} {
+func MapsJoin(m1, m2 interface{}) (interface{}, error) {
 	v1, v2 := reflect.ValueOf(m1), reflect.ValueOf(m2)
-	FailOnErrWhen(v1.Kind() != reflect.Map, "%v: m1", eg.MAP_INVALID)
-	FailOnErrWhen(v2.Kind() != reflect.Map, "%v: m2", eg.MAP_INVALID)
+	if v1.Kind() != reflect.Map || v2.Kind() != reflect.Map {
+		return nil, eg.PARAM_INVALID_MAP
+	}
 	keys1, keys2 := v1.MapKeys(), v2.MapKeys()
 	if len(keys1) > 0 && len(keys2) > 0 {
 		k1, k2 := keys1[0], keys2[0]
@@ -72,15 +78,15 @@ func MapsJoin(m1, m2 interface{}) interface{} {
 		for _, k := range keys2 {
 			aMap.SetMapIndex(reflect.ValueOf(k.Interface()), reflect.ValueOf(v2.MapIndex(k).Interface()))
 		}
-		return aMap.Interface()
+		return aMap.Interface(), nil
 	}
 	if len(keys1) > 0 && len(keys2) == 0 {
-		return m1
+		return m1, nil
 	}
 	if len(keys1) == 0 && len(keys2) > 0 {
-		return m2
+		return m2, nil
 	}
-	return m1
+	return m1, nil
 }
 
 // MapsMerge : overwritted by the later params
@@ -91,7 +97,9 @@ func MapsMerge(ms ...interface{}) interface{} {
 	mm := ms[0]
 	for i, m := range ms {
 		if i >= 1 {
-			mm = MapsJoin(mm, m)
+			var err error
+			mm, err = MapsJoin(mm, m)
+			FailOnErr("%v", err)
 		}
 	}
 	return mm
@@ -115,7 +123,9 @@ func MapPrint(m interface{}) {
 		}
 	}
 	for i, s := range ss {
-		if !XIn(i, rmIdxList) {
+		ok, err := XIn(i, rmIdxList)
+		FailOnErr("%v", err)
+		if !ok {
 			fPln(i, s)
 		}
 	}

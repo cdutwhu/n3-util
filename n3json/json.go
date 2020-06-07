@@ -168,8 +168,10 @@ func ScalarSelX(json string, attrGrp ...string) string {
 // ---------------------------------------------------- //
 
 // L1Attrs : Level-1 attributes
-func L1Attrs(json string) (attrs []string) {
-	failOnErrWhen(!isJSON(json), "%v: input param", eg.JSON_INVALID)
+func L1Attrs(json string) (attrs []string, err error) {
+	if !isJSON(json) {
+		return nil, eg.PARAM_INVALID_JSON
+	}
 	json = Fmt(json, 2)
 	r := regexp.MustCompile(`\n  "[^"]+": [\[\{"-1234567890ntf]`)
 	found := r.FindAllString(json, -1)
@@ -183,7 +185,8 @@ func L1Attrs(json string) (attrs []string) {
 func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 
 	if name == "" {
-		if hasAnySuffix(pkey, "-ID", "-id", "-Id", "_ID", "_id", "_Id") {
+		ok, err := hasAnySuffix(pkey, "-ID", "-id", "-Id", "_ID", "_id", "_Id")
+		if failOnErr("%v", err); ok {
 			name = pkey[:len(pkey)-3]
 		}
 	}
@@ -194,8 +197,11 @@ func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 	posGrp := [][]int{}
 
 	for i := 0; i < 2; i++ {
-		lsAttr := L1Attrs(inputs[i])
-		failOnErrWhen(!xin(keys[i], lsAttr), "%v: NO %s key attribute [%s]", eg.INTERNAL, keyTypes[i], keys[i])
+		lsAttr, err := L1Attrs(inputs[i])
+		failOnErr("%v", err)
+		ok, err := xin(keys[i], lsAttr)
+		failOnErr("%v", err)
+		failOnErrWhen(!ok, "%v: NO %s key attribute [%s]", eg.INTERNAL, keyTypes[i], keys[i])
 
 		r := regexp.MustCompile(fSf(`\n  "%s": .+[,]?\n`, keys[i]))
 		pSEs := r.FindAllStringIndex(inputs[i], 1)
@@ -206,7 +212,9 @@ func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 
 		if i == 0 {
 			posGrp = pSEs
-			failOnErrWhen(xin(name, lsAttr), "%v: [%s] already exists in left json", eg.INTERNAL, name)
+			ok, err := xin(name, lsAttr)
+			failOnErr("%v", err)
+			failOnErrWhen(ok, "%v: [%s] already exists in left json", eg.INTERNAL, name)
 		}
 	}
 
@@ -216,7 +224,9 @@ func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 			comma = ""
 		}
 		insert := fSf(`"%s": %s%s`, name, jsonR, comma)
-		return Fmt(replByPosGrp(jsonL, posGrp, []string{insert}), 2), true
+		str, err := replByPosGrp(jsonL, posGrp, []string{insert})
+		failOnErr("%v", err)
+		return Fmt(str, 2), true
 	}
 
 	return jsonL, false

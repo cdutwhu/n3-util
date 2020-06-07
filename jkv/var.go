@@ -35,6 +35,7 @@ var (
 	rmTailFromLastN = cmn.RmTailFromLastN
 	rmTailFromLast  = cmn.RmTailFromLast
 	rmHeadToLast    = cmn.RmHeadToLast
+	failOnErr       = cmn.FailOnErr
 	failOnErrWhen   = cmn.FailOnErrWhen
 	isJSON          = cmn.IsJSON
 	isNumeric       = cmn.IsNumeric

@@ -6,26 +6,30 @@ import (
 	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
-// HasAnyPrefix :
-func HasAnyPrefix(s string, lsPrefix ...string) bool {
-	FailOnErrWhen(len(lsPrefix) == 0, "%v: at least input one prefix", eg.PARAM_INVALID)
+// HasAnyPrefix : [lsPrefix] at least input one prefix
+func HasAnyPrefix(s string, lsPrefix ...string) (bool, error) {
+	if len(lsPrefix) == 0 {
+		return false, eg.PARAM_INVALID
+	}
 	for _, prefix := range lsPrefix {
 		if sHasPrefix(s, prefix) {
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
 
-// HasAnySuffix :
-func HasAnySuffix(s string, lsSuffix ...string) bool {
-	FailOnErrWhen(len(lsSuffix) == 0, "%v: at least input one suffix", eg.PARAM_INVALID)
+// HasAnySuffix : [lsSuffix] at least input one suffix
+func HasAnySuffix(s string, lsSuffix ...string) (bool, error) {
+	if len(lsSuffix) == 0 {
+		return false, eg.PARAM_INVALID
+	}
 	for _, suffix := range lsSuffix {
 		if sHasSuffix(s, suffix) {
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
 
 // RmTailFromLast :
@@ -88,16 +92,14 @@ func RmHeadToFirst(s, mark string) string {
 	return s
 }
 
-// ReplByPosGrp :
-func ReplByPosGrp(s string, posGrp [][]int, newStrGrp []string) (ret string) {
+// ReplByPosGrp : [posGrp]-[newStrGrp] same length OR newStrGrp can only have 1 element for filling into all posGrp
+func ReplByPosGrp(s string, posGrp [][]int, newStrGrp []string) (string, error) {
 	if len(posGrp) == 0 {
-		return s
+		return s, nil
 	}
-
-	FailOnErrWhen(len(posGrp) != len(newStrGrp) && len(newStrGrp) != 1,
-		"%v: [posGrp]-[newStrGrp] OR %v: newStrGrp can only have 1 element for filling into all posGrp",
-		eg.SLICES_DIF_LEN,
-		eg.SLICE_INCORRECT_COUNT)
+	if len(posGrp) != len(newStrGrp) && len(newStrGrp) != 1 {
+		return "", eg.SLICE_INCORRECT_COUNT
+	}
 
 	wrapper := make([]struct {
 		posPair []int
@@ -132,16 +134,17 @@ func ReplByPosGrp(s string, posGrp [][]int, newStrGrp []string) (ret string) {
 	keepStrGrp := make([]string, len(complement))
 	for i := 0; i < len(keepStrGrp); i++ {
 		start, end := complement[i][0], complement[i][1]
-		FailOnErrWhen(end < start, "%v: [end] must be greater than [start]", eg.VAR_INVALID)
+		FailOnErrWhen(end < start, "%v: [end] must greater than [start]", eg.VAR_INVALID)
 		keepStrGrp[i] = s[start:end]
 	}
 
+	ret := ""
 	for i, keep := range keepStrGrp[:len(keepStrGrp)-1] {
 		ret += (keep + wrapper[i].newStr)
 	}
 	ret += keepStrGrp[len(keepStrGrp)-1]
 
-	return
+	return ret, nil
 }
 
 // ProjectV :
