@@ -32,27 +32,38 @@ func Env2Struct(key string, s interface{}) (interface{}, error) {
 	return s, nil
 }
 
-// Struct2Map : each field name MUST be exportable
+// Struct2Map : each field name MUST be Exportable
 func Struct2Map(s interface{}) (map[string]interface{}, error) {
 	stVal := reflect.ValueOf(s)
-	if stVal.Kind() != reflect.Struct {
-		return nil, eg.PARAM_INVALID_STRUCT
+	if stVal.Kind() != reflect.Ptr || stVal.Elem().Kind() != reflect.Struct {
+		return nil, eg.PARAM_INVALID_STRUCT_PTR
 	}
 	ret := make(map[string]interface{})
-	val := reflect.Indirect(stVal)
-	for i := 0; i < stVal.NumField(); i++ {
-		name := val.Type().Field(i).Name
-		field := stVal.Field(i).Interface()
-		ret[name] = field
+	stValElem := stVal.Elem()
+	valTyp := stValElem.Type()
+	for i := 0; i < stValElem.NumField(); i++ {
+		if name, field := valTyp.Field(i).Name, stValElem.Field(i); field.CanInterface() {
+			ret[name] = field.Interface()
+
+			// --------------- //
+			if field.Type().Kind() == reflect.Func {
+				fPln("func variable: " + name)
+			}
+			// --------------- //
+		}
 	}
 	return ret, nil
 }
 
 // StructFields :
-func StructFields(s interface{}) []string {
+func StructFields(s interface{}) ([]string, error) {
+	stVal := reflect.ValueOf(s)
+	if stVal.Kind() != reflect.Ptr || stVal.Elem().Kind() != reflect.Struct {
+		return nil, eg.PARAM_INVALID_STRUCT_PTR
+	}
 	m, err := Struct2Map(s)
 	FailOnErr("%v", err)
-	keys, err := MapKeys(m)
+	IKeys, err := MapKeys(m)
 	FailOnErr("%v", err)
-	return keys.([]string)
+	return IKeys.([]string), nil
 }

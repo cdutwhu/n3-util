@@ -36,11 +36,12 @@ func TestEnv2Struct(t *testing.T) {
 }
 
 func TestStruct2Map(t *testing.T) {
-	s := struct {
+	s := &struct {
 		A string
 		B int
 		C bool
-	}{A: "aa", B: 22, C: false}
+		F func(string) string
+	}{A: "aa", B: 22, C: false, F: func(str string) string { return str }}
 	m, err := Struct2Map(s)
 	FailOnErr("%v", err)
 	fPln(m)
@@ -50,28 +51,30 @@ func TestStruct2Map(t *testing.T) {
 	// fPln(ks)
 	// fPln(vs)
 
-	fPln(" ------------------- ")
+	fPln("--------------------")
 
-	s1 := struct {
-		A1 string
-		B1 string
-		C1 string
-	}{A1: "aa", B1: "22", C1: "false"}
-	m, err = Struct2Map(s1)
-	FailOnErr("%v", err)
-	fPln(m)
+	// s1 := &struct {
+	// 	A1 string
+	// 	B1 string
+	// 	C1 string
+	// }{A1: "aa", B1: "22", C1: "false"}
+	// m, err = Struct2Map(s1)
+	// FailOnErr("%v", err)
+	// fPln(m)
 
-	ks, vs, err := MapKVs(m)
-	FailOnErr("%v", err)
-	fPln(ks, vs)
+	// ks, vs, err := MapKVs(m)
+	// FailOnErr("%v", err)
+	// fPln(ks, vs)
 }
 
 func TestStructFields(t *testing.T) {
-	s := struct {
-		A string
-		B int
-		C bool
-	}{A: "aa", B: 22, C: false}
-	flds := StructFields(s)
+	s := &struct {
+		A  string
+		B  int
+		c  bool
+		Fn func(string) string
+	}{A: "aa", B: 22, c: false, Fn: func(str string) string { return str }}
+	flds, err := StructFields(s)
+	FailOnErr("%v", err)
 	fPln(flds)
 }

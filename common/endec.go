@@ -12,9 +12,9 @@ import (
 )
 
 var (
-	RExpMD5    = regexp.MustCompile("\"[A-Fa-f0-9]{32}\"")
-	RExpSHA1   = regexp.MustCompile("\"[A-Fa-f0-9]{40}\"")
-	RExpSHA256 = regexp.MustCompile("\"[A-Fa-f0-9]{64}\"")
+	RepMD5    = regexp.MustCompile("\"[A-Fa-f0-9]{32}\"")
+	RepSHA1   = regexp.MustCompile("\"[A-Fa-f0-9]{40}\"")
+	RepSHA256 = regexp.MustCompile("\"[A-Fa-f0-9]{64}\"")
 )
 
 // SHA1Str :

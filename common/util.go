@@ -62,7 +62,7 @@ func MatchAssign(chkCasesValues ...interface{}) (interface{}, error) {
 	return chkCasesValues[l-1], nil
 }
 
-// TryInvoke :
+// TryInvoke : func Name must be Exportable
 func TryInvoke(st interface{}, name string, args ...interface{}) (rets []interface{}, ok bool, err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -71,8 +71,7 @@ func TryInvoke(st interface{}, name string, args ...interface{}) (rets []interfa
 	}()
 
 	stVal := reflect.ValueOf(st)
-	if stVal.Kind() != reflect.Ptr ||
-		stVal.Elem().Kind() != reflect.Struct {
+	if stVal.Kind() != reflect.Ptr || stVal.Elem().Kind() != reflect.Struct {
 		return nil, false, eg.PARAM_INVALID_STRUCT_PTR
 	}
 
@@ -80,13 +79,31 @@ func TryInvoke(st interface{}, name string, args ...interface{}) (rets []interfa
 	for i := range args {
 		inputs[i] = reflect.ValueOf(args[i])
 	}
-	if _, ok := reflect.TypeOf(st).MethodByName(name); ok {
+	if _, ok := stVal.Type().MethodByName(name); ok {
 		for _, ret := range stVal.MethodByName(name).Call(inputs) {
 			rets = append(rets, ret.Interface())
 		}
 		return rets, true, nil
 	}
 	return rets, false, nil
+}
+
+// TryInvokeWithMW : func Name must be Exportable
+func TryInvokeWithMW(st interface{}, name string, args ...interface{}) (rets []interface{}, ok bool, err error) {
+	m, e := Struct2Map(st)
+	FailOnErr("%v", e)
+	for k, v := range m {
+		if k == "MiddleWare" || k == "MW" || k == "middleware" || k == "MIDDLEWARE" {
+			if mMW, ok := v.(map[string][]interface{}); ok {
+				for k, v := range mMW {
+					if _, _, err = TryInvoke(st, k, v...); err != nil {
+						return nil, false, err
+					}
+				}
+			}
+		}
+	}
+	return TryInvoke(st, name, args...)
 }
 
 // InvRst :

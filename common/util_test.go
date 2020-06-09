@@ -10,33 +10,70 @@ func TestColor(t *testing.T) {
 	fPln("\033[34mBlue")
 }
 
-type student struct {
-	name  string
-	age   int
+// ------------------------- //
+
+// Iperson :
+type Iperson interface {
+	ShowName(s string) string
+}
+
+type Person struct {
+	Name string
+	Age  int
+	Fn   func()
+}
+
+func (p *Person) ShowName(str string) string {
+	return str + " P " + p.Name
+}
+
+func (p *Person) ShowAge(added int) int {
+	return p.Age + added
+}
+
+type Student struct {
+	Person
 	score int
+	MW    map[string][]interface{}
 }
 
-func (s *student) ShowName(str string) string {
-	return str + " " + s.name
+func (s *Student) ShowName(str string) string {
+	return str + " S " + s.Name
 }
 
-func (s *student) ShowAge(added int) int {
-	return s.age + added
+func (s *Student) ShowScore() {
+	fPln(s.score)
+}
+
+func (s *Student) AddScore(added int) {
+	fPln(s.score + added)
+}
+
+// Show :
+func Show(ip Iperson) {
+	fPln(ip.ShowName("hello"))
 }
 
 func TestTryInvoke(t *testing.T) {
-	s := student{name: "HAOHAIDONG", age: 22}
-	results, ok, err := TryInvoke(&s, "ShowName", "1")
+	s := &Student{
+		Person: Person{
+			Name: "HAOHAIDONG",
+			Age:  22,
+		},
+		score: 100,
+		MW: map[string][]interface{}{
+			"AddScore":  []interface{}{500},
+			"ShowScore": []interface{}{},
+		},
+	}
+
+	Show(s)
+
+	results, ok, err := TryInvokeWithMW(s, "ShowName", "Great")
 	if FailOnErr("%v", err); ok {
 		Iname, err := InvRst(results, 0)
 		FailOnErr("%v", err)
 		name := Iname.(string)
 		fPln(name)
 	}
-
-	// if results, ok := TryInvoke(&s, "ShowAge"); ok {
-	// 	age := InvRst(results, 0).(int)
-	// 	fPln(age)
-	// }
-	// TryInvoke(&s, "ShowScore")
 }

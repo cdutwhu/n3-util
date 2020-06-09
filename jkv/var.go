@@ -79,7 +79,7 @@ var (
 		return "\"" + cmn.SHA1Str(str) + "\""
 	}
 	// hash     = cmn.SHA1Str
-	hashRExp = cmn.RExpSHA1 // compiled with ""
+	hashRep = cmn.RepSHA1 // compiled with ""
 )
 
 var (

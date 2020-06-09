@@ -441,7 +441,7 @@ func (jkv *JKV) aoID2oIDlist(aoID string) string {
 // oIDlistStr2oIDlist : string: "[ ****, ****, **** ]" => [ ****, ****, **** ]
 func oIDlistStr2oIDlist(aoIDStr string) (oidlist []string, err error) {
 	nComma := sCount(aoIDStr, ",")
-	oidlist = hashRExp.FindAllString(aoIDStr, -1)
+	oidlist = hashRep.FindAllString(aoIDStr, -1)
 	if aoIDStr[0] != '[' || aoIDStr[len(aoIDStr)-1] != ']' || (oidlist != nil && len(oidlist) != nComma+1) {
 		return nil, eg.PARAM_INVALID_FMT
 	}
@@ -541,7 +541,7 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 		iExp++
 
 		// [object array whole oid] => [ oid, oid, oid ... ]
-		for _, oid := range hashRExp.FindAllString(frame, -1) {
+		for _, oid := range hashRep.FindAllString(frame, -1) {
 			if jkv.mOIDType[oid].IsObjArr() {
 				frame = sReplaceAll(frame, oid, jkv.mOIDObj[oid])
 			}
@@ -550,7 +550,7 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 			return frame, iExp // DEBUG testing
 		}
 
-		if oIDlist := hashRExp.FindAllString(frame, -1); oIDlist != nil {
+		if oIDlist := hashRep.FindAllString(frame, -1); oIDlist != nil {
 			for _, oid := range oIDlist {
 				ss := sSplit(jkv.mOIDiPath[oid], pLinker)
 				name := sSplit(ss[len(ss)-1], "@")[0]
@@ -559,7 +559,7 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 				frame = sReplaceAll(frame, oid, objMasked)
 
 				// [object array whole oid] => [ oid, oid, oid ... ]
-				for _, oid := range hashRExp.FindAllString(obj, -1) {
+				for _, oid := range hashRep.FindAllString(obj, -1) {
 					if jkv.mOIDType[oid].IsObjArr() {
 						frame = sReplaceAll(frame, oid, jkv.mOIDObj[oid])
 					}
@@ -648,7 +648,7 @@ func Mask(name, obj string, mask *JKV) string {
 			// fPln(valData)
 
 			// For Mask-JKV, only use end-leaf Mask Value
-			if hashRExp.FindStringIndex(valMask) == nil {
+			if hashRep.FindStringIndex(valMask) == nil {
 				switch valMask {
 				case `"[]"`:
 					if valData[0] != '[' { // only deal with one element to one element-array
