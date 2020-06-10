@@ -92,12 +92,28 @@ func TryInvoke(st interface{}, name string, args ...interface{}) (rets []interfa
 func TryInvokeWithMW(st interface{}, name string, args ...interface{}) (rets []interface{}, ok bool, err error) {
 	m, e := Struct2Map(st)
 	FailOnErr("%v", e)
+
 	for k, v := range m {
-		if k == "MiddleWare" || k == "MW" || k == "middleware" || k == "MIDDLEWARE" {
-			if mMW, ok := v.(map[string][]interface{}); ok {
-				for k, v := range mMW {
-					if _, _, err = TryInvoke(st, k, v...); err != nil {
-						return nil, false, err
+		// fPln(k, v)
+		if k == "MW" || k == "MiddleWare" || k == "MIDDLEWARE" {
+			if mMW, ok := v.(map[string]map[string][]interface{}); ok {
+			NEXTFN:
+				for fn, mCallerParams := range mMW {
+					for _, caller := range []string{name, "$@"} {
+						if params, ok := mCallerParams[caller]; ok {
+							// "$1" -> args[0] etc...
+							for i, param := range params {
+								if paramStr, ok := param.(string); ok && repParam.MatchString(paramStr) {
+									num, err := scParseUint(paramStr[1:], 10, 64)
+									FailOnErr("%v", err)
+									FailOnErrWhen(int(num) > len(args), "MiddleWare: %v", eg.PARAM_INVALID_INDEX)
+									params[i] = args[num-1]
+								}
+							}
+							_, _, err = TryInvoke(st, fn, params...)
+							FailOnErr("MiddleWare: %v", err)
+							continue NEXTFN
+						}
 					}
 				}
 			}

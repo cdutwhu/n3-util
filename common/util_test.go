@@ -34,14 +34,15 @@ func (p *Person) ShowAge(added int) int {
 type Student struct {
 	Person
 	score int
-	MW    map[string][]interface{}
+	MW    map[string]map[string][]interface{}
 }
 
 func (s *Student) ShowName(str string) string {
 	return str + " S " + s.Name
 }
 
-func (s *Student) ShowScore() {
+func (s *Student) ShowScore(str string) {
+	fPt(str + "   ")
 	fPln(s.score)
 }
 
@@ -61,9 +62,15 @@ func TestTryInvoke(t *testing.T) {
 			Age:  22,
 		},
 		score: 100,
-		MW: map[string][]interface{}{
-			"AddScore":  []interface{}{500},
-			"ShowScore": []interface{}{},
+		MW: map[string]map[string][]interface{}{
+			"ShowScore": {
+				"$@":       {"$1"},
+				"ShowName": {"$1"},
+			},
+			// "AddScore": {
+			// 	"$@":       {1000},
+			// 	"ShowName": {500},
+			// },
 		},
 	}
 

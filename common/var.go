@@ -2,6 +2,8 @@ package common
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -24,4 +26,9 @@ var (
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
 	sContains   = strings.Contains
+	scParseUint = strconv.ParseUint
+)
+
+var (
+	repParam = regexp.MustCompile(`^\$[1-9][0-9]*$`)
 )
