@@ -6,6 +6,21 @@ import (
 	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
+type fighter struct {
+	name string
+}
+
+func (p *fighter) showName() {
+	fPln(p.name + " @ " + Caller(false))
+}
+
+func TestFuncTrack(t *testing.T) {
+	fPln(Caller(true))
+	fPln(Caller(false))
+	p := &fighter{name: "HAO HAIDONG"}
+	p.showName()
+}
+
 func TestFailLog(t *testing.T) {
 	logfile := "./error.log"
 	SetLog(logfile)

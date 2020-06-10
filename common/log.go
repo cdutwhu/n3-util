@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"time"
@@ -94,10 +95,22 @@ func ExtractLog(logFile, logType string, tmBackwards, tmOffset int, desc bool) (
 	return logs, nil
 }
 
+// Caller :
+func Caller(fullpath bool) string {
+	pc := make([]uintptr, 15)
+	n := runtime.Callers(2, pc)
+	frames := runtime.CallersFrames(pc[:n])
+	frame, _ := frames.Next()
+	if fullpath {
+		return frame.Function
+	}
+	return RmHeadToLast(frame.Function, ".")
+}
+
 // FuncTrack : full path of func name
-// func FuncTrack(i interface{}) string {
-// 	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
-// }
+func FuncTrack(i interface{}) string {
+	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+}
 
 // trackCaller :
 func trackCaller() string {
