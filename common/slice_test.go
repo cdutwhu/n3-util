@@ -30,3 +30,14 @@ func TestSetUnion(t *testing.T) {
 	arr2 := []string{"C", "d", "A"}
 	fPln(SetUnion(arr1, arr2).([]string))
 }
+
+func TestToGeneralSlc(t *testing.T) {
+	fn := func(arr []interface{}) {
+		for _, e := range arr {
+			fPln(e)
+		}
+	}
+	slc1 := []string{"a", "b", "C"}
+	fn(ToGeneralSlc(slc1))
+	// fn(slc1)
+}

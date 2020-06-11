@@ -134,3 +134,16 @@ NEXT:
 	}
 	return set.Interface()
 }
+
+// ToGeneralSlc :
+func ToGeneralSlc(slc interface{}) (gslc []interface{}) {
+	v := reflect.ValueOf(slc)
+	k := v.Type().Kind()
+	if k != reflect.Slice && k != reflect.Array {
+		FailOnErr("%v: only can be [slice, array]", eg.PARAM_INVALID)
+	}
+	for i := 0; i < v.Len(); i++ {
+		gslc = append(gslc, v.Index(i).Interface())
+	}
+	return
+}
