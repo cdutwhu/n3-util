@@ -88,6 +88,14 @@ func TryInvoke(st interface{}, name string, args ...interface{}) (rets []interfa
 	return rets, false, nil
 }
 
+// MustInvokeWithMW :
+func MustInvokeWithMW(st interface{}, name string, args ...interface{}) []interface{} {
+	rets, ok, err := TryInvokeWithMW(st, name, args...)
+	FailOnErr("%v: [%s]", err, name)
+	FailOnErrWhen(!ok, "%v: No [%s]", eg.INTERNAL, name)
+	return rets
+}
+
 // TryInvokeWithMW : func Name must be Exportable
 func TryInvokeWithMW(st interface{}, name string, args ...interface{}) (rets []interface{}, ok bool, err error) {
 	m, e := Struct2Map(st)

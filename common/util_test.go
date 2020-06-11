@@ -76,11 +76,13 @@ func TestTryInvoke(t *testing.T) {
 
 	Show(s)
 
-	results, ok, err := TryInvokeWithMW(s, "ShowName", "Great")
-	if FailOnErr("%v", err); ok {
-		Iname, err := InvRst(results, 0)
-		FailOnErr("%v", err)
-		name := Iname.(string)
-		fPln(name)
-	}
+	fPln(MustInvokeWithMW(s, "ShowName", "Great", "A"))
+
+	// results, ok, err := TryInvokeWithMW(s, "ShowName", "Great")
+	// if FailOnErr("%v", err); ok {
+	// 	Iname, err := InvRst(results, 0)
+	// 	FailOnErr("%v", err)
+	// 	name := Iname.(string)
+	// 	fPln(name)
+	// }
 }
