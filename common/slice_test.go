@@ -15,6 +15,7 @@ func TestIsSetCover(t *testing.T) {
 }
 
 func TestToSet(t *testing.T) {
+	fPln(ToSet(nil))
 	fPln(ToSet([]int{1, 3, 2, 1, 3, 5}))
 	fPln(ToSet([]string{"1", "2", "3", "4", "1", "3", "2"}))
 }

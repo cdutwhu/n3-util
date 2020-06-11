@@ -75,6 +75,10 @@ NEXT:
 
 // SetIntersect :
 func SetIntersect(setA, setB interface{}) interface{} {
+	if setA == nil || setB == nil {
+		return nil
+	}
+
 	tA, tB := reflect.TypeOf(setA), reflect.TypeOf(setB)
 	if tA != tB || (tA.Kind() != reflect.Slice && tA.Kind() != reflect.Array) {
 		FailOnErr("%v: only can be [slice, array]", eg.PARAM_INVALID)
@@ -96,6 +100,15 @@ NEXT:
 
 // SetUnion :
 func SetUnion(setA, setB interface{}) interface{} {
+	switch {
+	case setA != nil && setB == nil:
+		return setA
+	case setA == nil && setB != nil:
+		return setB
+	case setA == nil && setB == nil:
+		return nil
+	}
+
 	tA, tB := reflect.TypeOf(setA), reflect.TypeOf(setB)
 	if tA != tB || (tA.Kind() != reflect.Slice && tA.Kind() != reflect.Array) {
 		FailOnErr("%v: only can be [slice, array]", eg.PARAM_INVALID)
@@ -109,6 +122,10 @@ func SetUnion(setA, setB interface{}) interface{} {
 
 // ToSet : convert slice / array to set. i.e. remove duplicated items
 func ToSet(slc interface{}) interface{} {
+	if slc == nil {
+		return nil
+	}
+
 	t := reflect.TypeOf(slc)
 	if t.Kind() != reflect.Slice && t.Kind() != reflect.Array {
 		FailOnErr("%v: only can be [slice, array]", eg.PARAM_INVALID)
@@ -137,6 +154,10 @@ NEXT:
 
 // ToGeneralSlc :
 func ToGeneralSlc(slc interface{}) (gslc []interface{}) {
+	if slc == nil {
+		return nil
+	}
+
 	v := reflect.ValueOf(slc)
 	k := v.Type().Kind()
 	if k != reflect.Slice && k != reflect.Array {
