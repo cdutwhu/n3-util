@@ -14,7 +14,7 @@ func TestColor(t *testing.T) {
 
 // Iperson :
 type Iperson interface {
-	ShowName(s string) string
+	ShowName(s1, s2 string) string
 }
 
 type Person struct {
@@ -23,8 +23,8 @@ type Person struct {
 	Fn   func()
 }
 
-func (p *Person) ShowName(str string) string {
-	return str + " P " + p.Name
+func (p *Person) ShowName(str1, str2 string) string {
+	return str1 + " P " + str2 + " P " + p.Name
 }
 
 func (p *Person) ShowAge(added int) int {
@@ -37,9 +37,9 @@ type Student struct {
 	MW    map[string]map[string][]interface{}
 }
 
-func (s *Student) ShowName(str string) string {
-	return str + " S " + s.Name
-}
+// func (s *Student) ShowName(str1, str2 string) string {
+// 	return str1 + " S " + str2 + " S " + s.Name
+// }
 
 func (s *Student) ShowScore(str string) {
 	fPt(str + "   ")
@@ -52,7 +52,7 @@ func (s *Student) AddScore(added int) {
 
 // Show :
 func Show(ip Iperson) {
-	fPln(ip.ShowName("hello"))
+	fPln(ip.ShowName("hello", "world"))
 }
 
 func TestTryInvoke(t *testing.T) {
@@ -64,8 +64,8 @@ func TestTryInvoke(t *testing.T) {
 		score: 100,
 		MW: map[string]map[string][]interface{}{
 			"ShowScore": {
-				"$@":       {"$1"},
-				"ShowName": {"$1"},
+				"*":        {"$1"},
+				"ShowName": {"$@"},
 			},
 			// "AddScore": {
 			// 	"$@":       {1000},
@@ -76,7 +76,7 @@ func TestTryInvoke(t *testing.T) {
 
 	Show(s)
 
-	fPln(MustInvokeWithMW(s, "ShowName", "Great", "A"))
+	fPln(MustInvokeWithMW(s, "ShowName", "Great", "haohaidong"))
 
 	// results, ok, err := TryInvokeWithMW(s, "ShowName", "Great")
 	// if FailOnErr("%v", err); ok {

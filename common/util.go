@@ -107,15 +107,27 @@ func TryInvokeWithMW(st interface{}, name string, args ...interface{}) (rets []i
 			if mMW, ok := v.(map[string]map[string][]interface{}); ok {
 			NEXTFN:
 				for fn, mCallerParams := range mMW {
-					for _, caller := range []string{name, "$@"} {
+					for _, caller := range []string{name, "*"} {
 						if params, ok := mCallerParams[caller]; ok {
-							// "$1" -> args[0] etc...
+							// "$1" -> args[0] etc... ; "$@" -> args string
 							for i, param := range params {
-								if paramStr, ok := param.(string); ok && repParam.MatchString(paramStr) {
-									num, err := scParseUint(paramStr[1:], 10, 64)
-									FailOnErr("%v", err)
-									FailOnErrWhen(int(num) > len(args), "MiddleWare: %v", eg.PARAM_INVALID_INDEX)
-									params[i] = args[num-1]
+								if paramStr, ok := param.(string); ok {
+									if repParam.MatchString(paramStr) {
+										num, err := scParseUint(paramStr[1:], 10, 64)
+										FailOnErr("%v", err)
+										FailOnErrWhen(int(num) > len(args) || int(num) < 0, "MiddleWare: %v", eg.PARAM_INVALID_INDEX)
+										if num == 0 {
+											params[i] = name
+										} else {
+											params[i] = args[num-1]
+										}
+									} else if paramStr == "$@" {
+										argStrs := make([]string, len(args))
+										for i, arg := range args {
+											argStrs[i] = fSf("%v", arg)
+										}
+										params[i] = sJoin(argStrs, " ")
+									}
 								}
 							}
 							_, _, err = TryInvoke(st, fn, params...)

@@ -30,5 +30,5 @@ var (
 )
 
 var (
-	repParam = regexp.MustCompile(`^\$[1-9][0-9]*$`)
+	repParam = regexp.MustCompile(`^\$[0-9]+$`)
 )
