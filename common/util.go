@@ -142,8 +142,8 @@ func TryInvokeWithMW(st interface{}, name string, args ...interface{}) (rets []i
 	return TryInvoke(st, name, args...)
 }
 
-// InvRst :
-func InvRst(rets interface{}, idx int) (ret interface{}, err error) {
+// InvokeRst :
+func InvokeRst(rets interface{}, idx int) (ret interface{}, err error) {
 	slc, ok := rets.([]interface{})
 	if !ok {
 		return nil, eg.PARAM_INVALID

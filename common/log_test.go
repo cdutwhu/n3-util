@@ -1,7 +1,9 @@
 package common
 
 import (
+	"io/ioutil"
 	"testing"
+	"time"
 
 	eg "github.com/cdutwhu/n3-util/n3errs"
 )
@@ -43,12 +45,70 @@ func TestFailLog(t *testing.T) {
 	FailOnErrWhen(1 == 0, "%v", eg.FOR_TEST)
 }
 
-func TestExtractLog(t *testing.T) {
-	logs, err := ExtractLog("./error.log", "WARN", 10000, 36000, true)
+func TimeIn(t time.Time, name string) (time.Time, error) {
+	loc, err := time.LoadLocation(name)
+	if err == nil {
+		t = t.In(loc)
+	}
+	return t, err
+}
+
+func TestFetchLog(t *testing.T) {
+
+	for _, name := range []string{
+		"",
+		"Local",
+		"Asia/Shanghai",
+		"America/New_York",
+		"Australia/Melbourne",
+	} {
+		t, err := TimeIn(time.Now(), name)
+		if err == nil {
+			fPln(t.Location(), t.Format("15:04"))
+		} else {
+			fPln(name, "<time unknown>")
+		}
+	}
+
+	fPln(" --------------------------------------- ")
+
+	now := time.Now()
+	zone, offset := now.Zone()
+	fPln(zone, offset)
+
+	fPln(" --------------------------------------- ")
+
+	logs, err := FetchLog("./error.log", "WARN", 10000, 36000, true)
 	FailOnErr("%v", err)
 	for _, ln := range logs {
 		fPln(ln)
 	}
-	ExtractLog2File("./error.log", "FAIL", 10000, 36000, true)
-	ExtractLog2CSV("./error.log", "FAIL", 10000, 36000, true)
+	FetchLog2File("./error.log", "FAIL", 10000, 36000, true)
+	FetchLog2CSV("./error.log", "FAIL", 10000, 36000, true)
+}
+
+func ReadFile(path string) {
+	files, _ := ioutil.ReadDir(path)
+	for _, f := range files {
+		if f.Name() != sToUpper(f.Name()[:1])+f.Name()[1:] {
+			continue
+		}
+		if f.IsDir() {
+			ReadFile(path + "/" + f.Name())
+		} else {
+			fPln((path + "/" + f.Name())[1:])
+		}
+	}
+}
+
+func TestListAllLoc(t *testing.T) {
+
+	for _, zoneDir := range []string{
+		// Update path according to your OS
+		"/usr/share/zoneinfo/",
+		"/usr/share/lib/zoneinfo/",
+		"/usr/lib/locale/TZ/",
+	} {
+		ReadFile(zoneDir)
+	}
 }

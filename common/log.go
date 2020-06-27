@@ -21,9 +21,9 @@ var (
 	mPathFile map[string]*os.File = make(map[string]*os.File)
 )
 
-// ExtractLog2CSV :
-func ExtractLog2CSV(logFile, logType string, tmBackwards, tmOffset int, desc bool) (string, error) {
-	logs, err := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
+// FetchLog2CSV :
+func FetchLog2CSV(logFile, logType string, tmBackwards, tmOffset int, desc bool) (string, error) {
+	logs, err := FetchLog(logFile, logType, tmBackwards, tmOffset, desc)
 	if err != nil {
 		return "", err
 	}
@@ -37,9 +37,9 @@ func ExtractLog2CSV(logFile, logType string, tmBackwards, tmOffset int, desc boo
 	return file, nil
 }
 
-// ExtractLog2File :
-func ExtractLog2File(logFile, logType string, tmBackwards, tmOffset int, desc bool) (string, error) {
-	logs, err := ExtractLog(logFile, logType, tmBackwards, tmOffset, desc)
+// FetchLog2File :
+func FetchLog2File(logFile, logType string, tmBackwards, tmOffset int, desc bool) (string, error) {
+	logs, err := FetchLog(logFile, logType, tmBackwards, tmOffset, desc)
 	if err != nil {
 		return "", err
 	}
@@ -52,8 +52,8 @@ func ExtractLog2File(logFile, logType string, tmBackwards, tmOffset int, desc bo
 	return file, nil
 }
 
-// ExtractLog : logType [INFO, WARN, FAIL]; tmBackwards second unit
-func ExtractLog(logFile, logType string, tmBackwards, tmOffset int, desc bool) ([]string, error) {
+// FetchLog : logType [INFO, WARN, FAIL]; tmBackwards second unit
+func FetchLog(logFile, logType string, tmBackwards, tmOffset int, desc bool) ([]string, error) {
 	logTypes := []string{"INFO", "WARN", "FAIL"}
 	if ok, err := XIn(logType, logTypes); err != nil || !ok {
 		return nil, eg.PARAM_NOT_SUPPORTED

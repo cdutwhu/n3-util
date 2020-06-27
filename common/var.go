@@ -26,6 +26,7 @@ var (
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
 	sContains   = strings.Contains
+	sToUpper    = strings.ToUpper
 	scParseUint = strconv.ParseUint
 )
 
