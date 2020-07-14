@@ -64,10 +64,10 @@ func (jkv *JKV) scan(depth int) (int, map[int][]int, map[int]int, error) {
 		NEXT:
 			for i := 0; i < len(s); i++ {
 				// modify levels for array-object
-				if ok, _ := hasAnyPrefix(s[i:], sTAOStart...); ok {
+				if hasAnyPrefix(s[i:], sTAOStart...) {
 					offset++
 				}
-				if ok, _ := hasAnyPrefix(s[i:], sTAOEnd...); ok {
+				if hasAnyPrefix(s[i:], sTAOEnd...) {
 					offset--
 				}
 
@@ -113,9 +113,7 @@ func (jkv *JKV) scan(depth int) (int, map[int][]int, map[int]int, error) {
 // fields :
 func (jkv *JKV) fields(mLvlFPos map[int][]int) []map[int]string {
 	s := jkv.JSON
-	Ikeys, err := mapKeys(mLvlFPos)
-	failOnErr("%v", err)
-	keys := Ikeys.([]int)
+	keys := mapKeys(mLvlFPos).([]int)
 
 	nLVL := keys[len(keys)-1]
 	mFPosFNameList := []map[int]string{{}} // L0 is empty
@@ -136,14 +134,8 @@ func (jkv *JKV) fields(mLvlFPos map[int][]int) []map[int]string {
 // pl2 -> pl1. pl1, pl2 are sorted.
 func merge2fields(mFPosFName1, mFPosFName2 map[int]string) map[int]string {
 	pl2Parent, pl2Path, iPos := make(map[int]string), make(map[int]string), 0
-
-	Ipl1, err := mapKeys(mFPosFName1)
-	failOnErr("%v", err)
-	pl1 := Ipl1.([]int)
-
-	Ipl2, err := mapKeys(mFPosFName2)
-	failOnErr("%v", err)
-	pl2 := Ipl2.([]int)
+	pl1 := mapKeys(mFPosFName1).([]int)
+	pl2 := mapKeys(mFPosFName2).([]int)
 
 	for _, p2 := range pl2 {
 		for i := iPos; i < len(pl1)-1; i++ {
@@ -159,9 +151,7 @@ func merge2fields(mFPosFName1, mFPosFName2 map[int]string) map[int]string {
 		pl2Path[p2] = pl2Parent[p2] + pLinker + mFPosFName2[p2]
 	}
 
-	Imap, err := mapsJoin(mFPosFName1, pl2Path)
-	failOnErr("%v", err)
-	return Imap.(map[int]string)
+	return mapMerge(mFPosFName1, pl2Path).(map[int]string)
 }
 
 // rely on "fields outcome"
@@ -174,9 +164,7 @@ func fPaths(mFPosFNameList ...map[int]string) map[int]string {
 			continue
 		}
 
-		IposList, err := mapKeys(mFPosFName)
-		failOnErr("%v", err)
-		posList := IposList.([]int)
+		posList := mapKeys(mFPosFName).([]int)
 		posLists[i] = posList
 	}
 	mFPosFNameMerge := mFPosFNameList[1]
@@ -215,7 +203,7 @@ func fValuesOnObjList(strObjlist string) (objlist []string) {
 func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 	getV := func(str string, s int) string {
 		for i := s + 1; i < len(str); i++ {
-			if ok, _ := hasAnyPrefix(str[i:], Trait1EndV, Trait2EndV); ok {
+			if hasAnyPrefix(str[i:], Trait1EndV, Trait2EndV) {
 				return str[s:i]
 			}
 		}
@@ -230,8 +218,7 @@ func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 			case '}':
 				nRCB++
 			}
-			ok, err := hasAnyPrefix(str[i:], "},\n", "}\n")
-			failOnErr("%v", err)
+			ok := hasAnyPrefix(str[i:], "},\n", "}\n")
 			if nLCB == nRCB && ok {
 				return str[s : i+1]
 			}
@@ -248,8 +235,7 @@ func (jkv *JKV) fValueType(p int) (v string, t JSONTYPE) {
 				nRBB++
 			}
 
-			ok, err := hasAnyPrefix(str[i:], "],\n", "]\n")
-			failOnErr("%v", err)
+			ok := hasAnyPrefix(str[i:], "],\n", "]\n")
 			if nLBB == nRBB && ok {
 				return str[s : i+1]
 			}
@@ -348,9 +334,7 @@ func (jkv *JKV) init() error {
 			return err
 		}
 
-		Ikeys, err := mapKeys(mFPath)
-		failOnErr("%v", err)
-		for _, p := range Ikeys.([]int) {
+		for _, p := range mapKeys(mFPath).([]int) {
 			v, t := jkv.fValueType(p)
 
 			oid := ""
@@ -460,7 +444,7 @@ func (jkv *JKV) wrapDefault(root string, must bool) *JKV {
 		json += "\n"
 	}
 
-	jsonInd, _ := indent(json, 2, true)
+	jsonInd := indent(json, 2, true)
 	rooted1 := fSf("{\n  \"%s\": %s}\n", root, jsonInd)
 	rooted2 := fSf("{\n  \"%s\": %s}\n", root, json)
 	rooted2 = fmtJSON(rooted2, 2) + "\n"
@@ -501,7 +485,7 @@ func (jkv *JKV) UnwrapDefault() *JKV {
 		}
 	}
 
-	unRooted1, _ := fmtInnerJSON(json[i-1 : j+2])
+	unRooted1 := fmtInnerJSON(json[i-1 : j+2])
 	unRooted1 += "\n"
 	// fPln(unRooted1)
 	unRooted2 := fmtJSON(json[i-1:j+2], 2)
@@ -585,7 +569,7 @@ func Mask(name, obj string, mask *JKV) string {
 	}
 
 	// check current mask path is valid for current objTmp fields, P1/2
-	objTmp, _ := fmtInnerJSON(obj)
+	objTmp := fmtInnerJSON(obj)
 	jkvTmp := NewJKV(objTmp, name, true)
 	pathlistTmp := func(name, linker string, fields []string) (pathlist []string) {
 		for _, f := range fields {

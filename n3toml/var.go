@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/io"
+	"github.com/cdutwhu/gotil/str"
 )
 
 var (
@@ -19,7 +21,7 @@ var (
 	sContains   = strings.Contains
 	sReplaceAll = strings.ReplaceAll
 
-	failOnErr      = cmn.FailOnErr
-	rmTailFromLast = cmn.RmTailFromLast
-	mustWriteFile  = cmn.MustWriteFile
+	failOnErr      = fn.FailOnErr
+	rmTailFromLast = str.RmTailFromLast
+	mustWriteFile  = io.MustWriteFile
 )

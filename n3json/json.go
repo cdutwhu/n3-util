@@ -1,6 +1,7 @@
 package n3json
 
 import (
+	"encoding/json"
 	"regexp"
 	"strings"
 	"sync"
@@ -8,8 +9,18 @@ import (
 	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
+// JSONRoot :
+func JSONRoot(jsonstr string) string {
+	x := make(map[string]interface{})
+	failOnErr("%v", json.Unmarshal([]byte(jsonstr), &x))
+	for k := range x {
+		return k
+	}
+	return ""
+}
+
 // InnerFmt :
-func InnerFmt(str string) (string, bool) {
+func InnerFmt(str string) string {
 	str = sTrim(str, BLANK)
 	str = sReplaceAll(str, "\t", "    ")
 	i := len(str) - 1
@@ -80,7 +91,7 @@ func SplitArr(json string, nSpace int) []string {
 // MakeArr :
 func MakeArr(jsonlist ...string) (arrstr string) {
 	combine := "[\n" + sJoin(jsonlist, ",\n")
-	fmtArr, _ := indent(combine, 2, true)
+	fmtArr := indent(combine, 2, true)
 	return fmtArr + "\n]"
 }
 
@@ -168,10 +179,8 @@ func ScalarSelX(json string, attrGrp ...string) string {
 // ---------------------------------------------------- //
 
 // L1Attrs : Level-1 attributes
-func L1Attrs(json string) (attrs []string, err error) {
-	if !isJSON(json) {
-		return nil, eg.PARAM_INVALID_JSON
-	}
+func L1Attrs(json string) (attrs []string) {
+	failP1OnErrWhen(!isJSON(json), "%v", eg.PARAM_INVALID_JSON)
 	json = Fmt(json, 2)
 	r := regexp.MustCompile(`\n  "[^"]+": [\[\{"-1234567890ntf]`)
 	found := r.FindAllString(json, -1)
@@ -183,10 +192,8 @@ func L1Attrs(json string) (attrs []string, err error) {
 
 // Join :
 func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
-
 	if name == "" {
-		ok, err := hasAnySuffix(pkey, "-ID", "-id", "-Id", "_ID", "_id", "_Id")
-		if failOnErr("%v", err); ok {
+		if hasAnySuffix(pkey, "-ID", "-id", "-Id", "_ID", "_id", "_Id") {
 			name = pkey[:len(pkey)-3]
 		}
 	}
@@ -197,11 +204,8 @@ func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 	posGrp := [][]int{}
 
 	for i := 0; i < 2; i++ {
-		lsAttr, err := L1Attrs(inputs[i])
-		failOnErr("%v", err)
-		ok, err := xin(keys[i], lsAttr)
-		failOnErr("%v", err)
-		failOnErrWhen(!ok, "%v: NO %s key attribute [%s]", eg.INTERNAL, keyTypes[i], keys[i])
+		lsAttr := toGeneralSlc(L1Attrs(inputs[i]))
+		failOnErrWhen(!exist(keys[i], lsAttr...), "%v: NO %s key attribute [%s]", eg.INTERNAL, keyTypes[i], keys[i])
 
 		r := regexp.MustCompile(fSf(`\n  "%s": .+[,]?\n`, keys[i]))
 		pSEs := r.FindAllStringIndex(inputs[i], 1)
@@ -212,9 +216,7 @@ func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 
 		if i == 0 {
 			posGrp = pSEs
-			ok, err := xin(name, lsAttr)
-			failOnErr("%v", err)
-			failOnErrWhen(ok, "%v: [%s] already exists in left json", eg.INTERNAL, name)
+			failOnErrWhen(exist(name, lsAttr...), "%v: [%s] already exists in left json", eg.INTERNAL, name)
 		}
 	}
 
@@ -224,8 +226,7 @@ func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 			comma = ""
 		}
 		insert := fSf(`"%s": %s%s`, name, jsonR, comma)
-		str, err := replByPosGrp(jsonL, posGrp, []string{insert})
-		failOnErr("%v", err)
+		str := replByPosGrp(jsonL, posGrp, []string{insert})
 		return Fmt(str, 2), true
 	}
 

@@ -1,10 +1,14 @@
-package common
+package n3cfg
 
 import (
 	"fmt"
-	"regexp"
+	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/judge"
+	"github.com/cdutwhu/gotil/net"
 )
 
 var (
@@ -28,8 +32,13 @@ var (
 	sContains   = strings.Contains
 	sToUpper    = strings.ToUpper
 	scParseUint = strconv.ParseUint
-)
+	vof         = reflect.ValueOf
+	typPTR      = reflect.Ptr
+	typSTRUCT   = reflect.Struct
 
-var (
-	repParam = regexp.MustCompile(`^\$[0-9]+$`)
+	isXML           = judge.IsXML
+	failOnErr       = fn.FailOnErr
+	failP1OnErr     = fn.FailP1OnErr
+	failP1OnErrWhen = fn.FailP1OnErrWhen
+	localIP         = net.LocalIP
 )

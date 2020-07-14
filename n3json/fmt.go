@@ -139,7 +139,7 @@ func FmtArr(jsonArr string, nSpace int) string {
 // FmtFile :
 func FmtFile(filename string, nSpace int) string {
 	bytes, err := ioutil.ReadFile(filename)
-	failOnErr("%v", err)
+	failP1OnErr("%v", err)
 	if json := string(bytes); isJSON(json) {
 		return Fmt(json, nSpace)
 	}

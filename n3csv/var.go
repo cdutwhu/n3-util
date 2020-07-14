@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
-	n3json "github.com/cdutwhu/n3-util/n3json"
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/io"
+	"github.com/cdutwhu/n3-util/n3json"
 )
 
 var (
@@ -14,12 +15,12 @@ var (
 	fSf         = fmt.Sprintf
 	sReplaceAll = strings.ReplaceAll
 
-	failOnErr     = cmn.FailOnErr
-	failOnErrWhen = cmn.FailOnErrWhen
-	warnOnErr     = cmn.WarnOnErr
-	mustWriteFile = cmn.MustWriteFile
-	setLog        = cmn.SetLog
-	resetLog      = cmn.ResetLog
+	failOnErr     = fn.FailOnErr
+	failOnErrWhen = fn.FailOnErrWhen
+	warnOnErr     = fn.WarnOnErr
+	setLog        = fn.SetLog
+	resetLog      = fn.ResetLog
+	mustWriteFile = io.MustWriteFile
 
 	jsonScalarSelX = n3json.ScalarSelX
 )

@@ -6,8 +6,15 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
-	n3json "github.com/cdutwhu/n3-util/n3json"
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/endec"
+	"github.com/cdutwhu/gotil/io"
+	"github.com/cdutwhu/gotil/iter"
+	"github.com/cdutwhu/gotil/judge"
+	"github.com/cdutwhu/gotil/misc"
+	"github.com/cdutwhu/gotil/rflx"
+	"github.com/cdutwhu/gotil/str"
+	"github.com/cdutwhu/n3-util/n3json"
 )
 
 var (
@@ -30,23 +37,24 @@ var (
 	sHasSuffix  = strings.HasSuffix
 	sRepeat     = strings.Repeat
 
-	xin             = cmn.XIn
-	trackTime       = cmn.TrackTime
-	rmTailFromLastN = cmn.RmTailFromLastN
-	rmTailFromLast  = cmn.RmTailFromLast
-	rmHeadToLast    = cmn.RmHeadToLast
-	failOnErr       = cmn.FailOnErr
-	failOnErrWhen   = cmn.FailOnErrWhen
-	isJSON          = cmn.IsJSON
-	isNumeric       = cmn.IsNumeric
-	indent          = cmn.Indent
-	iter2Slc        = cmn.Iter2Slc
-	iterN           = cmn.N
-	hasAnyPrefix    = cmn.HasAnyPrefix
-	mapKeys         = cmn.MapKeys
-	mapsJoin        = cmn.MapsJoin
-	mustWriteFile   = cmn.MustWriteFile
-	projectV        = cmn.ProjectV
+	exist           = judge.Exist
+	isJSON          = judge.IsJSON
+	isNumeric       = judge.IsNumeric
+	mustWriteFile   = io.MustWriteFile
+	trackTime       = misc.TrackTime
+	rmTailFromLastN = str.RmTailFromLastN
+	rmTailFromLast  = str.RmTailFromLast
+	rmHeadToLast    = str.RmHeadToLast
+	indent          = str.IndentTxt
+	hasAnyPrefix    = str.HasAnyPrefix
+	projectV        = str.Transpose
+	failOnErr       = fn.FailOnErr
+	failOnErrWhen   = fn.FailOnErrWhen
+	iter2Slc        = iter.Iter2Slc
+	iterN           = iter.N
+	mapKeys         = rflx.MapKeys
+	mapMerge        = rflx.MapMerge
+	toGeneralSlc    = rflx.ToGeneralSlc
 
 	maybeJSONArr = n3json.MaybeArr
 	splitJSONArr = n3json.SplitArr
@@ -76,10 +84,10 @@ var (
 var (
 	BLANK = " \t\n\r"
 	hash  = func(str string) string {
-		return "\"" + cmn.SHA1Str(str) + "\""
+		return "\"" + endec.SHA1Str(str) + "\""
 	}
 	// hash     = cmn.SHA1Str
-	hashRep = cmn.RepSHA1 // compiled with ""
+	hashRep = endec.RegexpSHA1 // compiled with ""
 )
 
 var (

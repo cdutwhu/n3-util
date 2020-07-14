@@ -4,7 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/io"
+	"github.com/cdutwhu/gotil/judge"
+	"github.com/cdutwhu/gotil/misc"
+	"github.com/cdutwhu/gotil/rflx"
+	"github.com/cdutwhu/gotil/str"
 )
 
 // BLANK :
@@ -30,13 +35,16 @@ var (
 	sHasSuffix  = strings.HasSuffix
 	sRepeat     = strings.Repeat
 
-	xin           = cmn.XIn
-	isJSON        = cmn.IsJSON
-	failOnErr     = cmn.FailOnErr
-	failOnErrWhen = cmn.FailOnErrWhen
-	replByPosGrp  = cmn.ReplByPosGrp
-	trackTime     = cmn.TrackTime
-	mustWriteFile = cmn.MustWriteFile
-	indent        = cmn.Indent
-	hasAnySuffix  = cmn.HasAnySuffix
+	exist           = judge.Exist
+	isJSON          = judge.IsJSON
+	mustWriteFile   = io.MustWriteFile
+	failOnErr       = fn.FailOnErr
+	failOnErrWhen   = fn.FailOnErrWhen
+	failP1OnErr     = fn.FailP1OnErr
+	failP1OnErrWhen = fn.FailP1OnErrWhen
+	trackTime       = misc.TrackTime
+	replByPosGrp    = str.ReplByPosGrp
+	indent          = str.IndentTxt
+	hasAnySuffix    = str.HasAnySuffix
+	toGeneralSlc    = rflx.ToGeneralSlc
 )

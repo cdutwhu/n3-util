@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
+	"github.com/cdutwhu/debog/fn"
 )
 
 var (
@@ -16,5 +16,7 @@ var (
 	sHasSuffix  = strings.HasSuffix
 	sTrimRight  = strings.TrimRight
 
-	failOnErr = cmn.FailOnErr
+	failOnErr   = fn.FailOnErr
+	failP1OnErr = fn.FailP1OnErr
+	failPnOnErr = fn.FailPnOnErr
 )

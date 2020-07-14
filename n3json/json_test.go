@@ -13,8 +13,8 @@ func TestInnerFmt(t *testing.T) {
 	      b
 	    }`
 
-	s, did := InnerFmt(s)
-	fPln(s, did)
+	s = InnerFmt(s)
+	fPln(s)
 }
 
 func TestSplitArr(t *testing.T) {

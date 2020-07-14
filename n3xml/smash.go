@@ -39,8 +39,7 @@ func Smash(xml string) (SubRoots, Subs []string, err error) {
 		return nil, nil, eg.PARAM_INVALID_XML
 	}
 
-	root, err := xmlRoot(xml)
-	failOnErr("%v", err)
+	root := XMLRoot(xml)
 	offset := len(fSf("<%s>", root)) + 1
 	remain := xml[offset:]
 	r := regexp.MustCompile(`<[^> /]+[ >]`)
