@@ -86,7 +86,7 @@ var (
 	hash  = func(str string) string {
 		return "\"" + endec.SHA1Str(str) + "\""
 	}
-	// hash     = cmn.SHA1Str
+	// hash     = endec.SHA1Str
 	hashRep = endec.RegexpSHA1 // compiled with ""
 )
 

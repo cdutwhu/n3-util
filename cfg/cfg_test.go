@@ -1,4 +1,4 @@
-package n3cfg
+package cfg
 
 import (
 	"io/ioutil"
@@ -62,10 +62,10 @@ type Config struct {
 	}
 }
 
-func TestCfgRepl(t *testing.T) {
+func TestModify(t *testing.T) {
 	cfg := &Config{}
 	toml.DecodeFile("../_data/toml/test.toml", cfg)
-	Icfg := CfgRepl(cfg, map[string]interface{}{
+	Icfg := Modify(cfg, map[string]interface{}{
 		"[DATE]": time.Now().Format("2006-01-02"),
 		"[IP]":   localIP(),
 		"[PORT]": cfg.WebService.Port,
@@ -76,7 +76,7 @@ func TestCfgRepl(t *testing.T) {
 	spew.Dump(cfg)
 }
 
-func TestFetchLog(t *testing.T) {
+func TestWorldTime(t *testing.T) {
 	tmin := func(t time.Time, name string) (time.Time, error) {
 		loc, err := time.LoadLocation(name)
 		if err == nil {
