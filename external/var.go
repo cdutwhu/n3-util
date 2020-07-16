@@ -10,6 +10,7 @@ import (
 var (
 	fPf = fmt.Printf
 	fEf = fmt.Errorf
+	fSf = fmt.Sprintf
 
 	sReplaceAll = strings.ReplaceAll
 	sHasPrefix  = strings.HasPrefix

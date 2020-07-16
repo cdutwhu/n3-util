@@ -3,36 +3,45 @@ package cfg
 import (
 	"os"
 	"os/exec"
-	"regexp"
 )
 
 // GitVer :
-func GitVer() string {
-	tag := GitTag()
-	r := regexp.MustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+$`)
-	if r.MatchString(tag) {
-		return tag
+func GitVer() (ver string, err error) {
+	tag, err := GitTag()
+	if err != nil {
+		return "", err
 	}
-	return ""
+	if r := rMustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+$`); r.MatchString(tag) {
+		return tag, nil
+	}
+	return "", nil
 }
 
 // GitTag :
-func GitTag() string {
+func GitTag() (tag string, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			tag, err = "", fEf("%v", r)
+		}
+	}()
+
 	// check git existing
-	_, oriWD := prepare("git")
-	os.Chdir(oriWD) // under .git project dir to get `git tag`
+	_, oriWD := prepare("git") // maybe invoke panic
+	os.Chdir(oriWD)            // under .git project dir to get `git tag`
 
 	// run git
-	cmdstr := "git tag"
-	cmd := exec.Command("bash", "-c", cmdstr)
+	cmd := exec.Command("bash", "-c", "git tag")
 	output, err := cmd.Output()
 	failOnErr("cmd.Output() error @ %v", err)
 	outstr := sTrim(string(output), " \n\t")
 	if outstr == "" {
-		return ""
+		return "", nil
 	}
 	lines := sSplit(outstr, "\n")
-	return lines[len(lines)-1]
+	if len(lines) >= 1 {
+		return lines[len(lines)-1], nil
+	}
+	return lines[0], nil
 }
 
 // Modify : only 2 levels struct variable could be modified. that is enough for config

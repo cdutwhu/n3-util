@@ -19,6 +19,8 @@ func Prepare(exe string, wkDirs ...string) (cWD, oriWD string) {
 			return cWD, oriWD
 		}
 	}
-	failPnOnErr(2, "%v: %s", eg.FILE_NOT_FOUND, exe)
-	return "", ""
+
+	panic(fSf("%v: %s", eg.FILE_NOT_FOUND, exe))
+	// failPnOnErr(2, "%v: %s", eg.FILE_NOT_FOUND, exe)
+	// return "", ""
 }
