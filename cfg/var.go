@@ -9,6 +9,7 @@ import (
 	"github.com/cdutwhu/debog/fn"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/net"
+	"github.com/cdutwhu/n3-util/external"
 )
 
 var (
@@ -41,4 +42,5 @@ var (
 	failP1OnErr     = fn.FailP1OnErr
 	failP1OnErrWhen = fn.FailP1OnErrWhen
 	localIP         = net.LocalIP
+	prepare         = external.Prepare
 )

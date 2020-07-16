@@ -8,7 +8,7 @@ import (
 
 // FmtJSONStr : May have 'Argument list too long' issue !
 func FmtJSONStr(json string, jqDirs ...string) string {
-	_, oriWD := prepare(jq, jqDirs...)
+	_, oriWD := Prepare(jq, jqDirs...)
 	defer func() { os.Chdir(oriWD) }()
 
 	json = sReplaceAll(json, `\`, `\\`)
@@ -33,7 +33,7 @@ func FmtJSONFile(file string, jqDirs ...string) string {
 		file = absfile
 	}
 
-	_, oriWD := prepare(jq, jqDirs...)
+	_, oriWD := Prepare(jq, jqDirs...)
 	defer func() { os.Chdir(oriWD) }()
 
 	cmdstr := "cat " + file + ` | ./` + jq + " ."

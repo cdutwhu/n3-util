@@ -1,5 +1,40 @@
 package cfg
 
+import (
+	"os"
+	"os/exec"
+	"regexp"
+)
+
+// GitVer :
+func GitVer() string {
+	tag := GitTag()
+	r := regexp.MustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+$`)
+	if r.MatchString(tag) {
+		return tag
+	}
+	return ""
+}
+
+// GitTag :
+func GitTag() string {
+	// check git existing
+	_, oriWD := prepare("git")
+	os.Chdir(oriWD) // under .git project dir to get `git tag`
+
+	// run git
+	cmdstr := "git tag"
+	cmd := exec.Command("bash", "-c", cmdstr)
+	output, err := cmd.Output()
+	failOnErr("cmd.Output() error @ %v", err)
+	outstr := sTrim(string(output), " \n\t")
+	if outstr == "" {
+		return ""
+	}
+	lines := sSplit(outstr, "\n")
+	return lines[len(lines)-1]
+}
+
 // Modify : only 2 levels struct variable could be modified. that is enough for config
 func Modify(cfg interface{}, mRepl map[string]interface{}) interface{} {
 	if mRepl == nil || len(mRepl) == 0 {

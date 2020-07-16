@@ -9,6 +9,14 @@ import (
 	"github.com/davecgh/go-spew/spew"
 )
 
+func TestGitVer(t *testing.T) {
+	fPln(GitVer())
+}
+
+func TestGitTag(t *testing.T) {
+	fPln(GitTag())
+}
+
 // Config is toml
 type Config struct {
 	Path    string
