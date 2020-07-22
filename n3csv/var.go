@@ -18,8 +18,7 @@ var (
 	failOnErr     = fn.FailOnErr
 	failOnErrWhen = fn.FailOnErrWhen
 	warnOnErr     = fn.WarnOnErr
-	setLog        = fn.SetLog
-	resetLog      = fn.ResetLog
+	enableLog2F   = fn.EnableLog2F
 	mustWriteFile = io.MustWriteFile
 
 	jsonScalarSelX = n3json.ScalarSelX

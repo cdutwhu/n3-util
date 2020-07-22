@@ -8,7 +8,7 @@ import (
 )
 
 func TestCSV2JSON(t *testing.T) {
-	setLog("./err.log")
+	enableLog2F(true, "./err.log")
 
 	dir := "../_data/csv/"
 	files, err := ioutil.ReadDir(dir)
