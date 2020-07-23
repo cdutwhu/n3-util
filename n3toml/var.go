@@ -11,6 +11,7 @@ import (
 
 var (
 	fPln        = fmt.Println
+	sIndex      = strings.Index
 	sJoin       = strings.Join
 	sSplit      = strings.Split
 	sHasPrefix  = strings.HasPrefix
@@ -21,7 +22,8 @@ var (
 	sContains   = strings.Contains
 	sReplaceAll = strings.ReplaceAll
 
-	failOnErr      = fn.FailOnErr
-	rmTailFromLast = str.RmTailFromLast
-	mustWriteFile  = io.MustWriteFile
+	failOnErr       = fn.FailOnErr
+	rmTailFromLast  = str.RmTailFromLast
+	rmTailFromFirst = str.RmTailFromFirst
+	mustWriteFile   = io.MustWriteFile
 )

@@ -13,31 +13,49 @@ func RmFileAttrL1(infile, outfile string, attrs ...string) string {
 	if !sHasSuffix(outfile, ".toml") {
 		outfile += ".toml"
 	}
-	mustWriteFile(outfile, []byte(RmAttrL1(string(bytes), attrs...)))
+	mustWriteFile(outfile, []byte(rmAttrL1(string(bytes), attrs...)))
 	return outfile
 }
 
-// RmAttrL1 :
-func RmAttrL1(toml string, attrs ...string) string {
+// rmAttrL1 :
+func rmAttrL1(toml string, attrs ...string) string {
 	chkStart := func(line, attr string) bool {
 		return sHasPrefix(line, "["+attr+"]")
 	}
-	chkEnd := func(line, attr string) bool {
+	chkEnd := func(line string) bool {
 		ln := sTrim(line, " \t")
 		return ln == "" || sHasPrefix(ln, "#") || sHasPrefix(ln, "[")
 	}
 
+	chkEndOfSingle := func(line string) bool {
+		ln := sTrimLeft(line, " \t")
+		return ln == "" || sHasPrefix(ln, "[")
+	}
+
+	attrSingle := true
 	pairs, rmflag := [][2]int{}, false
 	lines := sSplit(toml, "\n")
 NEXT1:
 	for i, line := range lines {
 		for _, attr := range attrs {
+
+			// ------------------------- //
+			if attrSingle {
+				if ln := sTrim(rmTailFromFirst(line, "="), " \t"); ln == attr {
+					pairs = append(pairs, [2]int{i, i})
+				}
+				if chkEndOfSingle(line) {
+					attrSingle = false
+				}
+			}
+			// ------------------------- //
+
 			if chkStart(line, attr) {
 				pairs = append(pairs, [2]int{i, -1})
 				rmflag = true
 				continue NEXT1
 			}
-			if rmflag && chkEnd(line, attr) {
+			if rmflag && chkEnd(line) {
 				pairs[len(pairs)-1][1] = i - 1
 				rmflag = false
 			}
