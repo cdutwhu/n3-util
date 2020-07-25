@@ -5,7 +5,7 @@ import "io/ioutil"
 // RmFileAttrL1 :
 func RmFileAttrL1(infile, outfile string, attrs ...string) string {
 	bytes, err := ioutil.ReadFile(infile)
-	failOnErr("%v", err)
+	failP1OnErr("%v", err)
 	// if sHasSuffix(outfile, ".toml") {
 	// 	outfile = outfile[:len(outfile)-5]
 	// }
@@ -29,11 +29,10 @@ func rmAttrL1(toml string, attrs ...string) string {
 
 	chkEndOfSingle := func(line string) bool {
 		ln := sTrimLeft(line, " \t")
-		return ln == "" || sHasPrefix(ln, "[")
+		return sHasPrefix(ln, "[")
 	}
 
-	attrSingle := true
-	pairs, rmflag := [][2]int{}, false
+	pairs, rmflag, attrSingle := [][2]int{}, false, true
 	lines := sSplit(toml, "\n")
 NEXT1:
 	for i, line := range lines {
