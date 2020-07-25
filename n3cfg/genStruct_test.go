@@ -1,4 +1,4 @@
-package n3toml
+package n3cfg
 
 import (
 	"io/ioutil"
@@ -28,7 +28,6 @@ func TestAttrsRange(t *testing.T) {
 	}
 }
 
-func TestAttrTypes(t *testing.T) {
-	TomlGenStruct("../_data/toml/test.toml", "OOO", "ppp", "../_data/toml/test111.go")
-	TomlGenStruct("../_data/toml/test.toml", "", "", "")
+func TestGenStruct(t *testing.T) {
+	GenStruct("../_data/toml/test.toml", "Config", "n3cfg", "./config.go")
 }

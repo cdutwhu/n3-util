@@ -1,4 +1,4 @@
-package n3toml
+package n3cfg
 
 import (
 	"io/ioutil"
@@ -88,8 +88,8 @@ func attrTypes(tomllines []string, grpAttr string) map[string]string {
 	return mAttrType
 }
 
-// TomlGenStruct :
-func TomlGenStruct(tomlFile, struName, pkgName, struFile string) {
+// GenStruct :
+func GenStruct(tomlFile, struName, pkgName, struFile string) {
 	failP1OnErrWhen(!sHasSuffix(tomlFile, ".toml"), "%v @tomlFile", eg.PARAM_INVALID)
 	tomlFile, err := filepath.Abs(tomlFile)
 	failP1OnErr("%v", err)

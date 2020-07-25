@@ -1,4 +1,4 @@
-package cfg
+package n3cfg
 
 import (
 	"os"
@@ -49,29 +49,28 @@ func Modify(cfg interface{}, mRepl map[string]interface{}) interface{} {
 	if mRepl == nil || len(mRepl) == 0 {
 		return cfg
 	}
-
 	if vof(cfg).Kind() == typPTR {
 		if cfgElem := vof(cfg).Elem(); cfgElem.Kind() == typSTRUCT {
 			for i, nField := 0, cfgElem.NumField(); i < nField; i++ {
 				for key, value := range mRepl {
+					var ivalue interface{} = value
+					repVal, isstrValue := value.(string)
 					field := cfgElem.Field(i)
 					if oriVal, ok := field.Interface().(string); ok && sContains(oriVal, key) {
-						if repVal, ok := value.(string); ok {
-							field.SetString(sReplaceAll(oriVal, key, repVal))
-						} else {
-							field.Set(vof(value))
+						if isstrValue {
+							ivalue = sReplaceAll(oriVal, key, repVal)
 						}
+						field.Set(vof(ivalue))
 					}
 					// go into struct element
 					if field.Kind() == typSTRUCT {
 						for j, nFieldSub := 0, field.NumField(); j < nFieldSub; j++ {
 							fieldSub := field.Field(j)
 							if oriVal, ok := fieldSub.Interface().(string); ok && sContains(oriVal, key) {
-								if repVal, ok := value.(string); ok {
-									fieldSub.SetString(sReplaceAll(oriVal, key, repVal))
-								} else {
-									fieldSub.Set(vof(value))
+								if isstrValue {
+									ivalue = sReplaceAll(oriVal, key, repVal)
 								}
+								fieldSub.Set(vof(ivalue))
 							}
 						}
 					}

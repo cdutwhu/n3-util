@@ -1,4 +1,4 @@
-package cfg
+package n3cfg
 
 import (
 	"io/ioutil"
@@ -17,57 +17,8 @@ func TestGitTag(t *testing.T) {
 	fPln(GitTag())
 }
 
-// Config is toml
+// 'genStruct' to create one for real one
 type Config struct {
-	Path    string
-	LogFile string
-
-	Storage struct {
-		DataBase     string
-		MetaPath     string
-		BadgerDBPath string
-	}
-
-	WebService struct {
-		Port    int
-		Service string
-		Version string
-	}
-
-	Route struct {
-		HELP        string
-		GetID       string
-		GetHash     string
-		Get         string
-		Update      string
-		Delete      string
-		LsID        string
-		LsUser      string
-		LsContext   string
-		LsObject    string
-		GetEnforced string
-	}
-
-	File struct {
-		ClientLinux64   string
-		ClientMac       string
-		ClientWin64     string
-		ClientConfig    string
-		EnforcerLinux64 string
-		EnforcerMac     string
-		EnforcerWin64   string
-		EnforcerConfig  string
-	}
-
-	Server struct {
-		Protocol string
-		IP       string
-		Port     interface{}
-	}
-
-	Access struct {
-		Timeout int
-	}
 }
 
 func TestModify(t *testing.T) {
@@ -76,9 +27,9 @@ func TestModify(t *testing.T) {
 	Icfg := Modify(cfg, map[string]interface{}{
 		"[DATE]": time.Now().Format("2006-01-02"),
 		"[IP]":   localIP(),
-		"[PORT]": cfg.WebService.Port,
-		"[s]":    cfg.WebService.Service,
-		"[v]":    cfg.WebService.Version,
+		"[PORT]": 1234,
+		"[s]":    "n3cfg",
+		"[v]":    "v1.2.3",
 	})
 	cfg = Icfg.(*Config)
 	spew.Dump(cfg)

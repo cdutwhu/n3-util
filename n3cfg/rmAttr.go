@@ -1,4 +1,4 @@
-package n3toml
+package n3cfg
 
 import "io/ioutil"
 

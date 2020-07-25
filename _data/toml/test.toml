@@ -1,5 +1,7 @@
 Path = ""
 LogFile = "./[DATE].log"
+IP = "[IP]"
+Port = "[PORT]"
 
 # ************************ Server ************************ #
 # ********** Client User DO NOT Modify This Part ********* #
