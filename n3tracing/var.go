@@ -7,6 +7,10 @@ import (
 )
 
 var (
-	fPln      = fmt.Println
-	failOnErr = fn.FailOnErr
+	fPln            = fmt.Println
+	fEf             = fmt.Errorf
+	failOnErr       = fn.FailOnErr
+	failOnErrWhen   = fn.FailOnErrWhen
+	failP1OnErrWhen = fn.FailP1OnErrWhen
+	logger          = fn.Logger
 )

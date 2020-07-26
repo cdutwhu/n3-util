@@ -1,4 +1,4 @@
-package n3errs
+package n3err
 
 import "fmt"
 
