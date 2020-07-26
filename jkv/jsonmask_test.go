@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 func TestJSONPolicy(t *testing.T) {
@@ -16,9 +16,9 @@ func TestJSONPolicy(t *testing.T) {
 	mask1 := fmtJSONFile("../_data/json/NAPCodeFrameMaskP.json", 2)
 	mask2 := fmtJSONFile("../_data/json/NAPCodeFrameMaskPcopy.json", 2)
 
-	failOnErrWhen(data == "", "%v: input empty, check path", eg.PARAM_INVALID)
-	failOnErrWhen(mask1 == "", "%v: mask1 empty, check path", eg.PARAM_INVALID)
-	failOnErrWhen(mask2 == "", "%v: mask2 empty, check path", eg.PARAM_INVALID)
+	failOnErrWhen(data == "", "%v: input empty, check path", n3err.PARAM_INVALID)
+	failOnErrWhen(mask1 == "", "%v: mask1 empty, check path", n3err.PARAM_INVALID)
+	failOnErrWhen(mask2 == "", "%v: mask2 empty, check path", n3err.PARAM_INVALID)
 
 	jkvM1 := NewJKV(mask1, "root", false)
 	jkvM2 := NewJKV(mask2, "root", false)
@@ -66,8 +66,8 @@ func TestJSONPolicy1(t *testing.T) {
 
 	data := fmtJSONFile("../_data/json/NAPCodeFrame.json", 2)
 	mask := fmtJSONFile("../_data/json/NAPCodeFrameMask.json", 2)
-	failOnErrWhen(data == "", "%v: data empty, check path", eg.PARAM_INVALID)
-	failOnErrWhen(mask == "", "%v: mask empty, check path", eg.PARAM_INVALID)
+	failOnErrWhen(data == "", "%v: data empty, check path", n3err.PARAM_INVALID)
+	failOnErrWhen(mask == "", "%v: mask empty, check path", n3err.PARAM_INVALID)
 
 	jkvD := NewJKV(data, "root", true) // data must wrap a level to do "simple" data & mask
 	jkvM := NewJKV(mask, "", false)

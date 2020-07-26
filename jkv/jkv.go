@@ -1,11 +1,11 @@
-// ********** ALL are Based On JQ Formatted JSON ********** //
+// ********** ALL are Based On Formatted JSON ********** //
 
 package jkv
 
 import (
 	"math"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 // NewJKV :
@@ -107,7 +107,7 @@ func (jkv *JKV) scan(depth int) (int, map[int][]int, map[int]int, error) {
 
 		return Lm, mLvlFParr, mFPosLvl, nil
 	}
-	return Lm, nil, nil, eg.JSON_INVALID
+	return Lm, nil, nil, n3err.JSON_INVALID
 }
 
 // fields :
@@ -339,7 +339,7 @@ func (jkv *JKV) init() error {
 
 			oid := ""
 			if !t.IsLeafValue() {
-				failOnErrWhen(!isJSON(v), "%v: fetching value error", eg.INTERNAL)
+				failOnErrWhen(!isJSON(v), "%v: fetching value error", n3err.INTERNAL)
 				oid = hash(v)
 				jkv.mOIDObj[oid] = v
 				v = oid
@@ -401,7 +401,7 @@ func (jkv *JKV) init() error {
 		return nil
 	}
 
-	return eg.INTERNAL_SCAN_ERR
+	return n3err.INTERNAL_SCAN_ERR
 }
 
 // aoID2oIDlist : only can be used after mOIDType assigned
@@ -427,7 +427,7 @@ func oIDlistStr2oIDlist(aoIDStr string) (oidlist []string, err error) {
 	nComma := sCount(aoIDStr, ",")
 	oidlist = hashRep.FindAllString(aoIDStr, -1)
 	if aoIDStr[0] != '[' || aoIDStr[len(aoIDStr)-1] != ']' || (oidlist != nil && len(oidlist) != nComma+1) {
-		return nil, eg.PARAM_INVALID_FMT
+		return nil, n3err.PARAM_INVALID_FMT
 	}
 	return oidlist, nil
 }
@@ -452,7 +452,7 @@ func (jkv *JKV) wrapDefault(root string, must bool) *JKV {
 		mustWriteFile("./root1.json", []byte(rooted1))
 		mustWriteFile("./root2.json", []byte(rooted2))
 	}
-	failOnErrWhen(rooted1 != rooted2, "%v: rooted", eg.INTERNAL)
+	failOnErrWhen(rooted1 != rooted2, "%v: rooted", n3err.INTERNAL)
 
 	// fPln(" ----------------------------------------------- ")
 	jkvR := NewJKV(rooted1, "", must)
@@ -495,7 +495,7 @@ func (jkv *JKV) UnwrapDefault() *JKV {
 		mustWriteFile("./unroot1.json", []byte(unRooted1))
 		mustWriteFile("./unroot2.json", []byte(unRooted2))
 	}
-	failOnErrWhen(unRooted1 != unRooted2, "%v: unRooted", eg.INTERNAL)
+	failOnErrWhen(unRooted1 != unRooted2, "%v: unRooted", n3err.INTERNAL)
 
 	jkvUnR := NewJKV(unRooted1, "", false)
 	jkvUnR.Wrapped = false
@@ -558,7 +558,7 @@ func (jkv *JKV) Unfold(toLvl int, mask *JKV) (string, int) {
 		}
 	}
 
-	failOnErrWhen(!isJSON(frame), "%v: UNFOLD ERROR", eg.INTERNAL)
+	failOnErrWhen(!isJSON(frame), "%v: UNFOLD ERROR", n3err.INTERNAL)
 	return frame, iExp
 }
 

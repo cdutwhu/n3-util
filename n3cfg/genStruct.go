@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 func scanToml(tomllines []string) (slAttrs, grpAttrs []string) {
@@ -90,7 +90,7 @@ func attrTypes(tomllines []string, grpAttr string) map[string]string {
 
 // GenStruct :
 func GenStruct(tomlFile, struName, pkgName, struFile string) {
-	failP1OnErrWhen(!sHasSuffix(tomlFile, ".toml"), "%v @tomlFile", eg.PARAM_INVALID)
+	failP1OnErrWhen(!sHasSuffix(tomlFile, ".toml"), "%v @tomlFile", n3err.PARAM_INVALID)
 	tomlFile, err := filepath.Abs(tomlFile)
 	failP1OnErr("%v", err)
 	bytes, err := ioutil.ReadFile(tomlFile)
@@ -108,7 +108,7 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) {
 		struFile = dir + "/" + fname + ".go"
 	}
 
-	failP1OnErrWhen(!ucIsUpper(rune(struName[0])), "%v @struName", eg.PARAM_INVALID)
+	failP1OnErrWhen(!ucIsUpper(rune(struName[0])), "%v @struName", n3err.PARAM_INVALID)
 
 	lines := sSplit(string(bytes), "\n")
 	struStr := ""

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 func TestInnerFmt(t *testing.T) {
@@ -22,16 +22,16 @@ func TestSplitArr(t *testing.T) {
 
 	// jArrStr := FmtFile("../_data/xapi.json", 2)
 	// jArrStr := FmtFile("../../Server/config/meta.json", 2)
-	// failOnErrWhen(jArrStr == "", "%v", eg.FILE_EMPTY)
+	// failOnErrWhen(jArrStr == "", "%v", n3err.FILE_EMPTY)
 
 	jArrStr := FmtFile("../_data/json/xapi.json", 2)
 
 	if arr := SplitArr(jArrStr, 2); arr != nil {
 		jMergedStr := MakeArr(arr...)
 		// fPln(jMergedStr)
-		failOnErrWhen(jArrStr != jMergedStr, "%v: MakeArr", eg.INTERNAL)
+		failOnErrWhen(jArrStr != jMergedStr, "%v: MakeArr", n3err.INTERNAL)
 	} else {
-		failOnErr("%v", eg.JSON_ARRAY_NOT_FMT)
+		failOnErr("%v", n3err.JSON_ARRAY_NOT_FMT)
 	}
 }
 

@@ -7,7 +7,7 @@ import (
 	"github.com/cdutwhu/debog/fn"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/str"
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 var (
@@ -28,7 +28,7 @@ var (
 // XMLRoot :
 func XMLRoot(xml string) string {
 	xml = sTrim(xml, " \t\n\r")
-	failP1OnErrWhen(!isXML(xml), "%v", eg.PARAM_INVALID_XML)
+	failP1OnErrWhen(!isXML(xml), "%v", n3err.PARAM_INVALID_XML)
 
 	start, end := 0, 0
 	for i := len(xml) - 1; i >= 0; i-- {
@@ -47,6 +47,6 @@ func XMLRoot(xml string) string {
 	// check, flag (?s) let . includes "NewLine"
 	// re1 := regexp.MustCompile(fSf(`(?s)^<%s .+</%s>$`, root, root))
 	// re2 := regexp.MustCompile(fSf(`(?s)^<%s>.+</%s>$`, root, root))
-	// failP1OnErrWhen(!re1.MatchString(xml) && !re2.MatchString(xml), "%v", eg.XML_INVALID)
+	// failP1OnErrWhen(!re1.MatchString(xml) && !re2.MatchString(xml), "%v", n3err.XML_INVALID)
 	// return
 }

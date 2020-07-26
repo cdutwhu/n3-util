@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 // File2JSON : read the content of CSV File
@@ -42,14 +42,14 @@ func File2JSON(path string, vertical, save bool, savePaths ...string) (string, [
 func Reader2JSON(r io.Reader, description string) (string, []string, error) {
 	content, _ := csv.NewReader(r).ReadAll()
 	if len(content) < 1 {
-		return "", nil, eg.FILE_EMPTY
+		return "", nil, n3err.FILE_EMPTY
 	}
 
 	headers := make([]string, 0)
 	for i, headE := range content[0] {
 		if headE == "" {
 			headE = fSf("column_%d", i)
-			fPln(warnOnErr("%v: %s - column[%d] is empty, mark [%s]", eg.CSV_COLUMN_HEADER_EMPTY, description, i, headE))
+			fPln(warnOnErr("%v: %s - column[%d] is empty, mark [%s]", n3err.CSV_COLUMN_HEADER_EMPTY, description, i, headE))
 		}
 		headers = append(headers, headE)
 	}

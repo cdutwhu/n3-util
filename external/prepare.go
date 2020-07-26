@@ -3,7 +3,7 @@ package external
 import (
 	"os"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 // Prepare : // append `defer func() { os.Chdir(oriWD) }()` after this function
@@ -20,7 +20,7 @@ func Prepare(exe string, wkDirs ...string) (cWD, oriWD string) {
 		}
 	}
 
-	panic(fSf("%v: %s", eg.FILE_NOT_FOUND, exe))
-	// failPnOnErr(2, "%v: %s", eg.FILE_NOT_FOUND, exe)
+	panic(fSf("%v: %s", n3err.FILE_NOT_FOUND, exe))
+	// failPnOnErr(2, "%v: %s", n3err.FILE_NOT_FOUND, exe)
 	// return "", ""
 }

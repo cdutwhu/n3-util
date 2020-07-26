@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 // JSONRoot :
@@ -64,7 +64,7 @@ func SplitArr(json string, nSpace int) []string {
 		}
 		lvlCntPrev = lvlCnt
 	}
-	failOnErrWhen(len(psGrp) != len(peGrp), "%v", eg.JSON_ARRAY_INVALID)
+	failOnErrWhen(len(psGrp) != len(peGrp), "%v", n3err.JSON_ARRAY_INVALID)
 
 	// [parallel mode]
 	wg := sync.WaitGroup{}
@@ -157,7 +157,7 @@ func AsyncScalarSel(json, attr string) <-chan string {
 
 		r = regexp.MustCompile(`,\n[ ]+\]`)
 		pairs := r.FindAllStringIndex(ret, -1)
-		failOnErrWhen(len(pairs) > 1, "%v", eg.INTERNAL)
+		failOnErrWhen(len(pairs) > 1, "%v", n3err.INTERNAL)
 		if len(pairs) == 1 {
 			rmPos := pairs[0][0]
 			ret = ret[:rmPos] + ret[rmPos+1:]
@@ -180,7 +180,7 @@ func ScalarSelX(json string, attrGrp ...string) string {
 
 // L1Attrs : Level-1 attributes
 func L1Attrs(json string) (attrs []string) {
-	failP1OnErrWhen(!isJSON(json), "%v", eg.PARAM_INVALID_JSON)
+	failP1OnErrWhen(!isJSON(json), "%v", n3err.PARAM_INVALID_JSON)
 	json = Fmt(json, 2)
 	r := regexp.MustCompile(`\n  "[^"]+": [\[\{"-1234567890ntf]`)
 	found := r.FindAllString(json, -1)
@@ -205,18 +205,18 @@ func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 
 	for i := 0; i < 2; i++ {
 		lsAttr := toGeneralSlc(L1Attrs(inputs[i]))
-		failOnErrWhen(!exist(keys[i], lsAttr...), "%v: NO %s key attribute [%s]", eg.INTERNAL, keyTypes[i], keys[i])
+		failOnErrWhen(!exist(keys[i], lsAttr...), "%v: NO %s key attribute [%s]", n3err.INTERNAL, keyTypes[i], keys[i])
 
 		r := regexp.MustCompile(fSf(`\n  "%s": .+[,]?\n`, keys[i]))
 		pSEs := r.FindAllStringIndex(inputs[i], 1)
-		failOnErrWhen(len(pSEs) == 0, "%v: %s key's value error", eg.INTERNAL, keyTypes[i])
+		failOnErrWhen(len(pSEs) == 0, "%v: %s key's value error", n3err.INTERNAL, keyTypes[i])
 		starts[i], ends[i] = pSEs[0][0], pSEs[0][1]
 		keyLines[i] = sTrim(inputs[i][starts[i]:ends[i]], ", \t\r\n")
 		keyValues[i] = keyLines[i][len(fkey)+4:]
 
 		if i == 0 {
 			posGrp = pSEs
-			failOnErrWhen(exist(name, lsAttr...), "%v: [%s] already exists in left json", eg.INTERNAL, name)
+			failOnErrWhen(exist(name, lsAttr...), "%v: [%s] already exists in left json", n3err.INTERNAL, name)
 		}
 	}
 

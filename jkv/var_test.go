@@ -15,10 +15,10 @@ func TestNewTraits(t *testing.T) {
 	}
 
 	// for i, s := range StartOfObjArr(iter2Slc(13)...) {
-	// 	failOnErrWhen(s != sTAOStart[i], "%v: err 1", eg.INTERNAL)
+	// 	failOnErrWhen(s != sTAOStart[i], "%v: err 1", n3err.INTERNAL)
 	// }
 
 	// for i, s := range EndOfObjArr(iter2Slc(13)...) {
-	// 	failOnErrWhen(s != sTAOEnd[i], "%v: err 2", eg.INTERNAL)
+	// 	failOnErrWhen(s != sTAOEnd[i], "%v: err 2", n3err.INTERNAL)
 	// }
 }
