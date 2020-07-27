@@ -10,6 +10,7 @@ import (
 
 // ITrace :
 type ITrace interface {
+	SetTracer(opentracing.Tracer)
 	Tracer() opentracing.Tracer
 	SetContext(context.Context)
 	Context() context.Context

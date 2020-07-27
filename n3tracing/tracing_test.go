@@ -15,6 +15,10 @@ type TrObj struct {
 	ctx    context.Context
 }
 
+func (to *TrObj) SetTracer(t opentracing.Tracer) {
+	to.tracer = t
+}
+
 func (to *TrObj) Tracer() opentracing.Tracer {
 	return to.tracer
 }
