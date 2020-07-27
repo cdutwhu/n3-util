@@ -2,7 +2,6 @@ package n3tracing
 
 import (
 	"context"
-	"io"
 	"net/http"
 	"testing"
 
@@ -14,26 +13,17 @@ import (
 type TrObj struct {
 	tracer opentracing.Tracer
 	ctx    context.Context
-	c      io.Closer
-}
-
-func (to *TrObj) SetTracer(tracer opentracing.Tracer) {
-	failP1OnErrWhen(to.c == nil, "%v", fEf("Need 'jaegertracing.New(e, nil)' for [SetEchoJgTrCloser]"))
-	to.tracer = tracer
 }
 
 func (to *TrObj) Tracer() opentracing.Tracer {
-	failP1OnErrWhen(to.c == nil, "%v", fEf("Need 'jaegertracing.New(e, nil)' for [SetEchoJgTrCloser]"))
 	return to.tracer
 }
 
 func (to *TrObj) SetContext(ctx context.Context) {
-	failP1OnErrWhen(to.c == nil, "%v", fEf("Need 'jaegertracing.New(e, nil)' for [SetEchoJgTrCloser]"))
 	to.ctx = ctx
 }
 
 func (to *TrObj) Context() context.Context {
-	failP1OnErrWhen(to.c == nil, "%v", fEf("Need 'jaegertracing.New(e, nil)' for [SetEchoJgTrCloser]"))
 	return to.ctx
 }
 
@@ -52,16 +42,17 @@ func TestInitTracer(t *testing.T) {
 	c := jaegertracing.New(e, nil)
 	defer c.Close()
 
-	obj := TrObj{InitTracer("n3tracing-test"), nil, c}
+	obj := TrObj{InitTracer("n3tracing-test"), nil}
 
-	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			obj.SetContext(c.Request().Context())
-			return next(c)
-		}
-	})
+	// e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+	// 	return func(c echo.Context) error {
+	// 		obj.SetContext(c.Request().Context())
+	// 		return next(c)
+	// 	}
+	// })
 
 	e.GET("/", func(c echo.Context) error {
+		obj.SetContext(c.Request().Context())
 		DoTracing(&obj, "testOperName", "testSpanValue", "testTAG", "testTAGValue", "testEvent")
 		return c.String(http.StatusOK, "test")
 	})

@@ -10,7 +10,6 @@ import (
 
 // ITrace :
 type ITrace interface {
-	SetTracer(opentracing.Tracer)
 	Tracer() opentracing.Tracer
 	SetContext(context.Context)
 	Context() context.Context
@@ -30,19 +29,18 @@ func InitTracer(service string) opentracing.Tracer {
 
 // DoTracing :
 func DoTracing(it ITrace, operName, spanValue, tagKey, tagValue, event string) {
-	if ctx := it.Context(); ctx != nil {
-		if span := opentracing.SpanFromContext(ctx); span != nil {
-			if tracer := it.Tracer(); tracer != nil {
-				// fPln(" ------- DoTracing ------- ")
-				logger("DoTracing: %s", event)
-				span := tracer.StartSpan(operName, opentracing.ChildOf(span.Context()))
-				defer span.Finish()
-				span.LogEvent(event)
-				span.SetTag(tagKey, tagValue)
-				tags.SpanKindRPCClient.Set(span)
-				tags.PeerService.Set(span, spanValue)
-				ctx = opentracing.ContextWithSpan(ctx, span)
-			}
-		}
-	}
+	ctx, tracer := it.Context(), it.Tracer()
+	failP1OnErrWhen(ctx == nil, "%v", fEf("Need 'SetContext'"))
+	failP1OnErrWhen(tracer == nil, "%v", fEf("Need 'SetTracer'"))
+	span := opentracing.SpanFromContext(ctx)
+	failP1OnErrWhen(span == nil, "%v", fEf("Need 'jaegertracing.New(e, nil)'"))
+	// fPln(" ------- DoTracing ------- ")
+	logger("DoTracing: %s", event)
+	span = tracer.StartSpan(operName, opentracing.ChildOf(span.Context()))
+	defer span.Finish()
+	span.LogEvent(event)
+	span.SetTag(tagKey, tagValue)
+	tags.SpanKindRPCClient.Set(span)
+	tags.PeerService.Set(span, spanValue)
+	opentracing.ContextWithSpan(ctx, span)
 }
