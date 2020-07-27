@@ -13,4 +13,5 @@ var (
 	failOnErrWhen   = fn.FailOnErrWhen
 	failP1OnErrWhen = fn.FailP1OnErrWhen
 	logger          = fn.Logger
+	loggerWhen      = fn.LoggerWhen
 )

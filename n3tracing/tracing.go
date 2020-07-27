@@ -30,8 +30,13 @@ func InitTracer(service string) opentracing.Tracer {
 // DoTracing :
 func DoTracing(it ITrace, operName, spanValue, tagKey, tagValue, event string) {
 	ctx, tracer := it.Context(), it.Tracer()
-	failP1OnErrWhen(ctx == nil, "%v", fEf("Need 'SetContext'"))
-	failP1OnErrWhen(tracer == nil, "%v", fEf("Need 'SetTracer'"))
+	// failP1OnErrWhen(ctx == nil, "%v", fEf("Need 'SetContext'"))
+	// failP1OnErrWhen(tracer == nil, "%v", fEf("Need 'SetTracer'"))
+	loggerWhen(ctx == nil, "context is nil, tracing is not working")
+	loggerWhen(tracer == nil, "tracer is nil, tracing is not working")
+	if ctx == nil || tracer == nil {
+		return
+	}
 	span := opentracing.SpanFromContext(ctx)
 	failP1OnErrWhen(span == nil, "%v", fEf("Need 'jaegertracing.New(e, nil)'"))
 	// fPln(" ------- DoTracing ------- ")
