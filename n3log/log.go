@@ -10,12 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var (
-	urlT   = `http://logs-01.loggly.com/inputs/#token#/tag/http/`
-	urlR   = ""
-	loggly = false
-)
-
 // LrInit :
 func LrInit() {
 	profile := flag.String("lrprofile", "test", "logrus formatter")
@@ -30,15 +24,31 @@ func LrInit() {
 	}
 }
 
-// LrOut :
-func LrOut(logrusOut func(format string, args ...interface{}), format string, args ...interface{}) (msg string, err error) {
-	var logwriter bytes.Buffer
-	logrus.SetOutput(io.Writer(&logwriter))
-	logrusOut(format, args...)
-	if loggly {
-		_, err = http.Post(urlR, "application/json", io.Reader(&logwriter))
+// Loggly :
+func Loggly(level string) Output {
+	return func(format string, args ...interface{}) {
+		var logwriter bytes.Buffer
+		logrus.SetOutput(io.Writer(&logwriter))
+		fn := logrus.Printf
+		switch level {
+		case "info":
+			fn = logrus.Printf
+		case "warn", "warning":
+			fn = logrus.Warnf
+		case "error":
+			fn = logrus.Errorf
+		case "debug":
+			fn = logrus.Debugf
+		default:
+			fn = logrus.Printf
+		}
+		fn(format, args...)
+		if loggly {
+			_, err := http.Post(urlR, "application/json", io.Reader(&logwriter))
+			warnOnErr("%v", err)
+		}
+		fPln(logwriter.String())
 	}
-	return logwriter.String(), err
 }
 
 // SetLogglyToken :
@@ -49,4 +59,24 @@ func SetLogglyToken(token string) {
 // EnableLoggly :
 func EnableLoggly(enable bool) {
 	loggly = enable
+}
+
+// --------------------------------------------------------- //
+
+// Output :
+type Output func(format string, args ...interface{})
+
+// Logger : group of Output
+type Logger []Output
+
+// Bind :
+func Bind(outputs ...Output) Logger {
+	return append([]Output{}, outputs...)
+}
+
+// Do :
+func (lg Logger) Do(format string, args ...interface{}) {
+	for _, f := range lg {
+		f(format, args...)
+	}
 }

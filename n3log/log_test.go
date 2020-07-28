@@ -1,17 +1,18 @@
 package n3log
 
 import (
-	"fmt"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	"github.com/labstack/echo/v4"
 )
 
 func TestLoggly(t *testing.T) {
+	e := echo.New()
+	defer e.Close()
+	defer e.Start(fSf(":%d", 1500))
+
 	LrInit()
 	EnableLoggly(true)
 	SetLogglyToken("54290728-93e0-425a-a49c-c9e834288026")
-	if _, err := LrOut(logrus.Errorf, "loggly test Errorf"); err != nil {
-		fmt.Println(err)
-	}
+	Bind(logger, lPf, e.Logger.Infof, Loggly("info")).Do("%s", "echo starting")
 }
