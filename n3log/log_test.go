@@ -2,17 +2,18 @@ package n3log
 
 import (
 	"testing"
-
-	"github.com/labstack/echo/v4"
 )
 
 func TestLoggly(t *testing.T) {
-	e := echo.New()
-	defer e.Close()
-	defer e.Start(fSf(":%d", 1500))
+	// e := echo.New()
+	// defer e.Close()
+	// defer e.Start(fSf(":%d", 1500))
 
-	LrInit()
-	EnableLoggly(true)
-	SetLogglyToken("54290728-93e0-425a-a49c-c9e834288026")
-	Bind(logger, lPf, e.Logger.Infof, Loggly("info")).Do("%s", "echo starting")
+	// e.GET("/", func(c echo.Context) error {
+	// 	e.Logger.Infof("e.GET")
+	// 	return c.String(http.StatusOK, "echo return")
+	// })
+
+	SetLoggly(true, "54290728-93e0-425a-a49c-c9e834288026", "n3log")
+	Bind(logger, lPf, Loggly("info")).Do("%s", "TestLogglyBind")
 }

@@ -5,13 +5,12 @@ import (
 	"flag"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/sirupsen/logrus"
 )
 
-// LrInit :
-func LrInit() {
+// lrInit :
+func lrInit() {
 	profile := flag.String("lrprofile", "test", "logrus formatter")
 	flag.Parse()
 	if *profile == "dev" {
@@ -21,6 +20,16 @@ func LrInit() {
 		})
 	} else {
 		logrus.SetFormatter(&logrus.JSONFormatter{})
+	}
+}
+
+// SetLoggly :
+func SetLoggly(enable bool, token, tag string) {
+	loggly = enable
+	urlR = sReplace(urlT, "#token#", token, 1)
+	urlR = sReplace(urlR, "#tag#", tag, 1)
+	if loggly {
+		lrInit()
 	}
 }
 
@@ -47,18 +56,8 @@ func Loggly(level string) Output {
 			_, err := http.Post(urlR, "application/json", io.Reader(&logwriter))
 			warnOnErr("%v", err)
 		}
-		fPln(logwriter.String())
+		fPt(logwriter.String())
 	}
-}
-
-// SetLogglyToken :
-func SetLogglyToken(token string) {
-	urlR = strings.Replace(urlT, "#token#", token, 1)
-}
-
-// EnableLoggly :
-func EnableLoggly(enable bool) {
-	loggly = enable
 }
 
 // --------------------------------------------------------- //
