@@ -63,6 +63,9 @@ AGAIN:
 		ret = sReplaceAll(ret, "\n\n\n", "\n\n")
 		goto AGAIN
 	}
+	if !sHasSuffix(ret, "\n") {
+		ret += "\n"
+	}
 	return ret
 }
 

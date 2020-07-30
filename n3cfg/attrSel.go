@@ -51,18 +51,19 @@ NEXT1:
 			start, end := pair[0], pair[1]
 			if i >= start && i <= end {
 				selection = append(selection, line)
-				if i == end {
-					selection = append(selection, "\n")
-				}
 			}
 		}
 	}
 
 	ret := sJoin(selection, "\n")
+	ret = sReplaceAll(ret, "\n[", "\n\n[") // add blank lines above each group attribute
 AGAIN:
 	if sContains(ret, "\n\n\n") {
 		ret = sReplaceAll(ret, "\n\n\n", "\n\n")
 		goto AGAIN
+	}
+	if !sHasSuffix(ret, "\n") {
+		ret += "\n"
 	}
 	return ret
 }
