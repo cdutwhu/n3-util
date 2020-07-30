@@ -2,23 +2,8 @@ package n3cfg
 
 import "io/ioutil"
 
-// RmFileAttrL1 :
-func RmFileAttrL1(infile, outfile string, attrs ...string) string {
-	bytes, err := ioutil.ReadFile(infile)
-	failP1OnErr("%v", err)
-	// if sHasSuffix(outfile, ".toml") {
-	// 	outfile = outfile[:len(outfile)-5]
-	// }
-	// outfile = rmTailFromLast(infile, "/") + "/" + outfile + ".toml"
-	if !sHasSuffix(outfile, ".toml") {
-		outfile += ".toml"
-	}
-	mustWriteFile(outfile, []byte(rmAttrL1(string(bytes), attrs...)))
-	return outfile
-}
-
-// rmAttrL1 :
-func rmAttrL1(toml string, attrs ...string) string {
+// attrL1Rm :
+func attrL1Rm(toml string, attrs ...string) string {
 	chkStart := func(line, attr string) bool {
 		return sHasPrefix(line, "["+attr+"]")
 	}
@@ -26,37 +11,36 @@ func rmAttrL1(toml string, attrs ...string) string {
 		ln := sTrim(line, " \t")
 		return ln == "" || sHasPrefix(ln, "#") || sHasPrefix(ln, "[")
 	}
-
 	chkEndOfSingle := func(line string) bool {
 		ln := sTrimLeft(line, " \t")
 		return sHasPrefix(ln, "[")
 	}
 
-	pairs, rmflag, attrSingle := [][2]int{}, false, true
+	pairs, flagRm, flagSA := [][2]int{}, false, true
 	lines := sSplit(toml, "\n")
 NEXT1:
 	for i, line := range lines {
 		for _, attr := range attrs {
 
 			// ------------------------- //
-			if attrSingle {
+			if flagSA {
 				if ln := sTrim(rmTailFromFirst(line, "="), " \t"); ln == attr {
 					pairs = append(pairs, [2]int{i, i})
 				}
 				if chkEndOfSingle(line) {
-					attrSingle = false
+					flagSA = false
 				}
 			}
 			// ------------------------- //
 
 			if chkStart(line, attr) {
 				pairs = append(pairs, [2]int{i, -1})
-				rmflag = true
+				flagRm = true
 				continue NEXT1
 			}
-			if rmflag && chkEnd(line) {
+			if flagRm && chkEnd(line) {
 				pairs[len(pairs)-1][1] = i - 1
-				rmflag = false
+				flagRm = false
 			}
 		}
 	}
@@ -80,4 +64,19 @@ AGAIN:
 		goto AGAIN
 	}
 	return ret
+}
+
+// RmFileAttrL1 :
+func RmFileAttrL1(infile, outfile string, attrs ...string) string {
+	bytes, err := ioutil.ReadFile(infile)
+	failP1OnErr("%v", err)
+	// if sHasSuffix(outfile, ".toml") {
+	// 	outfile = outfile[:len(outfile)-5]
+	// }
+	// outfile = rmTailFromLast(infile, "/") + "/" + outfile + ".toml"
+	if !sHasSuffix(outfile, ".toml") {
+		outfile += ".toml"
+	}
+	mustWriteFile(outfile, []byte(attrL1Rm(string(bytes), attrs...)))
+	return outfile
 }

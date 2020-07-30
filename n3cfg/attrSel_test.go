@@ -2,11 +2,11 @@ package n3cfg
 
 import "testing"
 
-func TestRmAttrL1(T *testing.T) {
+func TestSelFileAttrL1(T *testing.T) {
 	fPln(
-		RmFileAttrL1(
+		SelFileAttrL1(
 			"../_data/toml/test.toml",
-			"./config_part",
+			"./config_part1",
 			"WebService",
 			"LogFile",
 			"Storage",
