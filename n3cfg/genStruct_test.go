@@ -5,6 +5,10 @@ import (
 	"testing"
 )
 
+// 'genStruct' to create one for real one, then comment this out
+type Config struct {
+}
+
 func TestScanToml(t *testing.T) {
 	bytes, err := ioutil.ReadFile("../_data/toml/test.toml")
 	failP1OnErr("%v", err)

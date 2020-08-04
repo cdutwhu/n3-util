@@ -72,8 +72,7 @@ func attrTypes(tomllines []string, grpAttr string) map[string]string {
 		attr := sTrim(rmTailFromFirst(ln, "="), " \t")
 		value := sTrim(rmHeadToFirst(ln, "="), " \t")
 		switch {
-		case sHasPrefix(value, "\"[") && sHasSuffix(value, "]\"") &&
-			sCount(value, "[") == 1 && sCount(value, "]") == 1:
+		case sCount(value, "\"[") == 1 && sCount(value, "]\"") == 1:
 			mAttrType[attr] = "interface{}"
 		case isNumeric(value) && !sContains(value, "."):
 			mAttrType[attr] = "int"

@@ -1,8 +1,14 @@
 package n3cfg
 
 import (
+	"encoding/json"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strconv"
+	"time"
+
+	"github.com/BurntSushi/toml"
 )
 
 // GitVer :
@@ -81,4 +87,122 @@ func Modify(cfg interface{}, mRepl map[string]interface{}) interface{} {
 	}
 	failP1OnErr("%v", fEf("input cfg MUST be struct pointer"))
 	return nil
+}
+
+// EvalCfgValue :
+func EvalCfgValue(cfg interface{}, key string) interface{} {
+	bytes, err := json.MarshalIndent(cfg, "", "\t")
+	failP1OnErr("%v", err)
+	lines := sSplit(string(bytes), "\n")
+	if sCount(key, ".") == 0 {
+		for _, ln := range lines {
+			if sHasPrefix(ln, fSf("\t\"%s\":", key)) {
+				sval := sTrim(sSplit(ln, ": ")[1], ",\"")
+				switch {
+				case isNumeric(sval) && !sContains(sval, "."):
+					ret, _ := strconv.ParseInt(sval, 10, 64)
+					return int(ret)
+				case isNumeric(sval) && sContains(sval, "."):
+					ret, _ := strconv.ParseFloat(sval, 64)
+					return ret
+				case sval == "true" || sval == "false":
+					ret, _ := strconv.ParseBool(sval)
+					return ret
+				default:
+					return sval
+				}
+			}
+		}
+	} else if sCount(key, ".") == 1 {
+		ss := sSplit(key, ".")
+		part1, part2 := ss[0], ss[1]
+	NEXT:
+		for i, ln1 := range lines {
+			if sHasPrefix(ln1, fSf("\t\t\"%s\":", part2)) {
+				for j := i - 1; j >= 0; j-- {
+					ln2 := lines[j]
+					if sHasPrefix(ln2, "\t\"") {
+						if sHasPrefix(ln2, fSf("\t\"%s\":", part1)) {
+							sval := sTrim(sSplit(ln1, ": ")[1], ",\"")
+							switch {
+							case isNumeric(sval) && !sContains(sval, "."):
+								ret, _ := strconv.ParseInt(sval, 10, 64)
+								return int(ret)
+							case isNumeric(sval) && sContains(sval, "."):
+								ret, _ := strconv.ParseFloat(sval, 64)
+								return ret
+							case sval == "true" || sval == "false":
+								ret, _ := strconv.ParseBool(sval)
+								return ret
+							default:
+								return sval
+							}
+						}
+						continue NEXT
+					}
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// ----------------------------------- //
+
+// NewCfg :
+func NewCfg(mReplExpr map[string]string, configs ...string) *Config {
+	defer func() { mux.Unlock() }()
+	mux.Lock()
+	for _, f := range configs {
+		if _, e := os.Stat(f); e == nil {
+			return (&Config{}).init(f, mReplExpr)
+		}
+	}
+	return nil
+}
+
+// set is
+func (cfg *Config) init(fpath string, mReplExpr map[string]string) *Config {
+	_, e := toml.DecodeFile(fpath, cfg)
+	failPnOnErr(2, "%v", e)
+	abs, e := filepath.Abs(fpath)
+	failOnErr("%v", e)
+	home, e := os.UserHomeDir()
+	failOnErr("%v", e)
+	ver, e := GitVer()
+	failOnErr("%v", e)
+	cfg = Modify(cfg, map[string]interface{}{
+		"~":      home,
+		"[DATE]": time.Now().Format("2006-01-02"),
+		"[IP]":   localIP(),
+		"[GV]":   ver,
+		"[PATH]": abs,
+	}).(*Config)
+
+	mRepl := make(map[string]interface{})
+	for k, v := range mReplExpr {
+		mRepl[k] = EvalCfgValue(cfg, v)
+	}
+	return Modify(cfg, mRepl).(*Config)
+}
+
+// SaveAs :
+func (cfg *Config) SaveAs(filename string) {
+	if !sHasSuffix(filename, ".toml") {
+		filename += ".toml"
+	}
+	f, e := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+	failP1OnErr("%v", e)
+	defer f.Close()
+	failP1OnErr("%v", toml.NewEncoder(f).Encode(cfg))
+}
+
+// InitEnvVarFromTOML : initialize the global variables
+func InitEnvVarFromTOML(key string, configs ...string) bool {
+	Cfg := NewCfg(nil, append(configs, "./config.toml", "./config/config.toml")...)
+	if Cfg == nil {
+		return false
+	}
+	struct2Env(key, Cfg)
+	return true
 }

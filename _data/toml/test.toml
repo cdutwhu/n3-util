@@ -1,50 +1,51 @@
-Path = ""
-LogFile = "./[DATE].log"
 IP = "[IP]"
-Port = "[PORT]"
+LogFile = "./[DATE].log"
+Path = "[PATH]"
+Port = 1323
 
 # ************************ Server ************************ #
 # ********** Client User DO NOT Modify This Part ********* #
 
 [Storage]
-  DataBase = "badger" # "map" / "badger" / ...
-  MetaPath = "/var/tmp/n3-privacy/meta/"
   BadgerDBPath = "/var/tmp/n3-privacy/badger/" # "./data/badger/"
+  DataBase = "badger" # "map" / "badger" / ...
+  MetaPath = "/var/tmp/n3-privacy/meta/" 
 
-[WebService]                              # Shared with Client #
-  Port = 1323
-  Version = "0.1.0"                       # Server internal [Route] use
-  Service = "policy-service"              # Server internal [Route] use
+[WebService] # Shared with Client #
+  Port = "[p]" 
+  Service = "policy-service" # Server internal [Route] use
+  Version = "[GV]" # Server internal [Route] use
 
-[Route]                                   # Shared with Client #
-  ROOT = "/"
-  GetID = "/[s]/[v]/id"
-  GetHash = "/[s]/[v]/hash"
-  Get = "/[s]/[v]/policy"
-  Update = "/[s]/[v]/update"
+[Route] # Shared with Client #
   Delete = "/[s]/[v]/delete"
-  LsID = "/[s]/[v]/list/policyid"
-  LsUser = "/[s]/[v]/list/user"
+  Get = "/[s]/[v]/policy"
+  GetHash = "/[s]/[v]/hash"
+  GetID = "/[s]/[v]/id"
   LsContext = "/[s]/[v]/list/context"
+  LsID = "/[s]/[v]/list/policyid"
   LsObject = "/[s]/[v]/list/object"
+  LsUser = "/[s]/[v]/list/user"
+  ROOT = "/"
+  Update = "/[s]/[v]/update"
 
 [File]
+  ClientConfig = "../../../Client/build/Linux64/config.toml"
   ClientLinux64 = "../../../Client/build/Linux64/client"
   ClientMac = "../../../Client/build/Mac/client"
   ClientWin64 = "../../../Client/build/Win64/client.exe"
-  ClientConfig = "../../../Client/build/Linux64/config.toml"
+  MaskConfig = "../../../Mask/build/Linux64/config.toml"
   MaskLinux64 = "../../../Mask/build/Linux64/jm"
   MaskMac = "../../../Mask/build/Mac/jm"
   MaskWin64 = "../../../Mask/build/Win64/jm.exe"
-  MaskConfig = "../../../Mask/build/Linux64/config.toml"
 
 # ************************ Client ************************ #
 # *********** Client User ONLY Modify This Part ********** #
 
 [Server]
-  Protocol = "http" 
   IP = "[IP]"
-  Port = "[PORT]"
+  Port = "[p]"
+  Protocol = "http"
+  Service = "policy-service-1"
 
 [Access]
   Timeout = 3

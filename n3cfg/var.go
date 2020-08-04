@@ -6,12 +6,14 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"unicode"
 
 	"github.com/cdutwhu/debog/fn"
 	"github.com/cdutwhu/gotil/io"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/net"
+	"github.com/cdutwhu/gotil/rflx"
 	"github.com/cdutwhu/gotil/str"
 	"github.com/cdutwhu/n3-util/external"
 )
@@ -48,6 +50,7 @@ var (
 	failOnErr       = fn.FailOnErr
 	failP1OnErr     = fn.FailP1OnErr
 	failP1OnErrWhen = fn.FailP1OnErrWhen
+	failPnOnErr     = fn.FailPnOnErr
 	rmTailFromLast  = str.RmTailFromLast
 	rmTailFromFirst = str.RmTailFromFirst
 	rmHeadToFirst   = str.RmHeadToFirst
@@ -57,4 +60,10 @@ var (
 	isXML           = judge.IsXML
 	localIP         = net.LocalIP
 	prepare         = external.Prepare
+	struct2Env      = rflx.Struct2Env
+	env2Struct      = rflx.Env2Struct
+)
+
+var (
+	mux sync.Mutex
 )
