@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -f *.toml config.go
+rm -f *.toml *config*.go

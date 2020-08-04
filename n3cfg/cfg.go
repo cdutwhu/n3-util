@@ -150,19 +150,19 @@ func EvalCfgValue(cfg interface{}, key string) interface{} {
 // ----------------------------------- //
 
 // NewCfg :
-func NewCfg(mReplExpr map[string]string, configs ...string) *Config {
+func NewCfg(cfg interface{}, mReplExpr map[string]string, cfgPaths ...string) string {
 	defer func() { mux.Unlock() }()
 	mux.Lock()
-	for _, f := range configs {
+	for _, f := range cfgPaths {
 		if _, e := os.Stat(f); e == nil {
-			return (&Config{}).init(f, mReplExpr)
+			initCfg(f, cfg, mReplExpr)
+			return f
 		}
 	}
-	return nil
+	return ""
 }
 
-// set is
-func (cfg *Config) init(fpath string, mReplExpr map[string]string) *Config {
+func initCfg(fpath string, cfg interface{}, mReplExpr map[string]string) interface{} {
 	_, e := toml.DecodeFile(fpath, cfg)
 	failPnOnErr(2, "%v", e)
 	abs, e := filepath.Abs(fpath)
@@ -177,32 +177,31 @@ func (cfg *Config) init(fpath string, mReplExpr map[string]string) *Config {
 		"[IP]":   localIP(),
 		"[GV]":   ver,
 		"[PATH]": abs,
-	}).(*Config)
+	})
 
 	mRepl := make(map[string]interface{})
 	for k, v := range mReplExpr {
 		mRepl[k] = EvalCfgValue(cfg, v)
 	}
-	return Modify(cfg, mRepl).(*Config)
+	return Modify(cfg, mRepl)
 }
 
-// SaveAs :
-func (cfg *Config) SaveAs(filename string) {
-	if !sHasSuffix(filename, ".toml") {
-		filename += ".toml"
+// SaveCfg :
+func SaveCfg(fpath string, cfg interface{}) {
+	if !sHasSuffix(fpath, ".toml") {
+		fpath += ".toml"
 	}
-	f, e := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+	f, e := os.OpenFile(fpath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
 	failP1OnErr("%v", e)
 	defer f.Close()
 	failP1OnErr("%v", toml.NewEncoder(f).Encode(cfg))
 }
 
 // InitEnvVarFromTOML : initialize the global variables
-func InitEnvVarFromTOML(key string, configs ...string) bool {
-	Cfg := NewCfg(nil, append(configs, "./config.toml", "./config/config.toml")...)
-	if Cfg == nil {
+func InitEnvVarFromTOML(cfg interface{}, key string, configs ...string) bool {
+	if NewCfg(cfg, nil, append(configs, "./config.toml", "./config/config.toml")...) == "" {
 		return false
 	}
-	struct2Env(key, Cfg)
+	struct2Env(key, cfg)
 	return true
 }

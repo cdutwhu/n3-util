@@ -5,10 +5,6 @@ import (
 	"testing"
 )
 
-// 'genStruct' to create one for real one, then comment this out
-type Config struct {
-}
-
 func TestScanToml(t *testing.T) {
 	bytes, err := ioutil.ReadFile("../_data/toml/test.toml")
 	failP1OnErr("%v", err)
@@ -33,5 +29,5 @@ func TestAttrsRange(t *testing.T) {
 }
 
 func TestGenStruct(t *testing.T) {
-	GenStruct("../_data/toml/test.toml", "Config", "n3cfg", "./config.go")
+	GenStruct("../_data/toml/test.toml", "Config", "n3cfg", "./config_auto.go")
 }

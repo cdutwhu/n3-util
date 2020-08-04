@@ -16,9 +16,15 @@ func TestGitTag(t *testing.T) {
 	fPln(GitTag())
 }
 
+// Config : holder for ignoring compiling error. genStruct to get an real one.
+// then comment below out.
+type Config struct {
+}
+
 func TestModify(t *testing.T) {
 	cfg := &Config{}
-	toml.DecodeFile("../_data/toml/test.toml", cfg)
+	_, err := toml.DecodeFile("../_data/toml/test.toml", cfg)
+	failOnErr("%v", err)
 	Icfg := Modify(cfg, map[string]interface{}{
 		"[DATE]": time.Now().Format("2006-01-02"),
 		"[IP]":   localIP(),
@@ -31,7 +37,9 @@ func TestModify(t *testing.T) {
 }
 
 func TestNewCfg(t *testing.T) {
-	cfg := NewCfg(
+	cfg := &Config{}
+	ok := NewCfg(
+		cfg,
 		map[string]string{
 			"[s]": "WebService.Service",
 			"[v]": "WebService.Version",
@@ -39,18 +47,21 @@ func TestNewCfg(t *testing.T) {
 		},
 		"../_data/toml/test.toml",
 	)
+	fPln(ok)
 	spew.Dump(cfg)
-	cfg.SaveAs("./saved.toml")
+	SaveCfg("./saved.toml", cfg)
 }
 
 func TestEvalCfgValue(t *testing.T) {
-	cfg := NewCfg(nil, "../_data/toml/test.toml")
+	cfg := &Config{}
+	ok := NewCfg(cfg, nil, "../_data/toml/test.toml")
+	fPln(ok)
 	fPln(EvalCfgValue(cfg, "Port"))
 	fPln(EvalCfgValue(cfg, "Storage.MetaPath"))
 	fPln(EvalCfgValue(cfg, "WebService.Port"))
 	fPln(EvalCfgValue(cfg, "Server.Service"))
 	fPln(EvalCfgValue(cfg, "WebService.Service"))
-	cfg.SaveAs("./saved.toml")
+	SaveCfg("./saved.toml", cfg)
 }
 
 // func TestWorldTime(t *testing.T) {
