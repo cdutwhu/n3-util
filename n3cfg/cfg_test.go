@@ -38,7 +38,7 @@ func TestModify(t *testing.T) {
 
 func TestNewCfg(t *testing.T) {
 	cfg := &Config{}
-	ok := NewCfg(
+	ok := New(
 		cfg,
 		map[string]string{
 			"[s]": "WebService.Service",
@@ -49,19 +49,19 @@ func TestNewCfg(t *testing.T) {
 	)
 	fPln(ok)
 	spew.Dump(cfg)
-	SaveCfg("./saved.toml", cfg)
+	Save("./saved.toml", cfg)
 }
 
 func TestEvalCfgValue(t *testing.T) {
 	cfg := &Config{}
-	ok := NewCfg(cfg, nil, "../_data/toml/test.toml")
+	ok := New(cfg, nil, "../_data/toml/test.toml")
 	fPln(ok)
 	fPln(EvalCfgValue(cfg, "Port"))
 	fPln(EvalCfgValue(cfg, "Storage.MetaPath"))
 	fPln(EvalCfgValue(cfg, "WebService.Port"))
 	fPln(EvalCfgValue(cfg, "Server.Service"))
 	fPln(EvalCfgValue(cfg, "WebService.Service"))
-	SaveCfg("./saved.toml", cfg)
+	Save("./saved.toml", cfg)
 }
 
 // func TestWorldTime(t *testing.T) {

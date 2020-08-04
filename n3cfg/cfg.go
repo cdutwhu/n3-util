@@ -149,8 +149,8 @@ func EvalCfgValue(cfg interface{}, key string) interface{} {
 
 // ----------------------------------- //
 
-// NewCfg :
-func NewCfg(cfg interface{}, mReplExpr map[string]string, cfgPaths ...string) string {
+// New :
+func New(cfg interface{}, mReplExpr map[string]string, cfgPaths ...string) string {
 	defer func() { mux.Unlock() }()
 	mux.Lock()
 	for _, f := range cfgPaths {
@@ -186,8 +186,8 @@ func initCfg(fpath string, cfg interface{}, mReplExpr map[string]string) interfa
 	return Modify(cfg, mRepl)
 }
 
-// SaveCfg :
-func SaveCfg(fpath string, cfg interface{}) {
+// Save :
+func Save(fpath string, cfg interface{}) {
 	if !sHasSuffix(fpath, ".toml") {
 		fpath += ".toml"
 	}
@@ -197,9 +197,9 @@ func SaveCfg(fpath string, cfg interface{}) {
 	failP1OnErr("%v", toml.NewEncoder(f).Encode(cfg))
 }
 
-// InitEnvVarFromTOML : initialize the global variables
-func InitEnvVarFromTOML(cfg interface{}, key string, configs ...string) bool {
-	if NewCfg(cfg, nil, append(configs, "./config.toml", "./config/config.toml")...) == "" {
+// InitEnvVar : initialize the global variables
+func InitEnvVar(cfg interface{}, mReplExpr map[string]string, key string, cfgPaths ...string) bool {
+	if New(cfg, mReplExpr, append(cfgPaths, "./config.toml", "./config/config.toml")...) == "" {
 		return false
 	}
 	struct2Env(key, cfg)
