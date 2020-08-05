@@ -1,4 +1,4 @@
-package n3cfg
+package strugen
 
 import (
 	"io/ioutil"
@@ -89,6 +89,7 @@ func attrTypes(tomllines []string, grpAttr string) map[string]string {
 
 // GenStruct :
 func GenStruct(tomlFile, struName, pkgName, struFile string) {
+
 	failP1OnErrWhen(!sHasSuffix(tomlFile, ".toml"), "%v @tomlFile", n3err.PARAM_INVALID)
 	tomlFile, err := filepath.Abs(tomlFile)
 	failP1OnErr("%v", err)
@@ -130,6 +131,14 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) {
 	}
 	struStr += fSln("}")
 
-	failOnErr("%v", ioutil.WriteFile(struFile, []byte(struStr), 0666))
+	mustWriteFile(struFile, []byte(struStr))
 	return
+}
+
+// AddCfg2Bank :
+func AddCfg2Bank(tomlFile, struName string) {
+	bank := "bank"
+	dir, _ := callerSrc()
+	file := filepath.Dir(dir) + fSf("/%s/%s.go", bank, struName)
+	GenStruct(tomlFile, struName, bank, file)
 }

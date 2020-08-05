@@ -199,7 +199,7 @@ func Save(fpath string, cfg interface{}) {
 
 // InitEnvVar : initialize the global variables
 func InitEnvVar(cfg interface{}, mReplExpr map[string]string, key string, cfgPaths ...string) bool {
-	if New(cfg, mReplExpr, append(cfgPaths, "./config.toml", "./config/config.toml")...) == "" {
+	if New(cfg, mReplExpr, append(cfgPaths, "./config.toml")...) == "" {
 		return false
 	}
 	struct2Env(key, cfg)

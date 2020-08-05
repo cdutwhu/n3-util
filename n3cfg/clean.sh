@@ -1,3 +1,4 @@
 #!/bin/bash
 
-rm -f *.toml *config*.go
+rm -f *.toml *auto*.go
+rm -f ./strugen/*auto*.go

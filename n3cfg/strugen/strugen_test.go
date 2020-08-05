@@ -1,4 +1,4 @@
-package n3cfg
+package strugen
 
 import (
 	"io/ioutil"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestScanToml(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../_data/toml/test.toml")
+	bytes, err := ioutil.ReadFile("../../_data/toml/test.toml")
 	failP1OnErr("%v", err)
 	toml := string(bytes)
 	lines := sSplit(toml, "\n")
@@ -17,7 +17,7 @@ func TestScanToml(t *testing.T) {
 }
 
 func TestAttrsRange(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../_data/toml/test.toml")
+	bytes, err := ioutil.ReadFile("../../_data/toml/test.toml")
 	failP1OnErr("%v", err)
 	toml := string(bytes)
 	lines := sSplit(toml, "\n")
@@ -29,5 +29,9 @@ func TestAttrsRange(t *testing.T) {
 }
 
 func TestGenStruct(t *testing.T) {
-	GenStruct("../_data/toml/test.toml", "Config", "n3cfg", "./config_auto.go")
+	GenStruct("../../_data/toml/test.toml", "Config", "bank", "../bank/CfgSvr.go")
+}
+
+func TestAddConfig(t *testing.T) {
+	AddCfg2Bank("../../_data/toml/test.toml", "Config")
 }
