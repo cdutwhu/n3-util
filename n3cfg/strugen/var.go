@@ -24,6 +24,7 @@ var (
 	sTrimRight      = strings.TrimRight
 	sContains       = strings.Contains
 	sCount          = strings.Count
+	sReplace        = strings.Replace
 	sReplaceAll     = strings.ReplaceAll
 	sToUpper        = strings.ToUpper
 	sToLower        = strings.ToLower

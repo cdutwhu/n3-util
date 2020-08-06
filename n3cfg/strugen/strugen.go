@@ -2,6 +2,7 @@ package strugen
 
 import (
 	"io/ioutil"
+	"os/user"
 	"path/filepath"
 
 	"github.com/cdutwhu/n3-util/n3err"
@@ -137,14 +138,15 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) {
 
 // AddCfg2Bank : echo 'password' | sudo -S env "PATH=$PATH" go test -v ./ -run TestAddCfg2Bank
 func AddCfg2Bank(tomlFile, cfgName, pkgName string) string {
-	cfgName = sTitle(cfgName)
-	pkgName = sToLower(pkgName)
+	enableLog2F(true, logfile)
+	cfgName, pkgName = sTitle(cfgName), sToLower(pkgName)
 	dir, _ := callerSrc()
 	file := filepath.Dir(dir) + fSf("/%s/%s/%s.go", "bank", pkgName, cfgName)
-	enableLog2F(true, logfile)
-	logger("ready to generate config.go")
-	logger(file)
+	user, err := user.Current()
+	failOnErr("%v", err)
+	sReplace(file, "/root/", "/home/"+user.Name+"/", 1)
+	logger("ready to generate: %v", file)
 	GenStruct(tomlFile, cfgName, pkgName, file)
-	logger("finish generating config.go")
+	logger("finish generating: %v", file)
 	return file
 }
