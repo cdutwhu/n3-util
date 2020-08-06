@@ -1,4 +1,4 @@
-package n3cfg
+package attrim
 
 import "io/ioutil"
 

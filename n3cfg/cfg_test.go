@@ -2,7 +2,6 @@ package n3cfg
 
 import (
 	"testing"
-	"time"
 
 	"github.com/BurntSushi/toml"
 	"github.com/davecgh/go-spew/spew"
@@ -18,16 +17,14 @@ func TestGitTag(t *testing.T) {
 
 // Config : holder for ignoring compiling error. genStruct to get an real one.
 // then comment below out.
-// type Config struct {
-// }
+type Config struct {
+}
 
 func TestModify(t *testing.T) {
 	cfg := &Config{}
 	_, err := toml.DecodeFile("../_data/toml/test.toml", cfg)
 	failOnErr("%v", err)
 	Icfg := Modify(cfg, map[string]interface{}{
-		"[DATE]": time.Now().Format("2006-01-02"),
-		"[IP]":   localIP(),
 		"[PORT]": 1234,
 		"[s]":    "n3cfg",
 		"[v]":    "v1.2.3",

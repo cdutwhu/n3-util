@@ -119,15 +119,15 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) {
 	struStr += fSf("// %s : AUTO Created From %s\n", struName, tomlFile)
 	struStr += fSf("type %s struct {\n", struName)
 	for k, v := range attrTypes(lines, "") { // root type is ""
-		struStr += fSf("    %s %s\n", k, v)
+		struStr += fSf("    %s %s\n", k, v) // 4 space
 	}
 	_, attrs2 := scanToml(lines)
 	for _, attr := range attrs2 {
 		struStr += fSf("    %s struct {\n", attr)
 		for k, v := range attrTypes(lines, attr) {
-			struStr += fSf("        %s %s\n", k, v)
+			struStr += fSf("        %s %s\n", k, v) // 8 space
 		}
-		struStr += fSln("    }")
+		struStr += fSln("    }") // 4 space
 	}
 	struStr += fSln("}")
 
@@ -135,10 +135,11 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) {
 	return
 }
 
-// AddCfg2Bank :
-func AddCfg2Bank(tomlFile, struName string) {
-	bank := "bank"
+// AddCfg2Bank : echo 'password' | sudo -S env "PATH=$PATH" go test -v ./ -run TestAddCfg2Bank
+func AddCfg2Bank(tomlFile, cfgName, pkgName string) {
+	cfgName = sTitle(cfgName)
+	pkgName = sToLower(pkgName)
 	dir, _ := callerSrc()
-	file := filepath.Dir(dir) + fSf("/%s/%s.go", bank, struName)
-	GenStruct(tomlFile, struName, bank, file)
+	file := filepath.Dir(dir) + fSf("/%s/%s/%s.go", "bank", pkgName, cfgName)
+	GenStruct(tomlFile, cfgName, pkgName, file)
 }

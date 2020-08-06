@@ -33,5 +33,5 @@ func TestGenStruct(t *testing.T) {
 }
 
 func TestAddConfig(t *testing.T) {
-	AddCfg2Bank("../../_data/toml/test.toml", "Config")
+	AddCfg2Bank("../../_data/toml/test.toml", "config", "Svr")
 }
