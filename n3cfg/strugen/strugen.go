@@ -149,9 +149,17 @@ func AddCfg2Bank(funcOSUser, tomlFile, cfgName, pkgName string) string {
 		funcOSUser = user.Name
 	}
 
-	file = sReplace(file, "/root/", "/home/"+funcOSUser+"/", 1)
 	logger("ready to generate: %v", file)
 	GenStruct(tomlFile, cfgName, pkgName, file)
 	logger("finish generating: %v", file)
+
+	// file LIKE `/home/qmiao/go/pkg/mod/github.com/cdutwhu/n3-util@v0.2.27/n3cfg/bank/s2jsvr/Config.go`
+	pkgmark := "/go/pkg/mod/"
+	if sContains(file, pkgmark) {
+		fullpkg := filepath.Dir(sSplit(file, pkgmark)[1])
+		logger(fullpkg)
+		pos := rxMustCompile(`@[^/]+/`).FindAllStringIndex(fullpkg, -1)
+		return replByPosGrp(fullpkg, pos, []string{""}, 0, 1)
+	}
 	return file
 }

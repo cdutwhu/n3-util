@@ -2,6 +2,7 @@ package strugen
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -30,6 +31,7 @@ var (
 	sToLower        = strings.ToLower
 	sTitle          = strings.Title
 	ucIsUpper       = unicode.IsUpper
+	rxMustCompile   = regexp.MustCompile
 	failOnErr       = fn.FailOnErr
 	failP1OnErr     = fn.FailP1OnErr
 	failP1OnErrWhen = fn.FailP1OnErrWhen
@@ -40,6 +42,7 @@ var (
 	rmTailFromFirst = str.RmTailFromFirst
 	rmHeadToFirst   = str.RmHeadToFirst
 	hasAnyPrefix    = str.HasAnyPrefix
+	replByPosGrp    = str.ReplByPosGrp
 	mustWriteFile   = io.MustWriteFile
 	isNumeric       = judge.IsNumeric
 	isXML           = judge.IsXML
