@@ -33,5 +33,6 @@ func TestGenStruct(t *testing.T) {
 }
 
 func TestAddConfig(t *testing.T) {
-	AddCfg2Bank("../../_data/toml/test.toml", "config", "Svr")
+	file := AddCfg2Bank("qmiao", "../../_data/toml/test.toml", "config", "Svr")
+	fPln(file)
 }

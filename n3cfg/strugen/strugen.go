@@ -137,14 +137,19 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) {
 }
 
 // AddCfg2Bank : echo 'password' | sudo -S env "PATH=$PATH" go test -v ./ -run TestAddCfg2Bank
-func AddCfg2Bank(tomlFile, cfgName, pkgName string) string {
+func AddCfg2Bank(funcOSUser, tomlFile, cfgName, pkgName string) string {
 	enableLog2F(true, logfile)
 	cfgName, pkgName = sTitle(cfgName), sToLower(pkgName)
 	dir, _ := callerSrc()
-	file := filepath.Dir(dir) + fSf("/%s/%s/%s.go", "bank", pkgName, cfgName)
-	user, err := user.Current()
-	failOnErr("%v", err)
-	sReplace(file, "/root/", "/home/"+user.Name+"/", 1)
+	file := filepath.Dir(dir) + fSf("/%s/%s/%s.go", "bank", pkgName, cfgName) // cfg struct Name as to be go fileName
+
+	if funcOSUser == "" {
+		user, err := user.Current()
+		failOnErr("%v", err)
+		funcOSUser = user.Name
+	}
+
+	file = sReplace(file, "/root/", "/home/"+funcOSUser+"/", 1)
 	logger("ready to generate: %v", file)
 	GenStruct(tomlFile, cfgName, pkgName, file)
 	logger("finish generating: %v", file)
