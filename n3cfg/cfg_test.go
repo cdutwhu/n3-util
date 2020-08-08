@@ -7,6 +7,10 @@ import (
 	"github.com/davecgh/go-spew/spew"
 )
 
+func TestPrjName(t *testing.T) {
+	fPln(PrjName())
+}
+
 func TestGitVer(t *testing.T) {
 	fPln(GitVer())
 }

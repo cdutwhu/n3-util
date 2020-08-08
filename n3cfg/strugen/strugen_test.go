@@ -32,7 +32,7 @@ func TestGenStruct(t *testing.T) {
 	GenStruct("../../_data/toml/test.toml", "Config", "bank", "../bank/CfgSvr.go")
 }
 
-func TestAddConfig(t *testing.T) {
-	file := AddCfg2Bank("qmiao", "../../_data/toml/test.toml", "config", "Svr")
-	fPln(file)
+func TestAddConfig(t *testing.T) {	
+	ok, file := AddCfg2Bank("qmiao", "../../_data/toml/test.toml", "n3-util", "Server")
+	fPln(ok, file)
 }

@@ -36,6 +36,8 @@ var (
 	failP1OnErr     = fn.FailP1OnErr
 	failP1OnErrWhen = fn.FailP1OnErrWhen
 	failPnOnErr     = fn.FailPnOnErr
+	warnP1OnErr     = fn.WarnP1OnErr
+	warnP1OnErrWhen = fn.WarnP1OnErrWhen
 	logger          = fn.Logger
 	enableLog2F     = fn.EnableLog2F
 	rmTailFromLast  = str.RmTailFromLast

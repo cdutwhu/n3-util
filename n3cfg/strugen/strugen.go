@@ -89,13 +89,20 @@ func attrTypes(tomllines []string, grpAttr string) map[string]string {
 }
 
 // GenStruct :
-func GenStruct(tomlFile, struName, pkgName, struFile string) {
+func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
+	warnP1OnErrWhen(!sHasSuffix(tomlFile, ".toml"), "%v @tomlFile", n3err.PARAM_INVALID)
 
-	failP1OnErrWhen(!sHasSuffix(tomlFile, ".toml"), "%v @tomlFile", n3err.PARAM_INVALID)
 	tomlFile, err := filepath.Abs(tomlFile)
-	failP1OnErr("%v", err)
+	if err != nil {
+		warnP1OnErr("%v", err)
+		return false
+	}
+
 	bytes, err := ioutil.ReadFile(tomlFile)
-	failP1OnErr("%v", err)
+	if err != nil {
+		warnP1OnErr("%v", err)
+		return false
+	}
 
 	fname := sReplaceAll(filepath.Base(tomlFile), ".toml", "")
 	dir := filepath.Dir(tomlFile)
@@ -133,15 +140,15 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) {
 	struStr += fSln("}")
 
 	mustWriteFile(struFile, []byte(struStr))
-	return
+	return true
 }
 
 // AddCfg2Bank : echo 'password' | sudo -S env "PATH=$PATH" go test -v ./ -run TestAddCfg2Bank
-func AddCfg2Bank(funcOSUser, tomlFile, cfgName, pkgName string) string {
+func AddCfg2Bank(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
 	enableLog2F(true, logfile)
-	cfgName, pkgName = sTitle(cfgName), sToLower(pkgName)
+	pkgName = sToLower(pkgName)
 	dir, _ := callerSrc()
-	file := filepath.Dir(dir) + fSf("/%s/%s/%s.go", "bank", pkgName, cfgName) // cfg struct Name as to be go fileName
+	file := filepath.Dir(dir) + fSf("/bank/%s/%s/Config.go", prjName, pkgName) // cfg struct Name as to be go fileName
 
 	if funcOSUser == "" {
 		user, err := user.Current()
@@ -149,9 +156,11 @@ func AddCfg2Bank(funcOSUser, tomlFile, cfgName, pkgName string) string {
 		funcOSUser = user.Name
 	}
 
-	file = sReplace(file, "/root/", "/home/"+funcOSUser+"/", 1) // sudo root go pkg --> input OS-user go pkg 
+	file = sReplace(file, "/root/", "/home/"+funcOSUser+"/", 1) // sudo root go pkg --> input OS-user go pkg
 	logger("ready to generate: %v", file)
-	GenStruct(tomlFile, cfgName, pkgName, file)
+	if !GenStruct(tomlFile, "Config", pkgName, file) {
+		return false, ""
+	}
 	logger("finish generating: %v", file)
 
 	// file LIKE `/home/qmiao/go/pkg/mod/github.com/cdutwhu/n3-util@v0.2.27/n3cfg/bank/s2jsvr/Config.go`
@@ -162,7 +171,7 @@ func AddCfg2Bank(funcOSUser, tomlFile, cfgName, pkgName string) string {
 		pos := rxMustCompile(`@[^/]+/`).FindAllStringIndex(fullpkg, -1)
 		pkg := replByPosGrp(fullpkg, pos, []string{""}, 0, 1)
 		logger("generated package: %v", pkg)
-		return pkg
+		return true, pkg
 	}
-	return file
+	return false, file
 }

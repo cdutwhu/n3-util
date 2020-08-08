@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/cdutwhu/debog/base"
 	"github.com/cdutwhu/debog/fn"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/net"
@@ -30,6 +31,8 @@ var (
 	vof             = reflect.ValueOf
 	typPTR          = reflect.Ptr
 	typSTRUCT       = reflect.Struct
+	callerSrc       = base.CallerSrc
+	trackCaller     = base.TrackCaller
 	failOnErr       = fn.FailOnErr
 	failP1OnErr     = fn.FailP1OnErr
 	failP1OnErrWhen = fn.FailP1OnErrWhen
@@ -39,6 +42,7 @@ var (
 	prepare         = external.Prepare
 	struct2Env      = rflx.Struct2Env
 	splitLn         = str.SplitLn
+	rmTailFromLast  = str.RmTailFromLast
 )
 
 var (

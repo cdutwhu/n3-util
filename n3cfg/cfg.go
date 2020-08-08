@@ -11,6 +11,26 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+// PrjName :
+func PrjName() string {
+	const check = "/.git"
+	for _, ln := range splitLn(trackCaller(1)) {
+		if sHasPrefix(ln, "/") {
+			ln = rmTailFromLast(ln, ":")
+		AGAIN:
+			dir := filepath.Dir(ln)
+			_, err := os.Stat(dir + check)
+			if os.IsNotExist(err) {
+				ln = dir
+				goto AGAIN
+			} else {
+				return filepath.Base(dir)
+			}
+		}
+	}
+	return ""
+}
+
 // GitVer :
 func GitVer() (ver string, err error) {
 	tag, err := GitTag()
