@@ -147,9 +147,9 @@ func AddCfg2Bank(funcOSUser, tomlFile, cfgName, pkgName string) string {
 		user, err := user.Current()
 		failOnErr("%v", err)
 		funcOSUser = user.Name
-		file = sReplace(file, "/root/", "/home/"+funcOSUser+"/", 1)
 	}
 
+	file = sReplace(file, "/root/", "/home/"+funcOSUser+"/", 1) // sudo root go pkg --> input OS-user go pkg 
 	logger("ready to generate: %v", file)
 	GenStruct(tomlFile, cfgName, pkgName, file)
 	logger("finish generating: %v", file)
