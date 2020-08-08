@@ -148,7 +148,7 @@ func AddCfg2Bank(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
 	enableLog2F(true, logfile)
 	pkgName = sToLower(pkgName)
 	dir, _ := callerSrc()
-	file := filepath.Dir(dir) + fSf("/bank/%s/%s/Config.go", prjName, pkgName) // cfg struct Name as to be go fileName
+	file := filepath.Dir(dir) + fSf("/config-cache/%s/%s/Config.go", prjName, pkgName) // cfg struct Name as to be go fileName
 
 	if funcOSUser == "" {
 		user, err := user.Current()

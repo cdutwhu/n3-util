@@ -29,10 +29,10 @@ func TestAttrsRange(t *testing.T) {
 }
 
 func TestGenStruct(t *testing.T) {
-	GenStruct("../../_data/toml/test.toml", "Config", "bank", "../bank/CfgSvr.go")
+	GenStruct("../../_data/toml/test.toml", "Config", "n3cfg", "../Config.go")
 }
 
-func TestAddConfig(t *testing.T) {	
+func TestAddConfig(t *testing.T) {
 	ok, file := AddCfg2Bank("qmiao", "../../_data/toml/test.toml", "n3-util", "Server")
 	fPln(ok, file)
 }

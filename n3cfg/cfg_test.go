@@ -21,8 +21,8 @@ func TestGitTag(t *testing.T) {
 
 // Config : holder for ignoring compiling error. genStruct to get an real one.
 // then comment below out.
-type Config struct {
-}
+// type Config struct {
+// }
 
 func TestModify(t *testing.T) {
 	cfg := &Config{}
@@ -42,9 +42,10 @@ func TestNewCfg(t *testing.T) {
 	ok := New(
 		cfg,
 		map[string]string{
-			"[s]": "WebService.Service",
-			"[v]": "WebService.Version",
-			"[p]": "Port",
+			"[s]":   "WebService.Service",
+			"[v]":   "WebService.Version",
+			"[p]":   "Port",
+			"[prj]": PrjName(),
 		},
 		"../_data/toml/test.toml",
 	)

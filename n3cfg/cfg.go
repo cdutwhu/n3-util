@@ -14,17 +14,23 @@ import (
 // PrjName :
 func PrjName() string {
 	const check = "/.git"
-	for _, ln := range splitLn(trackCaller(1)) {
-		if sHasPrefix(ln, "/") {
-			ln = rmTailFromLast(ln, ":")
-		AGAIN:
-			dir := filepath.Dir(ln)
-			_, err := os.Stat(dir + check)
-			if os.IsNotExist(err) {
-				ln = dir
-				goto AGAIN
-			} else {
-				return filepath.Base(dir)
+NEXT:
+	for i := 1; i < 64; i++ {
+		for _, ln := range splitLn(trackCaller(i)) {
+			if sHasPrefix(ln, "/") {
+				ln = rmTailFromLast(ln, ":")
+			AGAIN:
+				dir := filepath.Dir(ln)
+				if dir == "/" {
+					continue NEXT
+				}
+				_, err := os.Stat(dir + check)
+				if os.IsNotExist(err) {
+					ln = dir
+					goto AGAIN
+				} else {
+					return filepath.Base(dir)
+				}
 			}
 		}
 	}
@@ -194,14 +200,20 @@ func initCfg(fpath string, cfg interface{}, mReplExpr map[string]string) interfa
 	cfg = Modify(cfg, map[string]interface{}{
 		"~":      home,
 		"[DATE]": time.Now().Format("2006-01-02"),
-		"[IP]":   localIP(),
-		"[GV]":   ver,
 		"[PATH]": abs,
+		"[IP]":   localIP(),
+		"[PRJ]":  PrjName(),
+		"[VER]":  ver,
 	})
 
 	mRepl := make(map[string]interface{})
 	for k, v := range mReplExpr {
-		mRepl[k] = EvalCfgValue(cfg, v)
+		value := EvalCfgValue(cfg, v)
+		if value != nil {
+			mRepl[k] = value
+		} else {
+			mRepl[k] = v
+		}
 	}
 	return Modify(cfg, mRepl)
 }

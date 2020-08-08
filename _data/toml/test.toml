@@ -2,6 +2,7 @@ IP = "[IP]"
 LogFile = "./[DATE].log"
 Path = "[PATH]"
 Port = 1323
+Service = "[prj]"
 
 # ************************ Server ************************ #
 # ********** Client User DO NOT Modify This Part ********* #
