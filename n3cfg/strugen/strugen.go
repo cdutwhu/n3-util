@@ -111,7 +111,7 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) {
 
 	failP1OnErrWhen(!ucIsUpper(rune(struName[0])), "%v @struName", n3err.PARAM_INVALID)
 
-	lines := sSplit(string(bytes), "\n")
+	lines := splitLn(string(bytes))
 	struStr := ""
 	if pkgName != "" {
 		struStr += fSf("package %s\n\n", pkgName)
@@ -150,15 +150,15 @@ func AddCfg2Bank(funcOSUser, tomlFile, cfgName, pkgName string) string {
 		file = sReplace(file, "/root/", "/home/"+funcOSUser+"/", 1)
 	}
 
-	// logger("ready to generate: %v", file)
+	logger("ready to generate: %v", file)
 	GenStruct(tomlFile, cfgName, pkgName, file)
-	// logger("finish generating: %v", file)
+	logger("finish generating: %v", file)
 
 	// file LIKE `/home/qmiao/go/pkg/mod/github.com/cdutwhu/n3-util@v0.2.27/n3cfg/bank/s2jsvr/Config.go`
 	pkgmark := "/go/pkg/mod/"
 	if sContains(file, pkgmark) {
 		fullpkg := filepath.Dir(sSplit(file, pkgmark)[1])
-		// logger(fullpkg)
+		logger("generated package path: %v", fullpkg)
 		pos := rxMustCompile(`@[^/]+/`).FindAllStringIndex(fullpkg, -1)
 		pkg := replByPosGrp(fullpkg, pos, []string{""}, 0, 1)
 		logger("generated package: %v", pkg)

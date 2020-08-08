@@ -27,5 +27,6 @@ var (
 	rmTailFromLast  = str.RmTailFromLast
 	rmTailFromFirst = str.RmTailFromFirst
 	rmHeadToFirst   = str.RmHeadToFirst
+	splitLn         = str.SplitLn
 	mustWriteFile   = io.MustWriteFile
 )

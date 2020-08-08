@@ -43,7 +43,7 @@ func GitTag() (tag string, err error) {
 	if outstr == "" {
 		return "", nil
 	}
-	lines := sSplit(outstr, "\n")
+	lines := splitLn(outstr)
 	if len(lines) >= 1 {
 		return lines[len(lines)-1], nil
 	}
@@ -93,7 +93,7 @@ func Modify(cfg interface{}, mRepl map[string]interface{}) interface{} {
 func EvalCfgValue(cfg interface{}, key string) interface{} {
 	bytes, err := json.MarshalIndent(cfg, "", "\t")
 	failP1OnErr("%v", err)
-	lines := sSplit(string(bytes), "\n")
+	lines := splitLn(string(bytes))
 	if sCount(key, ".") == 0 {
 		for _, ln := range lines {
 			if sHasPrefix(ln, fSf("\t\"%s\":", key)) {

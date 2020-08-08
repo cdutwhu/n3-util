@@ -2,9 +2,10 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/cdutwhu/debog v0.2.6 h1:X3ApPwhDcx34WABlCDEx2viJRbtEn+DhlBc3+WgIJr0=
 github.com/cdutwhu/debog v0.2.6/go.mod h1:KxqT/Pw+Hbvk3lgFCQXLWegxfeH7vhjWvySsy6lCXf4=
-github.com/cdutwhu/gotil v0.0.9 h1:qJJmiS7Ade8lCWyl32hvyv7zP8ZOMtNOlPwJDjFTsbg=
-github.com/cdutwhu/gotil v0.0.9/go.mod h1:6nr/COZJIycMpjGu7lzzmsxgojml73D1iriTYi+1UNw=
+github.com/cdutwhu/gotil v0.0.10 h1:ZMexFQM1N0Kajm/fipnWBO7ut+FyViPD2ZaUSqYD2vo=
+github.com/cdutwhu/gotil v0.0.10/go.mod h1:6nr/COZJIycMpjGu7lzzmsxgojml73D1iriTYi+1UNw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b h1:khEcpUM4yFcxg4/FHQWkvVRmgijNXRfzkIDHh23ggEo=
 github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b/go.mod h1:aUCEOzzezBEjDBbFBoSiya/gduyIiWYRP6CnSFIV8AM=

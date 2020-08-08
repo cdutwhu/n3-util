@@ -19,7 +19,7 @@ func attrL1Rm(toml string, attrs ...string) string {
 	}
 
 	pairs, flagRm, flagSA := [][2]int{}, false, true
-	lines := sSplit(toml, "\n")
+	lines := splitLn(toml)
 NEXT1:
 	for i, line := range lines {
 		for _, attr := range attrs {
@@ -99,7 +99,7 @@ func attrL1Sel(toml string, attrs ...string) string {
 	}
 
 	pairs, flagSel, flagSA := [][2]int{}, false, true
-	lines := sSplit(toml, "\n")
+	lines := splitLn(toml)
 NEXT1:
 	for i, line := range lines {
 		for _, attr := range attrs {

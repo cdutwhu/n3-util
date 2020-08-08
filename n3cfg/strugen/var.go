@@ -43,6 +43,7 @@ var (
 	rmHeadToFirst   = str.RmHeadToFirst
 	hasAnyPrefix    = str.HasAnyPrefix
 	replByPosGrp    = str.ReplByPosGrp
+	splitLn         = str.SplitLn
 	mustWriteFile   = io.MustWriteFile
 	isNumeric       = judge.IsNumeric
 	isXML           = judge.IsXML

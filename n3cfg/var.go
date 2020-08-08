@@ -11,6 +11,7 @@ import (
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/net"
 	"github.com/cdutwhu/gotil/rflx"
+	"github.com/cdutwhu/gotil/str"
 	"github.com/cdutwhu/n3-util/external"
 )
 
@@ -37,6 +38,7 @@ var (
 	localIP         = net.LocalIP
 	prepare         = external.Prepare
 	struct2Env      = rflx.Struct2Env
+	splitLn         = str.SplitLn
 )
 
 var (
