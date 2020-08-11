@@ -76,6 +76,10 @@ func TestRegister(t *testing.T) {
 	spew.Dump(cfg)
 	fPln(" ----------------------------------------------------------- ")
 	cfg1 := FromEnvVar_N3utilServer("KEY")
+	if cfg1 == nil {
+		fPln("Error @ FromEnvVar")
+		return
+	}
 	spew.Dump(cfg1)
 }
 

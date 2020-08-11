@@ -148,7 +148,8 @@ func RegisterCfg(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
 	enableLog2F(true, logfile)
 	pkgName = sToLower(pkgName)
 	dir, _ := callerSrc()
-	file := filepath.Dir(dir) + fSf("/config-cache/%s/%s/Config.go", prjName, pkgName) // cfg struct Name as to be go fileName
+	n3cfgDir := filepath.Dir(dir)
+	file := n3cfgDir + fSf("/config-cache/%s/%s/Config.go", prjName, pkgName) // cfg struct Name as to be go fileName
 
 	if funcOSUser == "" {
 		user, err := user.Current()
@@ -172,15 +173,15 @@ func RegisterCfg(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
 		pkg := replByPosGrp(fullpkg, pos, []string{""}, 0, 1)
 		logger("generated package: %v", pkg)
 		// make necessary functions for using
-		mkFuncs(pkg, prjName, pkgName)
+		mkFuncs(pkg, prjName, pkgName, n3cfgDir)
 		return true, pkg
 	}
 	return false, file
 }
 
-func mkFuncs(impt, prj, pkg string) {
+func mkFuncs(impt, prj, pkg, fnDir string) {
 	pkg = sToLower(pkg)
-	CfgFnFile := "../auto_" + prj + "_" + pkg + ".go"
+	CfgFnFile := fnDir + "/auto_" + prj + "_" + pkg + ".go"
 
 	prj = sReplaceAll(prj, "-", "")
 	prj = sReplaceAll(prj, " ", "")
