@@ -146,18 +146,18 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 // RegisterCfg : echo 'password' | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegisterCfg
 func RegisterCfg(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
 	enableLog2F(true, logfile)
-	pkgName = sToLower(pkgName)
-	dir, _ := callerSrc()
-	n3cfgDir := filepath.Dir(dir)
-	file := n3cfgDir + fSf("/config-cache/%s/%s/Config.go", prjName, pkgName) // cfg struct Name as to be go fileName
-
 	if funcOSUser == "" {
 		user, err := user.Current()
 		failOnErr("%v", err)
 		funcOSUser = user.Name
 	}
 
-	file = sReplace(file, "/root/", "/home/"+funcOSUser+"/", 1) // sudo root go pkg --> input OS-user go pkg
+	pkgName = sToLower(pkgName)
+	dir, _ := callerSrc()
+	n3cfgDir := filepath.Dir(dir)
+	n3cfgDir = sReplace(n3cfgDir, "/root/", "/home/"+funcOSUser+"/", 1)       // sudo root go pkg --> input OS-user go pkg
+	file := n3cfgDir + fSf("/config-cache/%s/%s/Config.go", prjName, pkgName) // cfg struct Name as to be go fileName
+
 	logger("ready to generate: %v", file)
 	if !GenStruct(tomlFile, "Config", pkgName, file) {
 		return false, ""
