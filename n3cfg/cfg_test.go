@@ -21,8 +21,8 @@ func TestGitTag(t *testing.T) {
 
 // Config : holder for ignoring compiling error. genStruct to get an real one.
 // then comment below out.
-// type Config struct {
-// }
+type Config struct {
+}
 
 func TestModify(t *testing.T) {
 	cfg := &Config{}
@@ -64,6 +64,19 @@ func TestEvalCfgValue(t *testing.T) {
 	fPln(EvalCfgValue(cfg, "Server.Service"))
 	fPln(EvalCfgValue(cfg, "WebService.Service"))
 	Save("./saved.toml", cfg)
+}
+
+func TestRegister(t *testing.T) {
+	mReplExpr := map[string]string{
+		"[s]": "Service",
+		"[v]": "WebService.Version",
+		"[p]": "Port",
+	}
+	cfg := ToEnvVar_N3utilServer(mReplExpr, "KEY", "../_data/toml/test.toml")
+	spew.Dump(cfg)
+	fPln(" ----------------------------------------------------------- ")
+	cfg1 := FromEnvVar_N3utilServer("KEY")
+	spew.Dump(cfg1)
 }
 
 // func TestWorldTime(t *testing.T) {

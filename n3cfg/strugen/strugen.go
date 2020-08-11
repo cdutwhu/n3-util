@@ -143,8 +143,8 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 	return true
 }
 
-// AddCfg2Bank : echo 'password' | sudo -S env "PATH=$PATH" go test -v ./ -run TestAddCfg2Bank
-func AddCfg2Bank(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
+// RegisterCfg : echo 'password' | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegisterCfg
+func RegisterCfg(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
 	enableLog2F(true, logfile)
 	pkgName = sToLower(pkgName)
 	dir, _ := callerSrc()
@@ -171,7 +171,54 @@ func AddCfg2Bank(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
 		pos := rxMustCompile(`@[^/]+/`).FindAllStringIndex(fullpkg, -1)
 		pkg := replByPosGrp(fullpkg, pos, []string{""}, 0, 1)
 		logger("generated package: %v", pkg)
+		// make necessary functions for using
+		mkFuncs(pkg, prjName, pkgName)
 		return true, pkg
 	}
 	return false, file
+}
+
+func mkFuncs(impt, prj, pkg string) {
+	pkg = sToLower(pkg)
+	CfgFnFile := "../auto_" + prj + "_" + pkg + ".go"
+
+	prj = sReplaceAll(prj, "-", "")
+	prj = sReplaceAll(prj, " ", "")
+	pkg = sReplaceAll(pkg, "-", "")
+	pkg = sReplaceAll(pkg, " ", "")
+
+	prj, pkg = sTitle(prj), sTitle(pkg)
+	fnNewCfg := `New_` + prj + pkg
+	fnToEnvVar := `ToEnvVar_` + prj + pkg
+	fnFromEnvVar := `FromEnvVar_` + prj + pkg
+
+	NewCfgSrc := `package n3cfg` + "\n\n"
+	NewCfgSrc += `import auto "` + impt + `"` + "\n"
+	NewCfgSrc += `import "os"` + "\n\n"
+	NewCfgSrc += `func ` + fnNewCfg + `(mReplExpr map[string]string, cfgPaths ...string) *auto.Config {` + "\n"
+	NewCfgSrc += `    defer func() { mux.Unlock() }()` + "\n"
+	NewCfgSrc += `    mux.Lock()` + "\n"
+	NewCfgSrc += `    cfg := &auto.Config{}` + "\n"
+	NewCfgSrc += `    for _, f := range cfgPaths {` + "\n"
+	NewCfgSrc += `        if _, e := os.Stat(f); e == nil {` + "\n"
+	NewCfgSrc += `            return initCfg(f, cfg, mReplExpr).(*auto.Config)` + "\n"
+	NewCfgSrc += `        }` + "\n"
+	NewCfgSrc += `    }` + "\n"
+	NewCfgSrc += `    return nil` + "\n"
+	NewCfgSrc += `}` + "\n\n"
+	NewCfgSrc += `// -------------------------------- //` + "\n\n"
+	NewCfgSrc += `func ` + fnToEnvVar + `(mReplExpr map[string]string, key string, cfgPaths ...string) *auto.Config {` + "\n"
+	NewCfgSrc += `    cfg := ` + fnNewCfg + `(mReplExpr, append(cfgPaths, "./config.toml")...)` + "\n"
+	NewCfgSrc += `    if cfg == nil {` + "\n"
+	NewCfgSrc += `        return nil` + "\n"
+	NewCfgSrc += `    }` + "\n"
+	NewCfgSrc += `    struct2Env(key, cfg)` + "\n"
+	NewCfgSrc += `    return cfg` + "\n"
+	NewCfgSrc += `}` + "\n\n"
+	NewCfgSrc += `// -------------------------------- //` + "\n\n"
+	NewCfgSrc += `func ` + fnFromEnvVar + `(key string) *auto.Config {` + "\n"
+	NewCfgSrc += `    return env2Struct(key, &auto.Config{}).(*auto.Config)` + "\n"
+	NewCfgSrc += `}` + "\n\n"
+
+	mustWriteFile(CfgFnFile, []byte(NewCfgSrc))
 }

@@ -173,19 +173,28 @@ func EvalCfgValue(cfg interface{}, key string) interface{} {
 	return nil
 }
 
-// ----------------------------------- //
+// ------------------------------------------------------------------------------- //
+
+// InitEnvVar : initialize the global variables
+func InitEnvVar(cfg interface{}, mReplExpr map[string]string, key string, cfgPaths ...string) interface{} {
+	cfg = New(cfg, mReplExpr, append(cfgPaths, "./config.toml")...)
+	if cfg == nil {
+		return nil
+	}
+	struct2Env(key, cfg)
+	return cfg
+}
 
 // New :
-func New(cfg interface{}, mReplExpr map[string]string, cfgPaths ...string) string {
+func New(cfg interface{}, mReplExpr map[string]string, cfgPaths ...string) interface{} {
 	defer func() { mux.Unlock() }()
 	mux.Lock()
 	for _, f := range cfgPaths {
 		if _, e := os.Stat(f); e == nil {
-			initCfg(f, cfg, mReplExpr)
-			return f
+			return initCfg(f, cfg, mReplExpr)
 		}
 	}
-	return ""
+	return nil
 }
 
 func initCfg(fpath string, cfg interface{}, mReplExpr map[string]string) interface{} {
@@ -227,13 +236,4 @@ func Save(fpath string, cfg interface{}) {
 	failP1OnErr("%v", e)
 	defer f.Close()
 	failP1OnErr("%v", toml.NewEncoder(f).Encode(cfg))
-}
-
-// InitEnvVar : initialize the global variables
-func InitEnvVar(cfg interface{}, mReplExpr map[string]string, key string, cfgPaths ...string) bool {
-	if New(cfg, mReplExpr, append(cfgPaths, "./config.toml")...) == "" {
-		return false
-	}
-	struct2Env(key, cfg)
-	return true
 }

@@ -41,6 +41,7 @@ var (
 	localIP         = net.LocalIP
 	prepare         = external.Prepare
 	struct2Env      = rflx.Struct2Env
+	env2Struct      = rflx.Env2Struct
 	splitLn         = str.SplitLn
 	rmTailFromLast  = str.RmTailFromLast
 )

@@ -2,7 +2,7 @@ IP = "[IP]"
 LogFile = "./[DATE].log"
 Path = "[PATH]"
 Port = 1323
-Service = "[prj]"
+Service = "[PRJ]"
 
 # ************************ Server ************************ #
 # ********** Client User DO NOT Modify This Part ********* #
@@ -15,7 +15,7 @@ Service = "[prj]"
 [WebService] # Shared with Client #
   Port = "[p]" 
   Service = "policy-service" # Server internal [Route] use
-  Version = "[GV]" # Server internal [Route] use
+  Version = "[VER]" # Server internal [Route] use
 
 [Route] # Shared with Client #
   Delete = "/[s]/[v]/delete"
