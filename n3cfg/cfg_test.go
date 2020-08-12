@@ -66,21 +66,28 @@ func TestEvalCfgValue(t *testing.T) {
 	Save("./saved.toml", cfg)
 }
 
+func TestToEnvVar(t *testing.T) {
+	// mReplExpr := map[string]string{
+	// 	"[s]": "Service",
+	// 	"[v]": "WebService.Version",
+	// 	"[p]": "Port",
+	// }
+	// cfg := ToEnvVarN3utilServer(mReplExpr, "KEY", "../_data/toml/test.toml")
+	// spew.Dump(cfg)
+	// fPln(" ----------------------------------------------------------- ")
+	// cfg1 := FromEnvVarN3utilServer("KEY")
+	// if cfg1 == nil {
+	// 	fPln("Error @ FromEnvVar")
+	// 	return
+	// }
+	// spew.Dump(cfg1)
+}
+
+// echo 'password' | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegister
 func TestRegister(t *testing.T) {
-	mReplExpr := map[string]string{
-		"[s]": "Service",
-		"[v]": "WebService.Version",
-		"[p]": "Port",
-	}
-	cfg := ToEnvVar_N3utilServer(mReplExpr, "KEY", "../_data/toml/test.toml")
-	spew.Dump(cfg)
-	fPln(" ----------------------------------------------------------- ")
-	cfg1 := FromEnvVar_N3utilServer("KEY")
-	if cfg1 == nil {
-		fPln("Error @ FromEnvVar")
-		return
-	}
-	spew.Dump(cfg1)
+	prj, pkg := "n3-util", "Server"
+	ok, file := Register("qmiao", "../_data/toml/test.toml", prj, pkg)
+	fPln(ok, file)
 }
 
 // func TestWorldTime(t *testing.T) {

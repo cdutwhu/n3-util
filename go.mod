@@ -1,6 +1,6 @@
 module github.com/cdutwhu/n3-util
 
-go 1.14
+go 1.15
 
 require (
 	github.com/BurntSushi/toml v0.3.1
@@ -14,5 +14,5 @@ require (
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.2.0+incompatible // indirect
 	go.uber.org/atomic v1.6.0 // indirect
-	golang.org/x/sys v0.0.0-20200806125547-5acd03effb82 // indirect
+	golang.org/x/sys v0.0.0-20200810151505-1b9f1253b3ed // indirect
 )

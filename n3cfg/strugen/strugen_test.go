@@ -32,9 +32,4 @@ func TestGenStruct(t *testing.T) {
 	GenStruct("../../_data/toml/test.toml", "Config", "n3cfg", "../Config.go")
 }
 
-// echo 'password' | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegisterCfg
-func TestRegisterCfg(t *testing.T) {
-	prj, pkg := "n3-util", "Server"
-	ok, file := RegisterCfg("qmiao", "../../_data/toml/test.toml", prj, pkg)
-	fPln(ok, file)
-}
+

@@ -39,7 +39,6 @@ var (
 	warnP1OnErr     = fn.WarnP1OnErr
 	warnP1OnErrWhen = fn.WarnP1OnErrWhen
 	logger          = fn.Logger
-	enableLog2F     = fn.EnableLog2F
 	rmTailFromLast  = str.RmTailFromLast
 	rmTailFromFirst = str.RmTailFromFirst
 	rmHeadToFirst   = str.RmHeadToFirst
@@ -50,8 +49,4 @@ var (
 	isNumeric       = judge.IsNumeric
 	isXML           = judge.IsXML
 	callerSrc       = base.CallerSrc
-)
-
-const (
-	logfile = "/home/qmiao/Desktop/debug.log"
 )
