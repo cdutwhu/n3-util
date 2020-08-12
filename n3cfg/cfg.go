@@ -255,7 +255,7 @@ func Register(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
 	dir, _ := callerSrc()
 	n3cfgDir := dir                                                     // filepath.Dir(dir)
 	n3cfgDir = sReplace(n3cfgDir, "/root/", "/home/"+funcOSUser+"/", 1) // sudo root go pkg --> input OS-user go pkg
-	file := n3cfgDir + fSf("/cache/%s/%s/Config.go", prjName, pkgName)  // cfg struct Name as to be go fileName
+	file := n3cfgDir + fSf("/.cache/%s/%s/Config.go", prjName, pkgName) // cfg struct Name as to be go fileName
 
 	logger("ready to generate: %v", file)
 	if !strugen.GenStruct(tomlFile, "Config", pkgName, file) {
@@ -280,7 +280,7 @@ func Register(funcOSUser, tomlFile, prjName, pkgName string) (bool, string) {
 
 func mkFuncs(impt, prj, pkg, fnDir string) {
 	pkg = sToLower(pkg)
-	CfgFnFile := fnDir + "/auto_" + prj + "_" + pkg + ".go"
+	fnFile := fnDir + "/auto_" + prj + "_" + pkg + ".go"
 
 	prj = sReplaceAll(prj, "-", "")
 	prj = sReplaceAll(prj, " ", "")
@@ -288,37 +288,37 @@ func mkFuncs(impt, prj, pkg, fnDir string) {
 	pkg = sReplaceAll(pkg, " ", "")
 
 	prj, pkg = sTitle(prj), sTitle(pkg)
-	fnNewCfg := `New` + prj + pkg
-	fnToEnvVar := `ToEnvVar` + prj + pkg
-	fnFromEnvVar := `FromEnvVar` + prj + pkg
+	fnNew := `New` + prj + pkg
+	fnToEnv := `ToEnv` + prj + pkg
+	fnFromEnv := `FromEnv` + prj + pkg
 
-	NewCfgSrc := `package n3cfg` + "\n\n"
-	NewCfgSrc += `import auto "` + impt + `"` + "\n"
-	NewCfgSrc += `import "os"` + "\n\n"
-	NewCfgSrc += `func ` + fnNewCfg + `(mReplExpr map[string]string, cfgPaths ...string) *auto.Config {` + "\n"
-	NewCfgSrc += `    defer func() { mux.Unlock() }()` + "\n"
-	NewCfgSrc += `    mux.Lock()` + "\n"
-	NewCfgSrc += `    cfg := &auto.Config{}` + "\n"
-	NewCfgSrc += `    for _, f := range cfgPaths {` + "\n"
-	NewCfgSrc += `        if _, e := os.Stat(f); e == nil {` + "\n"
-	NewCfgSrc += `            return initCfg(f, cfg, mReplExpr).(*auto.Config)` + "\n"
-	NewCfgSrc += `        }` + "\n"
-	NewCfgSrc += `    }` + "\n"
-	NewCfgSrc += `    return nil` + "\n"
-	NewCfgSrc += `}` + "\n\n"
-	NewCfgSrc += `// -------------------------------- //` + "\n\n"
-	NewCfgSrc += `func ` + fnToEnvVar + `(mReplExpr map[string]string, key string, cfgPaths ...string) *auto.Config {` + "\n"
-	NewCfgSrc += `    cfg := ` + fnNewCfg + `(mReplExpr, append(cfgPaths, "./config.toml")...)` + "\n"
-	NewCfgSrc += `    if cfg == nil {` + "\n"
-	NewCfgSrc += `        return nil` + "\n"
-	NewCfgSrc += `    }` + "\n"
-	NewCfgSrc += `    struct2Env(key, cfg)` + "\n"
-	NewCfgSrc += `    return cfg` + "\n"
-	NewCfgSrc += `}` + "\n\n"
-	NewCfgSrc += `// -------------------------------- //` + "\n\n"
-	NewCfgSrc += `func ` + fnFromEnvVar + `(key string) *auto.Config {` + "\n"
-	NewCfgSrc += `    return env2Struct(key, &auto.Config{}).(*auto.Config)` + "\n"
-	NewCfgSrc += `}` + "\n\n"
+	src := `package n3cfg` + "\n\n"
+	src += `import auto "` + impt + `"` + "\n"
+	src += `import "os"` + "\n\n"
+	src += `func ` + fnNew + `(mReplExpr map[string]string, cfgPaths ...string) *auto.Config {` + "\n"
+	src += `    defer func() { mux.Unlock() }()` + "\n"
+	src += `    mux.Lock()` + "\n"
+	src += `    cfg := &auto.Config{}` + "\n"
+	src += `    for _, f := range cfgPaths {` + "\n"
+	src += `        if _, e := os.Stat(f); e == nil {` + "\n"
+	src += `            return initCfg(f, cfg, mReplExpr).(*auto.Config)` + "\n"
+	src += `        }` + "\n"
+	src += `    }` + "\n"
+	src += `    return nil` + "\n"
+	src += `}` + "\n\n"
+	src += `// -------------------------------- //` + "\n\n"
+	src += `func ` + fnToEnv + `(mReplExpr map[string]string, key string, cfgPaths ...string) *auto.Config {` + "\n"
+	src += `    cfg := ` + fnNew + `(mReplExpr, append(cfgPaths, "./config.toml")...)` + "\n"
+	src += `    if cfg == nil {` + "\n"
+	src += `        return nil` + "\n"
+	src += `    }` + "\n"
+	src += `    struct2Env(key, cfg)` + "\n"
+	src += `    return cfg` + "\n"
+	src += `}` + "\n\n"
+	src += `// -------------------------------- //` + "\n\n"
+	src += `func ` + fnFromEnv + `(key string) *auto.Config {` + "\n"
+	src += `    return env2Struct(key, &auto.Config{}).(*auto.Config)` + "\n"
+	src += `}` + "\n\n"
 
-	mustWriteFile(CfgFnFile, []byte(NewCfgSrc))
+	mustWriteFile(fnFile, []byte(src))
 }

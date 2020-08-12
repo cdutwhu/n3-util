@@ -72,10 +72,10 @@ func TestToEnvVar(t *testing.T) {
 	// 	"[v]": "WebService.Version",
 	// 	"[p]": "Port",
 	// }
-	// cfg := ToEnvVarN3utilServer(mReplExpr, "KEY", "../_data/toml/test.toml")
+	// cfg := ToEnvN3utilServer(mReplExpr, "KEY", "../_data/toml/test.toml")
 	// spew.Dump(cfg)
 	// fPln(" ----------------------------------------------------------- ")
-	// cfg1 := FromEnvVarN3utilServer("KEY")
+	// cfg1 := FromEnvN3utilServer("KEY")
 	// if cfg1 == nil {
 	// 	fPln("Error @ FromEnvVar")
 	// 	return
@@ -85,7 +85,7 @@ func TestToEnvVar(t *testing.T) {
 
 // echo 'password' | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegister
 func TestRegister(t *testing.T) {
-	prj, pkg := "n3-util", "Server"
+	prj, pkg := PrjName(), "Server"
 	ok, file := Register("qmiao", "../_data/toml/test.toml", prj, pkg)
 	fPln(ok, file)
 }
