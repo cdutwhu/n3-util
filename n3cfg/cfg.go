@@ -66,7 +66,7 @@ func GitTag() (tag string, err error) {
 	// run git
 	cmd := exec.Command("bash", "-c", "git tag")
 	output, err := cmd.Output()
-	failOnErr("cmd.Output() error @ %v", err)
+	// failOnErr("cmd.Output() error @ %v", err) // DO NOT PANIC
 	outstr := sTrim(string(output), " \n\t")
 	if outstr == "" {
 		return "", nil

@@ -82,7 +82,7 @@ func RmCfgAttrL1(infile, outfile string, attrs ...string) string {
 	return outfile
 }
 
-// ------------------------- Set ------------------------- //
+// ------------------------- Select ------------------------- //
 
 // attrL1Sel :
 func attrL1Sel(toml string, attrs ...string) string {
