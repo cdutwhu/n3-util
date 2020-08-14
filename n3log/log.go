@@ -75,7 +75,8 @@ func Bind(outputs ...Output) Logger {
 
 // Do :
 func (lg Logger) Do(format string, args ...interface{}) {
+	// defer trackTime(time.Now())
 	for _, f := range lg {
-		f(format, args...)
+		go f(format, args...)
 	}
 }

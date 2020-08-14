@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/misc"
 )
 
 var (
@@ -17,6 +18,8 @@ var (
 	logger        = fn.Logger
 	warnOnErr     = fn.WarnOnErr
 	warnOnErrWhen = fn.WarnOnErrWhen
+	gogo          = misc.Go
+	trackTime     = misc.TrackTime
 )
 
 var (
