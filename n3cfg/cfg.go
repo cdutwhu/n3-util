@@ -207,7 +207,8 @@ func initCfg(fpath string, cfg interface{}, mReplExpr map[string]string) interfa
 	home, e := os.UserHomeDir()
 	failOnErr("%v", e)
 	ver, e := GitVer()
-	failOnErr("%v", e)
+	// failOnErr("%v", e)     // DO NOT PANIC
+
 	cfg = Modify(cfg, map[string]interface{}{
 		"~":      home,
 		"[DATE]": time.Now().Format("2006-01-02"),
