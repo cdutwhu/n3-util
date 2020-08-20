@@ -15,5 +15,8 @@ func TestLoggly(t *testing.T) {
 	// })
 
 	SetLoggly(true, "54290728-93e0-425a-a49c-c9e834288026", "n3log")
-	Bind(logger, lPf, Loggly("info")).Do("%s", "TestLogglyBind")
+	SyncBindLog(false)
+	Bind(logger, lPf, Loggly("info")).Do("%s", "TestLogglyBind ASyncBindLog")
+	SyncBindLog(true)
+	Bind(logger, lPf, Loggly("info")).Do("%s", "TestLogglyBind SyncBindLog")
 }

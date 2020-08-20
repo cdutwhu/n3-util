@@ -18,12 +18,12 @@ var (
 	logger        = fn.Logger
 	warnOnErr     = fn.WarnOnErr
 	warnOnErrWhen = fn.WarnOnErrWhen
-	gogo          = misc.Go
 	trackTime     = misc.TrackTime
 )
 
 var (
-	urlT   = `http://logs-01.loggly.com/inputs/#token#/tag/#tag#/`
-	urlR   = ""
-	loggly = false
+	urlT    = `http://logs-01.loggly.com/inputs/#token#/tag/#tag#/`
+	urlR    = ""
+	loggly  = false
+	syncLog = false
 )

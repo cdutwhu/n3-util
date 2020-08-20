@@ -77,6 +77,15 @@ func Bind(outputs ...Output) Logger {
 func (lg Logger) Do(format string, args ...interface{}) {
 	// defer trackTime(time.Now())
 	for _, f := range lg {
-		go f(format, args...)
+		if !syncLog {
+			go f(format, args...)
+		} else {
+			f(format, args...)
+		}
 	}
+}
+
+// SyncBindLog :
+func SyncBindLog(enable bool) {
+	syncLog = enable
 }
