@@ -70,16 +70,28 @@ func attrTypes(tomllines []string, grpAttr string) map[string]string {
 	for i := start; i <= end; i++ {
 		ln := sTrim(tomllines[i], " \t")
 		attr := sTrim(rmTailFromFirst(ln, "="), " \t")
-		value := sTrim(rmHeadToFirst(ln, "="), " \t")
+		val := sTrim(rmHeadToFirst(ln, "="), " \t")
 		switch {
-		case sCount(value, "\"[") == 1 && sCount(value, "]\"") == 1:
+		case sCount(val, "\"[") == 1 && sCount(val, "]\"") == 1:
 			mAttrType[attr] = "interface{}"
-		case isNumeric(value) && !sContains(value, "."):
+		case isNumeric(val) && !sContains(val, "."):
 			mAttrType[attr] = "int"
-		case isNumeric(value) && sContains(value, "."):
+		case isNumeric(val) && sContains(val, "."):
 			mAttrType[attr] = "float64"
-		case value == "true" || value == "false":
+		case val == "true" || val == "false":
 			mAttrType[attr] = "bool"
+		case sHasPrefix(val, "[") && sHasSuffix(val, "]"):
+			first := sSplit(val[1:len(val)-1], ",")[0]
+			switch {
+			case isNumeric(first) && !sContains(first, "."):
+				mAttrType[attr] = "[]int"
+			case isNumeric(first) && sContains(first, "."):
+				mAttrType[attr] = "[]float64"
+			case first == "true" || first == "false":
+				mAttrType[attr] = "[]bool"
+			default:
+				mAttrType[attr] = "[]string"
+			}
 		default:
 			mAttrType[attr] = "string"
 		}
@@ -92,14 +104,12 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 	warnP1OnErrWhen(!sHasSuffix(tomlFile, ".toml"), "%v @tomlFile", n3err.PARAM_INVALID)
 
 	tomlFile, err := filepath.Abs(tomlFile)
-	if err != nil {
-		warnP1OnErr("%v", err)
+	if warnP1OnErr("%v", err) != nil {
 		return false
 	}
 
 	bytes, err := ioutil.ReadFile(tomlFile)
-	if err != nil {
-		warnP1OnErr("%v", err)
+	if warnP1OnErr("%v", err) != nil {
 		return false
 	}
 
@@ -117,7 +127,7 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 
 	failP1OnErrWhen(!ucIsUpper(rune(struName[0])), "%v @struName", n3err.PARAM_INVALID)
 
-	lines := splitLn(string(bytes))
+	lines := splitLn(string(bytes) + "\n")
 	struStr := ""
 	if pkgName != "" {
 		struStr += fSf("package %s\n\n", pkgName)

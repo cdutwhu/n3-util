@@ -50,3 +50,18 @@ Service = "[PRJ]"
 
 [Access]
   Timeout = 3
+
+[SchoolPrograms]
+  BOOLEAN = ["SIF_Metadata/TimeElements/TimeElement/IsCurrent", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/IsCurrent"]
+
+[CollectionStatus]
+  NUMERIC = ["LocalCodeList/LocalCode/ListIndex"]
+
+[Journal]
+  NUMERIC = ["Amount", "JournalAdjustmentList/JournalAdjustment/LineAdjustmentAmount", "LocalCodeList/LocalCode/ListIndex"]
+
+[SectionInfo]
+  NUMERIC = ["LocalCodeList/LocalCode/ListIndex"]  
+
+
+  

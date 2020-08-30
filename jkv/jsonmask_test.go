@@ -12,9 +12,9 @@ import (
 func TestJSONPolicy(t *testing.T) {
 	defer trackTime(time.Now())
 
-	data := fmtJSONFile("../_data/json/NAPCodeFrame.json", 2)
-	mask1 := fmtJSONFile("../_data/json/NAPCodeFrameMaskP.json", 2)
-	mask2 := fmtJSONFile("../_data/json/NAPCodeFrameMaskPcopy.json", 2)
+	data := fmtJSONFile("../data/json/NAPCodeFrame.json", 2)
+	mask1 := fmtJSONFile("../data/json/NAPCodeFrameMaskP.json", 2)
+	mask2 := fmtJSONFile("../data/json/NAPCodeFrameMaskPcopy.json", 2)
 
 	failOnErrWhen(data == "", "%v: input empty, check path", n3err.PARAM_INVALID)
 	failOnErrWhen(mask1 == "", "%v: mask1 empty, check path", n3err.PARAM_INVALID)
@@ -64,8 +64,8 @@ func TestJSONPolicy(t *testing.T) {
 func TestJSONPolicy1(t *testing.T) {
 	defer trackTime(time.Now())
 
-	data := fmtJSONFile("../_data/json/NAPCodeFrame.json", 2)
-	mask := fmtJSONFile("../_data/json/NAPCodeFrameMask.json", 2)
+	data := fmtJSONFile("../data/json/NAPCodeFrame.json", 2)
+	mask := fmtJSONFile("../data/json/NAPCodeFrameMask.json", 2)
 	failOnErrWhen(data == "", "%v: data empty, check path", n3err.PARAM_INVALID)
 	failOnErrWhen(mask == "", "%v: mask empty, check path", n3err.PARAM_INVALID)
 

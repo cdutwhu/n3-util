@@ -4,7 +4,7 @@ Basic tool-set for n3-*** projects
 
 ( if no go.mod or go.sum, run `go mod init github.com/cdutwhu/n3-util` )
 
-_data: sample files for unit test.
+data: sample files for unit test.
 
 common:     basic support for others.
 

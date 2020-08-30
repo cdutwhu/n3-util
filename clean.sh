@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rm -rf .vscode
-cd ./_data/toml && rm -rf *.go && cd -
+cd ./data/toml && rm -rf *.go && cd -
 cd ./external && ./clean.sh && cd -
 cd ./jkv && ./clean.sh && cd -
 cd ./n3csv && ./clean.sh && cd -

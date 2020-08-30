@@ -5,7 +5,7 @@ import "testing"
 func TestRmCfgAttrL1(T *testing.T) {
 	fPln(
 		RmCfgAttrL1(
-			"../../_data/toml/test.toml",
+			"../../data/toml/test.toml",
 			"./config_rm",
 			"Path",
 			"WebService",
@@ -19,7 +19,7 @@ func TestRmCfgAttrL1(T *testing.T) {
 func TestSelCfgAttrL1(T *testing.T) {
 	fPln(
 		SelCfgAttrL1(
-			"../../_data/toml/test.toml",
+			"../../data/toml/test.toml",
 			"./config_sel",
 			"Path",
 			"WebService",

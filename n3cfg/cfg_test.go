@@ -26,7 +26,7 @@ type Config struct {
 
 func TestModify(t *testing.T) {
 	cfg := &Config{}
-	_, err := toml.DecodeFile("../_data/toml/test.toml", cfg)
+	_, err := toml.DecodeFile("../data/toml/test.toml", cfg)
 	failOnErr("%v", err)
 	Icfg := Modify(cfg, map[string]interface{}{
 		"[PORT]": 1234,
@@ -47,7 +47,7 @@ func TestNewCfg(t *testing.T) {
 			"[p]":   "Port",
 			"[prj]": PrjName(),
 		},
-		"../_data/toml/test.toml",
+		"../data/toml/test.toml",
 	)
 	fPln(ok)
 	spew.Dump(cfg)
@@ -56,7 +56,7 @@ func TestNewCfg(t *testing.T) {
 
 func TestEvalCfgValue(t *testing.T) {
 	cfg := &Config{}
-	ok := New(cfg, nil, "../_data/toml/test.toml")
+	ok := New(cfg, nil, "../data/toml/test.toml")
 	fPln(ok)
 	fPln(EvalCfgValue(cfg, "Port"))
 	fPln(EvalCfgValue(cfg, "Storage.MetaPath"))
@@ -72,7 +72,7 @@ func TestToEnvVar(t *testing.T) {
 	// 	"[v]": "WebService.Version",
 	// 	"[p]": "Port",
 	// }
-	// cfg := ToEnvN3utilServer(mReplExpr, "KEY", "../_data/toml/test.toml")
+	// cfg := ToEnvN3utilServer(mReplExpr, "KEY", "../data/toml/test.toml")
 	// spew.Dump(cfg)
 	// fPln(" ----------------------------------------------------------- ")
 	// cfg1 := FromEnvN3utilServer("KEY")
@@ -86,7 +86,7 @@ func TestToEnvVar(t *testing.T) {
 // echo 'password' | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegister
 func TestRegister(t *testing.T) {
 	prj, pkg := PrjName(), "Server"
-	ok, file := Register("qmiao", "../_data/toml/test.toml", prj, pkg)
+	ok, file := Register("qmiao", "../data/toml/test.toml", prj, pkg)
 	fPln(ok, file)
 }
 
