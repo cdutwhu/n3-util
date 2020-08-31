@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	toml = "../../data/toml/test.toml"
+	toml = "../../data/toml/test1.toml"
 )
 
 func TestScanToml(t *testing.T) {

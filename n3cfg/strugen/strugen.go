@@ -65,35 +65,35 @@ func attrsRange(tomllines []string) map[string][2]int {
 func attrTypes(tomllines []string, grpAttr string) map[string]string {
 	mAttrType := make(map[string]string)
 	mGrpPos := attrsRange(tomllines)
-	rng := mGrpPos[grpAttr]
-	start, end := rng[0], rng[1]
-	for i := start; end != 0 && i <= end; i++ {
-		ln := sTrim(tomllines[i], " \t")
-		attr := sTrim(rmTailFromFirst(ln, "="), " \t")
-		val := sTrim(rmHeadToFirst(ln, "="), " \t")
-		switch {
-		case sCount(val, "\"[") == 1 && sCount(val, "]\"") == 1:
-			mAttrType[attr] = "interface{}"
-		case isNumeric(val) && !sContains(val, "."):
-			mAttrType[attr] = "int"
-		case isNumeric(val) && sContains(val, "."):
-			mAttrType[attr] = "float64"
-		case val == "true" || val == "false":
-			mAttrType[attr] = "bool"
-		case sHasPrefix(val, "[") && sHasSuffix(val, "]"):
-			first := sSplit(val[1:len(val)-1], ",")[0]
+	if rng, ok := mGrpPos[grpAttr]; ok {
+		for i := rng[0]; i <= rng[1]; i++ {
+			ln := sTrim(tomllines[i], " \t")
+			attr := sTrim(rmTailFromFirst(ln, "="), " \t")
+			val := sTrim(rmHeadToFirst(ln, "="), " \t")
 			switch {
-			case isNumeric(first) && !sContains(first, "."):
-				mAttrType[attr] = "[]int"
-			case isNumeric(first) && sContains(first, "."):
-				mAttrType[attr] = "[]float64"
-			case first == "true" || first == "false":
-				mAttrType[attr] = "[]bool"
+			case sCount(val, "\"[") == 1 && sCount(val, "]\"") == 1:
+				mAttrType[attr] = "interface{}"
+			case isNumeric(val) && !sContains(val, "."):
+				mAttrType[attr] = "int"
+			case isNumeric(val) && sContains(val, "."):
+				mAttrType[attr] = "float64"
+			case val == "true" || val == "false":
+				mAttrType[attr] = "bool"
+			case sHasPrefix(val, "[") && sHasSuffix(val, "]"):
+				first := sSplit(val[1:len(val)-1], ",")[0]
+				switch {
+				case isNumeric(first) && !sContains(first, "."):
+					mAttrType[attr] = "[]int"
+				case isNumeric(first) && sContains(first, "."):
+					mAttrType[attr] = "[]float64"
+				case first == "true" || first == "false":
+					mAttrType[attr] = "[]bool"
+				default:
+					mAttrType[attr] = "[]string"
+				}
 			default:
-				mAttrType[attr] = "[]string"
+				mAttrType[attr] = "string"
 			}
-		default:
-			mAttrType[attr] = "string"
 		}
 	}
 	return mAttrType
@@ -136,15 +136,15 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 	struStr += fSf("// %s : AUTO Created From %s\n", struName, tomlFile)
 	struStr += fSf("type %s struct {\n", struName)
 	for k, v := range attrTypes(lines, "") { // root type is ""
-		struStr += fSf("    %s %s\n", k, v) // 4 space
+		struStr += fSf("\t%s %s\n", k, v)
 	}
 	_, attrs2 := scanToml(lines)
 	for _, attr := range attrs2 {
-		struStr += fSf("    %s struct {\n", attr)
+		struStr += fSf("\t%s struct {\n", attr)
 		for k, v := range attrTypes(lines, attr) {
-			struStr += fSf("        %s %s\n", k, v) // 8 space
+			struStr += fSf("\t\t%s %s\n", k, v)
 		}
-		struStr += fSln("    }") // 4 space
+		struStr += fSln("\t}")
 	}
 	struStr += fSln("}")
 

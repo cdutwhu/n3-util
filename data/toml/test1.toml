@@ -1,3 +1,5 @@
+Version = ""
+
 [Storage]
   BadgerDBPath = "/var/tmp/n3-privacy/badger/" # "./data/badger/"
   DataBase = "badger" # "map" / "badger" / ...
