@@ -5,8 +5,12 @@ import (
 	"testing"
 )
 
+var (
+	toml = "../../data/toml/test.toml"
+)
+
 func TestScanToml(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../../data/toml/test.toml")
+	bytes, err := ioutil.ReadFile(toml)
 	failP1OnErr("%v", err)
 	lines := splitLn(string(bytes))
 	attrs1, attrs2 := scanToml(lines)
@@ -15,15 +19,23 @@ func TestScanToml(t *testing.T) {
 }
 
 func TestAttrsRange(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../../data/toml/test.toml")
+	bytes, err := ioutil.ReadFile(toml)
 	failP1OnErr("%v", err)
 	lines := splitLn(string(bytes))
-	m := attrsRange(lines)
-	for k, v := range m {
+	for k, v := range attrsRange(lines) {
+		fPln(k, v)
+	}
+}
+
+func TestAttrTypes(t *testing.T) {
+	bytes, err := ioutil.ReadFile(toml)
+	failP1OnErr("%v", err)
+	lines := splitLn(string(bytes))
+	for k, v := range attrTypes(lines, "") {
 		fPln(k, v)
 	}
 }
 
 func TestGenStruct(t *testing.T) {
-	GenStruct("../../data/toml/test.toml", "Config", "n3cfg", "../Config.go")
+	GenStruct(toml, "Config", "n3cfg", "../Config.go")
 }

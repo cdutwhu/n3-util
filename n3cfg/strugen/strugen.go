@@ -67,7 +67,7 @@ func attrTypes(tomllines []string, grpAttr string) map[string]string {
 	mGrpPos := attrsRange(tomllines)
 	rng := mGrpPos[grpAttr]
 	start, end := rng[0], rng[1]
-	for i := start; i <= end; i++ {
+	for i := start; end != 0 && i <= end; i++ {
 		ln := sTrim(tomllines[i], " \t")
 		attr := sTrim(rmTailFromFirst(ln, "="), " \t")
 		val := sTrim(rmHeadToFirst(ln, "="), " \t")

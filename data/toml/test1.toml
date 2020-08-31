@@ -1,0 +1,58 @@
+[Storage]
+  BadgerDBPath = "/var/tmp/n3-privacy/badger/" # "./data/badger/"
+  DataBase = "badger" # "map" / "badger" / ...
+  MetaPath = "/var/tmp/n3-privacy/meta/" 
+
+[WebService] # Shared with Client #
+  Port = "[p]" 
+  Service = "policy-service" # Server internal [Route] use
+  Version = "[VER]" # Server internal [Route] use
+
+[Route] # Shared with Client #
+  Delete = "/[s]/[v]/delete"
+  Get = "/[s]/[v]/policy"
+  GetHash = "/[s]/[v]/hash"
+  GetID = "/[s]/[v]/id"
+  LsContext = "/[s]/[v]/list/context"
+  LsID = "/[s]/[v]/list/policyid"
+  LsObject = "/[s]/[v]/list/object"
+  LsUser = "/[s]/[v]/list/user"
+  ROOT = "/"
+  Update = "/[s]/[v]/update"
+
+[File]
+  ClientConfig = "../../../Client/build/Linux64/config.toml"
+  ClientLinux64 = "../../../Client/build/Linux64/client"
+  ClientMac = "../../../Client/build/Mac/client"
+  ClientWin64 = "../../../Client/build/Win64/client.exe"
+  MaskConfig = "../../../Mask/build/Linux64/config.toml"
+  MaskLinux64 = "../../../Mask/build/Linux64/jm"
+  MaskMac = "../../../Mask/build/Mac/jm"
+  MaskWin64 = "../../../Mask/build/Win64/jm.exe"
+
+# ************************ Client ************************ #
+# *********** Client User ONLY Modify This Part ********** #
+
+[Server]
+  IP = "[IP]"
+  Port = "[p]"
+  Protocol = "http"
+  Service = "policy-service-1"
+
+[Access]
+  Timeout = 3
+
+[SchoolPrograms]
+  BOOLEAN = ["SIF_Metadata/TimeElements/TimeElement/IsCurrent", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/IsCurrent"]
+
+[CollectionStatus]
+  NUMERIC = ["LocalCodeList/LocalCode/ListIndex"]
+
+[Journal]
+  NUMERIC = ["Amount", "JournalAdjustmentList/JournalAdjustment/LineAdjustmentAmount", "LocalCodeList/LocalCode/ListIndex"]
+
+[SectionInfo]
+  NUMERIC = ["LocalCodeList/LocalCode/ListIndex"]  
+
+
+  
