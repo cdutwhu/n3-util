@@ -64,7 +64,7 @@ func GitTag() (tag string, err error) {
 	os.Chdir(oriWD)            // under .git project dir to get `git tag`
 
 	// run git
-	cmd := exec.Command("bash", "-c", "git tag")
+	cmd := exec.Command("bash", "-c", "git describe --tags")
 	output, err := cmd.Output()
 	// failOnErr("cmd.Output() error @ %v", err) // DO NOT PANIC
 	outstr := sTrim(string(output), " \n\t")
