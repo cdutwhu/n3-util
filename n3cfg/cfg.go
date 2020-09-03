@@ -283,10 +283,8 @@ func mkFuncs(impt, prj, pkg, fnDir string) {
 	pkg = sToLower(pkg)
 	fnFile := fnDir + "/auto_" + prj + "_" + pkg + ".go"
 
-	prj = sReplaceAll(prj, "-", "")
-	prj = sReplaceAll(prj, " ", "")
-	pkg = sReplaceAll(pkg, "-", "")
-	pkg = sReplaceAll(pkg, " ", "")
+	prj = replAllOnAny(prj, []string{"-", " "}, "")
+	pkg = replAllOnAny(pkg, []string{"-", " "}, "")
 
 	prj, pkg = sTitle(prj), sTitle(pkg)
 	fnNew := `New` + prj + pkg

@@ -53,6 +53,7 @@ var (
 	splitLn         = str.SplitLn
 	rmTailFromLast  = str.RmTailFromLast
 	replByPosGrp    = str.ReplByPosGrp
+	replAllOnAny    = str.ReplAllOnAny
 	mustWriteFile   = io.MustWriteFile
 )
 
