@@ -67,15 +67,10 @@ func GitTag() (tag string, err error) {
 	cmd := exec.Command("bash", "-c", "git describe --tags")
 	output, err := cmd.Output()
 	// failOnErr("cmd.Output() error @ %v", err) // DO NOT PANIC
-	outstr := sTrim(string(output), " \n\t")
-	if outstr == "" {
-		return "", nil
+	if outstr := sTrim(string(output), " \n\t"); outstr != "" {
+		return sSplit(outstr, "-")[0], nil
 	}
-	lines := splitLn(outstr)
-	if len(lines) >= 1 {
-		return lines[len(lines)-1], nil
-	}
-	return lines[0], nil
+	return "", nil
 }
 
 // Modify : only 2 levels struct variable could be modified. that is enough for config
