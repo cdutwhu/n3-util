@@ -2,7 +2,34 @@ package n3xml
 
 import (
 	"github.com/cdutwhu/n3-util/n3err"
+	"github.com/go-xmlfmt/xmlfmt"
 )
+
+// Fmt :
+func Fmt(xml string) string {
+	xml = sReplaceAll(xml, "\r\n", "\n")                              // "\r\n" -> "\n"
+	locGrp := rMustCompile(`(\n[ \t]*)+`).FindAllStringIndex(xml, -1) // BLANK lines
+	xml = replByPosGrp(xml, locGrp, []string{""})                     // remove all BLANK lines
+	xml = xmlfmt.FormatXML(xml, "", "\t")                             // NOTICE: after this, auto "\r\n" applied by 'xmlfmt'
+	xml = sReplaceAll(xml, "\r\n", "\n")                              // "\r\n" -> "\n"
+	xml = sReplaceAll(xml, "    ", "\t")                              // "4space" -> "\t"
+
+	indent, cnt := "", 0
+	for i := 0; i < 100; i++ {
+		r := rMustCompile(fSf(`[^>]\n%s</`, indent))
+		locGrp := r.FindAllStringIndex(xml, -1)
+		if locGrp == nil {
+			if cnt == 4 {
+				break
+			}
+			cnt++
+		} else {
+			xml = replByPosGrp(xml, locGrp, []string{""}, 1, 2)
+		}
+		indent += "\t"
+	}
+	return sTrim(xml, " \t\r\n")
+}
 
 // XMLRoot :
 func XMLRoot(xml string) string {

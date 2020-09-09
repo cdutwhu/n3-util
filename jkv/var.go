@@ -18,25 +18,24 @@ import (
 )
 
 var (
-	fPf         = fmt.Printf
-	fPln        = fmt.Println
-	fSf         = fmt.Sprintf
-	fEf         = fmt.Errorf
-	sSplit      = strings.Split
-	sJoin       = strings.Join
-	sCount      = strings.Count
-	sContains   = strings.Contains
-	sReplace    = strings.Replace
-	sReplaceAll = strings.ReplaceAll
-	sIndex      = strings.Index
-	sLastIndex  = strings.LastIndex
-	sTrim       = strings.Trim
-	sTrimLeft   = strings.TrimLeft
-	sTrimRight  = strings.TrimRight
-	sHasPrefix  = strings.HasPrefix
-	sHasSuffix  = strings.HasSuffix
-	sRepeat     = strings.Repeat
-
+	fPf             = fmt.Printf
+	fPln            = fmt.Println
+	fSf             = fmt.Sprintf
+	fEf             = fmt.Errorf
+	sSplit          = strings.Split
+	sJoin           = strings.Join
+	sCount          = strings.Count
+	sContains       = strings.Contains
+	sReplace        = strings.Replace
+	sReplaceAll     = strings.ReplaceAll
+	sIndex          = strings.Index
+	sLastIndex      = strings.LastIndex
+	sTrim           = strings.Trim
+	sTrimLeft       = strings.TrimLeft
+	sTrimRight      = strings.TrimRight
+	sHasPrefix      = strings.HasPrefix
+	sHasSuffix      = strings.HasSuffix
+	sRepeat         = strings.Repeat
 	exist           = judge.Exist
 	isJSON          = judge.IsJSON
 	isNumeric       = judge.IsNumeric
@@ -55,13 +54,12 @@ var (
 	mapKeys         = rflx.MapKeys
 	mapMerge        = rflx.MapMerge
 	toGeneralSlc    = rflx.ToGeneralSlc
-
-	maybeJSONArr = n3json.MaybeArr
-	splitJSONArr = n3json.SplitArr
-	makeJSONArr  = n3json.MakeArr
-	fmtJSON      = n3json.Fmt
-	fmtJSONFile  = n3json.FmtFile
-	fmtInnerJSON = n3json.InnerFmt
+	maybeJSONArr    = n3json.MaybeArr
+	splitJSONArr    = n3json.SplitArr
+	makeJSONArr     = n3json.MakeArr
+	fmtJSON         = n3json.Fmt
+	fmtJSONFile     = n3json.FmtFile
+	fmtInnerJSON    = n3json.InnerFmt
 )
 
 type (

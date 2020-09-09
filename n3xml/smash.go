@@ -1,12 +1,10 @@
 package n3xml
 
 import (
-	"io/ioutil"
 	"os"
 	"regexp"
 
 	"github.com/cdutwhu/n3-util/n3err"
-	"github.com/go-xmlfmt/xmlfmt"
 )
 
 // SmashSave :
@@ -21,13 +19,8 @@ func SmashSave(xml, saveDir string) []string {
 	failOnErr("%v", err)
 	for i, subRoot := range SubRoots {
 		filename := fSf("%s%s_%d.xml", saveDir, subRoot, mObjCnt[subRoot])
-		// fPln(filename)
-
-		Subs[i] = xmlfmt.FormatXML(Subs[i], "", "    ")
-		Subs[i] = sTrim(Subs[i], " \n\r\t")
-		// fPln(Subs[i])
-
-		failOnErr("%v", ioutil.WriteFile(filename, []byte(Subs[i]), os.ModePerm))
+		Subs[i] = Fmt(Subs[i])
+		mustWriteFile(filename, []byte(Subs[i]))
 		mObjCnt[subRoot]++
 	}
 	return Subs

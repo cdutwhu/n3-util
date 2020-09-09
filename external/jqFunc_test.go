@@ -11,6 +11,6 @@ func TestJQ(t *testing.T) {
 	failOnErr("%v", err)
 	fmtted := FmtJSONStr(string(bytes), "./utils/")
 	// fmt.Println(fmtted)
-	ioutil.WriteFile("jq-fmt.json", []byte(fmtted), 0666)
+	mustWriteFile("jq-fmt.json", []byte(fmtted))
 	fmt.Println("OK")
 }

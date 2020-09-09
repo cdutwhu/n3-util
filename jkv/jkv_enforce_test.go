@@ -1,7 +1,6 @@
 package jkv
 
 import (
-	"io/ioutil"
 	"sync"
 	"testing"
 	"time"
@@ -39,7 +38,7 @@ func TestJSONPolicy(t *testing.T) {
 			}(i, json)
 		}
 		wg.Wait()
-		ioutil.WriteFile("array.json", []byte(makeJSONArr(jsonList...)), 0666)
+		mustWriteFile("array.json", []byte(makeJSONArr(jsonList...)))
 
 	} else {
 
@@ -57,7 +56,7 @@ func TestJSONPolicy(t *testing.T) {
 		json = jkvMR.UnwrapDefault().JSON
 		json = fmtJSON(json, 2)
 
-		ioutil.WriteFile("single.json", []byte(json), 0666)
+		mustWriteFile("single.json", []byte(json))
 	}
 }
 
@@ -78,5 +77,5 @@ func TestJSONPolicy1(t *testing.T) {
 	json = fmtJSON(json, 2)
 
 	fPln(json)
-	ioutil.WriteFile("single.json", []byte(json), 0666)
+	mustWriteFile("single.json", []byte(json))
 }

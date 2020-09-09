@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/io"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/misc"
 	"github.com/cdutwhu/gotil/str"
@@ -23,6 +24,7 @@ var (
 	sHasSuffix      = strings.HasSuffix
 	sSplit          = strings.Split
 	sCount          = strings.Count
+	sReplaceAll     = strings.ReplaceAll
 	rMustCompile    = regexp.MustCompile
 	failOnErr       = fn.FailOnErr
 	failOnErrWhen   = fn.FailOnErrWhen
@@ -33,4 +35,5 @@ var (
 	hasAnyPrefix    = str.HasAnyPrefix
 	splitLn         = str.SplitLn
 	trackTime       = misc.TrackTime
+	mustWriteFile   = io.MustWriteFile
 )

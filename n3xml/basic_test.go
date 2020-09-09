@@ -58,3 +58,11 @@ func TestDigitalTags(t *testing.T) {
 		}
 	}
 }
+
+func TestFmt(t *testing.T) {
+	defer trackTime(time.Now())
+	bytes, err := ioutil.ReadFile("../data/xml/c.xml")
+	failOnErr("%v", err)
+	xml := Fmt(string(bytes))	
+	mustWriteFile("../data/xml/fmt.xml", []byte(xml))
+}
