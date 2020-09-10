@@ -49,7 +49,7 @@ func TestDigitalTags(t *testing.T) {
 	defer trackTime(time.Now())
 	bytes, err := ioutil.ReadFile("../data/xml/siftest347.xml")
 	failOnErr("%v", err)
-	r := rMustCompile(`[0-9]*\.[0-9]{1}$`)
+	r := rxMustCompile(`[0-9]*\.[0-9]{1}$`)
 	for _, ln := range splitLn(string(bytes)) {
 		if val, ok := Value(ln); ok && isNumeric(val) {
 			if r.MatchString(val) {

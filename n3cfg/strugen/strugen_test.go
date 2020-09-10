@@ -2,11 +2,13 @@ package strugen
 
 import (
 	"io/ioutil"
+	"os"
 	"testing"
 )
 
 var (
-	toml = "../../data/toml/test1.toml"
+	toml  = "../../data/toml/test.toml"
+	toml1 = "../../data/toml/test1.toml"
 )
 
 func TestScanToml(t *testing.T) {
@@ -37,5 +39,9 @@ func TestAttrTypes(t *testing.T) {
 }
 
 func TestGenStruct(t *testing.T) {
-	GenStruct(toml, "Config", "n3cfg", "../Config.go")
+	cfgsrc := "../../data/toml/Config.go"
+	os.Remove(cfgsrc)
+	GenStruct(toml, "Config1", "toml", cfgsrc)
+	GenStruct(toml1, "Config2", "toml", cfgsrc)
+	GenNewCfg(cfgsrc)
 }

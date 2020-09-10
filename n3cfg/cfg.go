@@ -45,7 +45,7 @@ func GitVer() (ver string, err error) {
 	if err != nil {
 		return "", err
 	}
-	if r := rMustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+$`); r.MatchString(tag) {
+	if r := rxMustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+$`); r.MatchString(tag) {
 		return tag, nil
 	}
 	return "", nil

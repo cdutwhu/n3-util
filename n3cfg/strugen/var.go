@@ -46,6 +46,7 @@ var (
 	replByPosGrp    = str.ReplByPosGrp
 	splitLn         = str.SplitLn
 	mustWriteFile   = io.MustWriteFile
+	mustAppendFile  = io.MustAppendFile
 	isNumeric       = judge.IsNumeric
 	isXML           = judge.IsXML
 	callerSrc       = base.CallerSrc

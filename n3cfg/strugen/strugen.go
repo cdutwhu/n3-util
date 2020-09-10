@@ -118,19 +118,24 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 	if struName == "" {
 		struName = sToUpper(string(fname[0])) + fname[1:]
 	}
+	failP1OnErrWhen(!ucIsUpper(rune(struName[0])), "%v @struName", n3err.PARAM_INVALID)
+
+	addPkg := true
 	if pkgName == "" {
 		pkgName = filepath.Base(dir)
 	}
 	if struFile == "" {
 		struFile = dir + "/" + fname + ".go"
 	}
-
-	failP1OnErrWhen(!ucIsUpper(rune(struName[0])), "%v @struName", n3err.PARAM_INVALID)
+	if bytes, err := ioutil.ReadFile(struFile); err == nil && sHasPrefix(string(bytes), "package ") {
+		addPkg = false
+	}
 
 	lines := splitLn(string(bytes) + "\n")
 	struStr := ""
-	if pkgName != "" {
+	if addPkg {
 		struStr += fSf("package %s\n\n", pkgName)
+		struStr += `import "github.com/cdutwhu/n3-util/n3cfg"` + "\n\n"
 	}
 
 	struStr += fSf("// %s : AUTO Created From %s\n", struName, tomlFile)
@@ -148,6 +153,40 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 	}
 	struStr += fSln("}")
 
-	mustWriteFile(struFile, []byte(struStr))
+	mustAppendFile(struFile, []byte(struStr), true)
 	return true
+}
+
+// GenNewCfg :
+func GenNewCfg(struFile string) bool {
+	bytes, err := ioutil.ReadFile(struFile)
+	if err != nil {
+		return false
+	}
+	cont := string(bytes)
+	struNames := []string{}
+	r := rxMustCompile(`type [A-Za-z0-9_]+ struct {`)
+	offset1, offset2 := len("type "), len(" struct {")
+	for _, find := range r.FindAllString(cont, -1) {
+		struNames = append(struNames, find[offset1:len(find)-offset2])
+	}
+	fPln(struNames)
+	if sContains(cont, "func NewCfg(") {
+		return false
+	}
+
+	src := `// NewCfg :` + "\n"
+	src += `func NewCfg(cfgStruName string, mReplExpr map[string]string, cfgPaths ...string) interface{} {` + "\n"
+	src += `	var cfg interface{}` + "\n"
+	src += `	switch cfgStruName {` + "\n"
+	for _, cfgname := range struNames {
+		src += fSf("\tcase \"%[1]s\":\n\t\tcfg = &%[1]s{}\n", cfgname)
+	}
+	src += "\tdefault:\n\t\treturn nil\n"
+	src += "\t}\n"
+	src += `	return n3cfg.InitEnvVar(cfg, mReplExpr, cfgStruName, cfgPaths...)` + "\n"
+	src += `}` + "\n"
+	
+	mustAppendFile(struFile, []byte(src), true)
+	return false
 }

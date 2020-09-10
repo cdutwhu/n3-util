@@ -7,16 +7,16 @@ import (
 
 // Fmt :
 func Fmt(xml string) string {
-	xml = sReplaceAll(xml, "\r\n", "\n")                              // "\r\n" -> "\n"
-	locGrp := rMustCompile(`(\n[ \t]*)+`).FindAllStringIndex(xml, -1) // BLANK lines
-	xml = replByPosGrp(xml, locGrp, []string{""})                     // remove all BLANK lines
-	xml = xmlfmt.FormatXML(xml, "", "\t")                             // NOTICE: after this, auto "\r\n" applied by 'xmlfmt'
-	xml = sReplaceAll(xml, "\r\n", "\n")                              // "\r\n" -> "\n"
-	xml = sReplaceAll(xml, "    ", "\t")                              // "4space" -> "\t"
+	xml = sReplaceAll(xml, "\r\n", "\n")                               // "\r\n" -> "\n"
+	locGrp := rxMustCompile(`(\n[ \t]*)+`).FindAllStringIndex(xml, -1) // BLANK lines
+	xml = replByPosGrp(xml, locGrp, []string{""})                      // remove all BLANK lines
+	xml = xmlfmt.FormatXML(xml, "", "\t")                              // NOTICE: after this, auto "\r\n" applied by 'xmlfmt'
+	xml = sReplaceAll(xml, "\r\n", "\n")                               // "\r\n" -> "\n"
+	xml = sReplaceAll(xml, "    ", "\t")                               // "4space" -> "\t"
 
 	indent, cnt := "", 0
 	for i := 0; i < 100; i++ {
-		r := rMustCompile(fSf(`[^>]\n%s</`, indent))
+		r := rxMustCompile(fSf(`[^>]\n%s</`, indent))
 		locGrp := r.FindAllStringIndex(xml, -1)
 		if locGrp == nil {
 			if cnt == 4 {
@@ -69,7 +69,7 @@ func HasAllAttr(xml string, attrs ...string) bool {
 		return false
 	}
 	for _, attr := range attrs {
-		if !rMustCompile(fSf(` %s=["'].*["'][ >/]`, attr)).MatchString(xml) {
+		if !rxMustCompile(fSf(` %s=["'].*["'][ >/]`, attr)).MatchString(xml) {
 			return false
 		}
 	}
@@ -82,7 +82,7 @@ func HasAnyAttr(xml string, attrs ...string) bool {
 		return false
 	}
 	for _, attr := range attrs {
-		if rMustCompile(fSf(` %s=["'].*["'][ >/]`, attr)).MatchString(xml) {
+		if rxMustCompile(fSf(` %s=["'].*["'][ >/]`, attr)).MatchString(xml) {
 			return true
 		}
 	}
@@ -103,7 +103,7 @@ func AttrValue(xml string) (attrs []string, mAttrVal map[string]string) {
 	mAttrVal = make(map[string]string)
 	head, tail1, tail2 := fSf(`<%s `, root), fSf(`</%s>`, root), fSf(`/>`)
 	attrseg := ""
-	if loc := rMustCompile(fSf(`>.*%s$`, tail1)).FindStringIndex(xml); loc != nil {
+	if loc := rxMustCompile(fSf(`>.*%s$`, tail1)).FindStringIndex(xml); loc != nil {
 		attrseg = xml[len(head):loc[0]]
 	}
 	if sHasSuffix(xml, tail2) {
@@ -127,7 +127,7 @@ func Value(xml string) (string, bool) {
 	if sHasSuffix(xml, "/>") {
 		return "", true
 	}
-	if loc := rMustCompile(`>.*<`).FindStringIndex(xml); loc != nil {
+	if loc := rxMustCompile(`>.*<`).FindStringIndex(xml); loc != nil {
 		return xml[loc[0]+1 : loc[1]-1], true
 	}
 	return "", true

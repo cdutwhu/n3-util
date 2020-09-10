@@ -25,7 +25,7 @@ var (
 	sSplit          = strings.Split
 	sCount          = strings.Count
 	sReplaceAll     = strings.ReplaceAll
-	rMustCompile    = regexp.MustCompile
+	rxMustCompile   = regexp.MustCompile
 	failOnErr       = fn.FailOnErr
 	failOnErrWhen   = fn.FailOnErrWhen
 	failP1OnErrWhen = fn.FailP1OnErrWhen

@@ -32,11 +32,10 @@ var (
 	sCount          = strings.Count
 	sReplaceAll     = strings.ReplaceAll
 	sReplace        = strings.Replace
-	rMustCompile    = regexp.MustCompile
+	rxMustCompile   = regexp.MustCompile
 	vof             = reflect.ValueOf
 	typPTR          = reflect.Ptr
 	typSTRUCT       = reflect.Struct
-	rxMustCompile   = regexp.MustCompile
 	callerSrc       = base.CallerSrc
 	trackCaller     = base.TrackCaller
 	failOnErr       = fn.FailOnErr
@@ -62,5 +61,5 @@ var (
 )
 
 const (
-	logfile = "/home/qmiao/Desktop/debug.log"
+	logfile = "./debug.log"
 )
