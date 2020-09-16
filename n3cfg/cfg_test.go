@@ -8,11 +8,11 @@ import (
 )
 
 func TestPrjName(t *testing.T) {
-	fPln(PrjName())
+	fPln(PrjName("PRJ"))
 }
 
 func TestGitVer(t *testing.T) {
-	fPln(GitVer())
+	fPln(GitVer("0.0.0"))
 }
 
 func TestGitTag(t *testing.T) {
@@ -38,6 +38,7 @@ func TestModify(t *testing.T) {
 }
 
 func TestNewCfg(t *testing.T) {
+	prj, _ := PrjName("PRJ")
 	cfg := &Config{}
 	ok := New(
 		cfg,
@@ -45,7 +46,7 @@ func TestNewCfg(t *testing.T) {
 			"[s]":   "WebService.Service",
 			"[v]":   "WebService.Version",
 			"[p]":   "Port",
-			"[prj]": PrjName(),
+			"[prj]": prj,
 		},
 		"../data/toml/test.toml",
 	)
@@ -85,7 +86,8 @@ func TestToEnvVar(t *testing.T) {
 
 // echo 'password' | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegister
 func TestRegister(t *testing.T) {
-	prj, pkg := PrjName(), "Server"
+	prj, _ := PrjName("PRJ")
+	pkg := "Server"
 	ok, file := Register("qmiao", "../data/toml/test.toml", prj, pkg)
 	fPln(ok, file)
 }

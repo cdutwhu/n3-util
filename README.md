@@ -1,6 +1,6 @@
 # mod `github.com/cdutwhu/n3-util`
 
-Basic utils for n3-*** projects
+Basic utils for ESA NSIP n3-*** projects
 
 data: sample files for unit test.
 

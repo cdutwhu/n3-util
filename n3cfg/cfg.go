@@ -14,7 +14,7 @@ import (
 )
 
 // PrjName :
-func PrjName() string {
+func PrjName(dftPrjName string) (string, bool) {
 	const check = "/.git"
 NEXT:
 	for i := 1; i < 64; i++ {
@@ -31,24 +31,24 @@ NEXT:
 					ln = dir
 					goto AGAIN
 				} else {
-					return filepath.Base(dir)
+					return filepath.Base(dir), true
 				}
 			}
 		}
 	}
-	return ""
+	return dftPrjName, false
 }
 
 // GitVer :
-func GitVer() (ver string, err error) {
+func GitVer(dftVer string) (string, bool) {
 	tag, err := GitTag()
 	if err != nil {
-		return "", err
+		return dftVer, false
 	}
 	if r := rxMustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+$`); r.MatchString(tag) {
-		return tag, nil
+		return tag, true
 	}
-	return "", nil
+	return dftVer, false
 }
 
 // GitTag :
@@ -201,15 +201,15 @@ func initCfg(fpath string, cfg interface{}, mReplExpr map[string]string) interfa
 	failOnErr("%v", e)
 	home, e := os.UserHomeDir()
 	failOnErr("%v", e)
-	ver, e := GitVer()
-	// failOnErr("%v", e)     // DO NOT PANIC
+	ver, _ := GitVer("0.0.0")
+	prj, _ := PrjName("PRJ")
 
 	cfg = Modify(cfg, map[string]interface{}{
 		"~":      home,
 		"[DATE]": time.Now().Format("2006-01-02"),
 		"[PATH]": abs,
 		"[IP]":   localIP(),
-		"[PRJ]":  PrjName(),
+		"[PRJ]":  prj,
 		"[VER]":  ver,
 	})
 
