@@ -39,9 +39,10 @@ func TestAttrTypes(t *testing.T) {
 }
 
 func TestGenStruct(t *testing.T) {
-	cfgsrc := "../../data/toml/Config.go"
+	enableWarnDetail(false)
+	cfgsrc := "../Config.go"
 	os.Remove(cfgsrc)
-	GenStruct(toml, "Config1", "toml", cfgsrc)
-	GenStruct(toml1, "Config2", "toml", cfgsrc)
+	GenStruct(toml, "Config", "n3cfg", cfgsrc)
+	GenStruct(toml1, "Config1", "n3cfg", cfgsrc)
 	GenNewCfg(cfgsrc)
 }

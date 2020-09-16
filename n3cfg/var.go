@@ -57,7 +57,9 @@ var (
 )
 
 var (
-	mux sync.Mutex
+	mux        sync.Mutex
+	dftPrjName string
+	dftPrjVer  string
 )
 
 const (

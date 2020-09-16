@@ -135,7 +135,12 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 	struStr := ""
 	if addPkg {
 		struStr += fSf("package %s\n\n", pkgName)
-		struStr += `import "github.com/cdutwhu/n3-util/n3cfg"` + "\n\n"
+		if pkgName != "n3cfg" {
+			struStr += `import "github.com/cdutwhu/n3-util/n3cfg"` + "\n\n"
+		} else {
+			warner("pkgName should NOT be 'n3cfg' unless for self-dev test")
+			selfDev = true
+		}
 	}
 
 	struStr += fSf("// %s : AUTO Created From %s\n", struName, tomlFile)
@@ -184,9 +189,13 @@ func GenNewCfg(struFile string) bool {
 	}
 	src += "\tdefault:\n\t\treturn nil\n"
 	src += "\t}\n"
-	src += `	return n3cfg.InitEnvVar(cfg, mReplExpr, cfgStruName, cfgPaths...)` + "\n"
+	if !selfDev {
+		src += `	return n3cfg.InitEnvVar(cfg, mReplExpr, cfgStruName, cfgPaths...)` + "\n"
+	} else {
+		src += `	return InitEnvVar(cfg, mReplExpr, cfgStruName, cfgPaths...)` + "\n"
+	}
 	src += `}` + "\n"
-	
+
 	mustAppendFile(struFile, []byte(src), true)
 	return false
 }

@@ -8,20 +8,17 @@ import (
 )
 
 func TestPrjName(t *testing.T) {
-	fPln(PrjName("PRJ"))
+	SetDftCfgVal("dftPrjName", "0.0.0")
+	fPln(PrjName())
 }
 
 func TestGitVer(t *testing.T) {
-	fPln(GitVer("0.0.0"))
+	SetDftCfgVal("dftPrjName", "0.0.0")
+	fPln(GitVer())
 }
 
 func TestGitTag(t *testing.T) {
 	fPln(GitTag())
-}
-
-// Config : holder for ignoring compiling error. genStruct to get an real one.
-// then comment below out.
-type Config struct {
 }
 
 func TestModify(t *testing.T) {
@@ -38,7 +35,8 @@ func TestModify(t *testing.T) {
 }
 
 func TestNewCfg(t *testing.T) {
-	prj, _ := PrjName("PRJ")
+	SetDftCfgVal("dftPrjName", "0.0.0")
+	prj, _ := PrjName()
 	cfg := &Config{}
 	ok := New(
 		cfg,
@@ -51,7 +49,6 @@ func TestNewCfg(t *testing.T) {
 		"../data/toml/test.toml",
 	)
 	fPln(ok)
-	spew.Dump(cfg)
 	Save("./saved.toml", cfg)
 }
 
@@ -86,7 +83,7 @@ func TestToEnvVar(t *testing.T) {
 
 // echo 'password' | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegister
 func TestRegister(t *testing.T) {
-	prj, _ := PrjName("PRJ")
+	prj, _ := PrjName()
 	pkg := "Server"
 	ok, file := Register("qmiao", "../data/toml/test.toml", prj, pkg)
 	fPln(ok, file)

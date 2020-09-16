@@ -13,8 +13,14 @@ import (
 	"github.com/cdutwhu/n3-util/n3cfg/strugen"
 )
 
+// SetDftCfgVal :
+func SetDftCfgVal(prjName, prjVer string) {
+	dftPrjName = prjName
+	dftPrjVer = prjVer
+}
+
 // PrjName :
-func PrjName(dftPrjName string) (string, bool) {
+func PrjName() (string, bool) {
 	const check = "/.git"
 NEXT:
 	for i := 1; i < 64; i++ {
@@ -40,15 +46,15 @@ NEXT:
 }
 
 // GitVer :
-func GitVer(dftVer string) (string, bool) {
+func GitVer() (string, bool) {
 	tag, err := GitTag()
 	if err != nil {
-		return dftVer, false
+		return dftPrjVer, false
 	}
 	if r := rxMustCompile(`^v[0-9]+\.[0-9]+\.[0-9]+$`); r.MatchString(tag) {
 		return tag, true
 	}
-	return dftVer, false
+	return dftPrjVer, false
 }
 
 // GitTag :
@@ -201,8 +207,8 @@ func initCfg(fpath string, cfg interface{}, mReplExpr map[string]string) interfa
 	failOnErr("%v", e)
 	home, e := os.UserHomeDir()
 	failOnErr("%v", e)
-	ver, _ := GitVer("0.0.0")
-	prj, _ := PrjName("PRJ")
+	prj, _ := PrjName()
+	ver, _ := GitVer()
 
 	cfg = Modify(cfg, map[string]interface{}{
 		"~":      home,
