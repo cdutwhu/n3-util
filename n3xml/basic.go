@@ -5,29 +5,79 @@ import (
 	"github.com/go-xmlfmt/xmlfmt"
 )
 
+var (
+	rxHead    = rxMustCompile(`<\w+(\s+\w+\s*=\s*"[^"]*"\s*)*\s*/?>`)
+	rxTail    = rxMustCompile(`</\w+\s*>`)
+	rxMultiLF = rxMustCompile(`\n{2}\t+<\w+`)
+	// rxLF         = rxMustCompile(`\n{2}\t+`)
+	rxTagLoose   = rxMustCompile(`<\w+\s{2,}(>|\w+)`)
+	rxTagSpace   = rxMustCompile(`\s{2,}`)
+	rxAttrLoose  = rxMustCompile(`"\s{2,}[\w/>]`)
+	rxAttrSpace  = rxMustCompile(`\s{2,}`)
+	rxEqLoose    = rxMustCompile(`\s[^"=]+\s*=\s*"`)
+	rxEqSpace    = rxMustCompile(`\s+=\s+`)
+	rxAttrDangle = rxMustCompile(`<\w+(\n\s*)+[^>]*>`)
+	rxAttrLF     = rxMustCompile(`(\n\s*)+`)
+)
+
 // Fmt :
 func Fmt(xml string) string {
-	xml = sReplaceAll(xml, "\r\n", "\n")                               // "\r\n" -> "\n"
-	locGrp := rxMustCompile(`(\n[ \t]*)+`).FindAllStringIndex(xml, -1) // BLANK lines
-	xml = replByPosGrp(xml, locGrp, []string{""})                      // remove all BLANK lines
-	xml = xmlfmt.FormatXML(xml, "", "\t")                              // NOTICE: after this, auto "\r\n" applied by 'xmlfmt'
-	xml = sReplaceAll(xml, "\r\n", "\n")                               // "\r\n" -> "\n"
-	xml = sReplaceAll(xml, "    ", "\t")                               // "4space" -> "\t"
+	xml = xmlfmt.FormatXML(xml, "", "\t") // NOTICE: after this, auto "\r\n" applied by 'xmlfmt'
+	xml = sReplaceAll(xml, "\r\n", "\n")  // "\r\n" -> "\n"
 
-	indent, cnt := "", 0
-	for i := 0; i < 100; i++ {
-		r := rxMustCompile(fSf(`[^>]\n%s</`, indent))
-		locGrp := r.FindAllStringIndex(xml, -1)
-		if locGrp == nil {
-			if cnt == 4 {
-				break
-			}
-			cnt++
-		} else {
-			xml = replByPosGrp(xml, locGrp, []string{""}, 1, 2)
+	// Remove new added LF when tail is already LF
+	xml = rxMultiLF.ReplaceAllStringFunc(xml, func(m string) string {
+		return sReplace(m, "\n\n", "\n", 1)
+	})
+
+	mOldNew := make(map[string]string)
+	search := xml
+	I := 0
+NEXT:
+	if pair := rxHead.FindAllStringIndex(search, 1); pair != nil {
+		s, e := pair[0][0], pair[0][1]
+		find := search[s:e]
+		fPln(I, find)
+		search = search[e:]
+
+		rmAttrDangle := rxAttrDangle.ReplaceAllStringFunc(find, func(m string) string {
+			return rxAttrLF.ReplaceAllString(m, " ")
+		})
+		//-----------------------------------//
+		tagThin := rxTagLoose.ReplaceAllStringFunc(rmAttrDangle, func(m string) string {
+			return sReplaceAll(rxTagSpace.ReplaceAllString(m, " "), " >", ">")
+		})
+		//-----------------------------------//
+		attrThin := rxAttrLoose.ReplaceAllStringFunc(tagThin, func(m string) string {
+			return sReplaceAll(rxAttrSpace.ReplaceAllString(m, " "), "\" >", "\">")
+		})
+		//-----------------------------------//
+		eqThin := rxEqLoose.ReplaceAllStringFunc(attrThin, func(m string) string {
+			return rxEqSpace.ReplaceAllString(m, "=")
+		})
+
+		if eqThin != find {
+			mOldNew[find] = eqThin
+			fPln(I, find)
+			fPln(I, eqThin)
+			fPln(" ----------------------- ")
 		}
-		indent += "\t"
+
+		I++
+		goto NEXT
 	}
+
+	for k, v := range mOldNew {
+		xml = sReplaceAll(xml, k, v)
+	}
+
+	// if pair := rxTail
+
+	// fPln(" ----------------------- ")
+	// for i, tail := range rxTail.FindAllString(xml, -1) {
+	// 	fPln(i, tail)
+	// }
+
 	return sTrim(xml, " \t\r\n")
 }
 
@@ -103,7 +153,7 @@ func AttrValue(xml string) (attrs []string, mAttrVal map[string]string) {
 	mAttrVal = make(map[string]string)
 	head, tail1, tail2 := fSf(`<%s `, root), fSf(`</%s>`, root), fSf(`/>`)
 	attrseg := ""
-	if loc := rxMustCompile(fSf(`>.*%s$`, tail1)).FindStringIndex(xml); loc != nil {
+	if loc := rxMustCompile(fSf(`>([^<>]*(\n\s*)*)+%s$`, tail1)).FindStringIndex(xml); loc != nil {
 		attrseg = xml[len(head):loc[0]]
 	}
 	if sHasSuffix(xml, tail2) {
@@ -127,8 +177,8 @@ func Value(xml string) (string, bool) {
 	if sHasSuffix(xml, "/>") {
 		return "", true
 	}
-	if loc := rxMustCompile(`>.*<`).FindStringIndex(xml); loc != nil {
-		return xml[loc[0]+1 : loc[1]-1], true
+	if loc := rxMustCompile(`>([^<>]*(\n\s*)*)+<`).FindStringIndex(xml); loc != nil {
+		return sTrim(xml[loc[0]+1:loc[1]-1], " \t\n\r"), true
 	}
 	return "", true
 }

@@ -9,12 +9,16 @@ import (
 func TestBasic(t *testing.T) {
 	defer trackTime(time.Now())
 
-	xml := `<Duration Units="minute" Unit="123">3220</Duration>`
+	xml := `<Duration Units  =   "    minute   " Unit="123">3220
+	3221
+	</Duration>`
 	fPln(HasAllAttr(xml, "Unit", "Units"))
 	fPln(HasAnyAttr(xml, "Unit", "abc"))
 	fPln(AttrValue(xml))
 	fPln(Value(xml))
 	fPln("--------------------")
+
+	return
 
 	xml = `<Duration>30007</Duration>`
 	fPln(HasAllAttr(xml, "Unit", "Units"))
@@ -61,8 +65,10 @@ func TestDigitalTags(t *testing.T) {
 
 func TestFmt(t *testing.T) {
 	defer trackTime(time.Now())
-	bytes, err := ioutil.ReadFile("../data/xml/c.xml")
+	bytes, err := ioutil.ReadFile("../data/xml/d.xml")
 	failOnErr("%v", err)
-	xml := Fmt(string(bytes))	
+	fPln(isXML(string(bytes)))
+	xml := Fmt(string(bytes))
+	fPln(isXML(xml))
 	mustWriteFile("../data/xml/fmt.xml", []byte(xml))
 }

@@ -24,6 +24,7 @@ var (
 	sHasSuffix      = strings.HasSuffix
 	sSplit          = strings.Split
 	sCount          = strings.Count
+	sReplace        = strings.Replace
 	sReplaceAll     = strings.ReplaceAll
 	rxMustCompile   = regexp.MustCompile
 	failOnErr       = fn.FailOnErr
