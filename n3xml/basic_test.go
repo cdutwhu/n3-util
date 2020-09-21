@@ -9,58 +9,44 @@ import (
 func TestBasic(t *testing.T) {
 	defer trackTime(time.Now())
 
-	xml := `<Duration Units  =   "    minute   " Unit="123">3220
-	3221
-	</Duration>`
-	fPln(HasAllAttr(xml, "Unit", "Units"))
-	fPln(HasAnyAttr(xml, "Unit", "abc"))
-	fPln(AttrValue(xml))
-	fPln(Value(xml))
-	fPln("--------------------")
+	xml := `<text a =  "23" >Thank you for sending us the information on
+	<emphasis>SDL Trados Studio 2015 SDL Trados Studio 2015
+	</emphasis>. 
+</text>`
+
+	//  xml := `<Duration   Units  =   "    minute   "   Unit="123">3220
+	//  3221   11
+	//  </Duration>`
+
+	// xml := `<Duration>30007</Duration>`
+	// xml := `<Duration Units="minute" Unit="123"/>`
+	// xml := `<Duration/>`
+	// xml := `<ActivityTime>`
+
+	fPln(XMLRoot(xml))
+
+	tag, cont, attrs, mAV := TagContAttrVal(xml)
+	fPln(tag)
+	fPln(cont)
+	fPln(attrs)
+	fPln(mAV)
+	// fPln(exist("Unit", toGeneralSlc(attrs)...))
 
 	return
-
-	xml = `<Duration>30007</Duration>`
-	fPln(HasAllAttr(xml, "Unit", "Units"))
-	fPln(HasAnyAttr(xml, "Unit", "abc"))
-	fPln(AttrValue(xml))
-	fPln(Value(xml))
-	fPln("--------------------")
-
-	xml = `<Duration Units="minute" Unit="123"/>`
-	fPln(HasAllAttr(xml, "Unit", "Units"))
-	fPln(HasAnyAttr(xml, "Unit", "abc"))
-	fPln(AttrValue(xml))
-	fPln(Value(xml))
-	fPln("--------------------")
-
-	xml = `<Duration/>`
-	fPln(HasAllAttr(xml, "Unit", "Units"))
-	fPln(HasAnyAttr(xml, "Unit", "abc"))
-	fPln(AttrValue(xml))
-	fPln(Value(xml))
-	fPln("--------------------")
-
-	xml = `<ActivityTime>`
-	fPln(HasAllAttr(xml, "Unit", "Units"))
-	fPln(HasAnyAttr(xml, "Unit", "abc"))
-	fPln(AttrValue(xml))
-	fPln(Value(xml))
-	fPln("--------------------")
 }
 
 func TestDigitalTags(t *testing.T) {
-	defer trackTime(time.Now())
-	bytes, err := ioutil.ReadFile("../data/xml/siftest347.xml")
-	failOnErr("%v", err)
-	r := rxMustCompile(`[0-9]*\.[0-9]{1}$`)
-	for _, ln := range splitLn(string(bytes)) {
-		if val, ok := Value(ln); ok && isNumeric(val) {
-			if r.MatchString(val) {
-				fPln(ln)
-			}
-		}
-	}
+	// defer trackTime(time.Now())
+	// bytes, err := ioutil.ReadFile("../data/xml/siftest347.xml")
+	// failOnErr("%v", err)
+	// r := rxMustCompile(`[0-9]*\.[0-9]{1}$`)
+	// for _, ln := range splitLn(string(bytes)) {
+	// 	if val, ok := Value(ln); ok && isNumeric(val) {
+	// 		if r.MatchString(val) {
+	// 			fPln(ln)
+	// 		}
+	// 	}
+	// }
 }
 
 func TestFmt(t *testing.T) {

@@ -9,6 +9,7 @@ import (
 	"github.com/cdutwhu/gotil/io"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/misc"
+	"github.com/cdutwhu/gotil/rflx"
 	"github.com/cdutwhu/gotil/str"
 )
 
@@ -20,6 +21,7 @@ var (
 	sTrimLeft       = strings.TrimLeft
 	sTrimRight      = strings.TrimRight
 	sIndex          = strings.Index
+	sLastIndex      = strings.LastIndex
 	sHasPrefix      = strings.HasPrefix
 	sHasSuffix      = strings.HasSuffix
 	sSplit          = strings.Split
@@ -32,9 +34,11 @@ var (
 	failP1OnErrWhen = fn.FailP1OnErrWhen
 	isXML           = judge.IsXML
 	isNumeric       = judge.IsNumeric
+	exist           = judge.Exist
 	replByPosGrp    = str.ReplByPosGrp
 	hasAnyPrefix    = str.HasAnyPrefix
 	splitLn         = str.SplitLn
 	trackTime       = misc.TrackTime
+	toGeneralSlc    = rflx.ToGeneralSlc
 	mustWriteFile   = io.MustWriteFile
 )

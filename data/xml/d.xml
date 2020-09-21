@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<letter>
+<letter             
+>
 <title maxlength   =   "10"> Quote Letter </title>
 
 
@@ -37,4 +38,5 @@ translate =  "  = yes
 
 
 address="http://www.smith-company-ltd.com/logo.jpg"  />
-</letter  >
+</letter   
+>
