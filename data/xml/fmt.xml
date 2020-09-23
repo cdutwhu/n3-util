@@ -22,14 +22,11 @@ options in the
 		</component> filter. It has helped us to
 set up support for our XML files in a flash. We have already
 downloaded the latest version from your Customer Center.
-
 	</text>
 	<title maxlength="40"> Quote Details
-
 	</title>
 	<text> We would like to order 50 licenses.
 Please send us a quote. Keep up the good work!
-
 	</text>
 	<greetings minlength="10">Yours sincerely,
 	</greetings>

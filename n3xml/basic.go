@@ -6,22 +6,24 @@ import (
 )
 
 var (
-	rxHead    = rxMustCompile(`<\w+(\s+\w+\s*=\s*"[^"]*"\s*)*\s*/?>`)
-	rxTail    = rxMustCompile(`</\w+\s*>`)
-	rxMultiLF = rxMustCompile(`\n{2}\t+<\w+`)
-	// rxLF         = rxMustCompile(`\n{2}\t+`)
-	rxSTagLoose  = rxMustCompile(`<\w+\s{2,}(>|\w+)`)
-	rxSTagSpace  = rxMustCompile(`\s{2,}`)
-	rxAttrLoose  = rxMustCompile(`"\s{2,}[\w/>]`)
-	rxAttrSpace  = rxMustCompile(`\s{2,}`)
-	rxEqLoose    = rxMustCompile(`\s[^"=]+\s*=\s*"`)
-	rxEqSpace    = rxMustCompile(`\s+=\s+`)
-	rxAttrDangle = rxMustCompile(`<\w+(\n\s*)+[^>]*>`)
-	rxAttrLF     = rxMustCompile(`(\n\s*)+`)
-	rxETagLoose  = rxMustCompile(`</\w+\s+>`)
-	rxETagSpace  = rxMustCompile(`\s+`)
-	rxAttrPart   = rxMustCompile(`\s+\w+\s*=\s*"[\w\s]*"`)
-	rxSTag       = rxMustCompile(`<\w+[\s>/]`)
+	// Fmt
+	rxHead        = rxMustCompile(`<\w+(\s+\w+\s*=\s*"[^"]*"\s*)*\s*/?>`)
+	rxTail        = rxMustCompile(`</\w+\s*>`)
+	rxContMultiLF = rxMustCompile(`(\n\t*){2,}</?\w+`)
+	rxMultiLF     = rxMustCompile(`(\n\t*){2,}`)
+	rxSTagLoose   = rxMustCompile(`<\w+\s{2,}(>|\w+)`)
+	rxSTagSpace   = rxMustCompile(`\s{2,}`)
+	rxAttrLoose   = rxMustCompile(`"\s{2,}[\w/>]`)
+	rxAttrSpace   = rxMustCompile(`\s{2,}`)
+	rxEqLoose     = rxMustCompile(`\s[^"=]+\s*=\s*"`)
+	rxEqSpace     = rxMustCompile(`\s+=\s+`)
+	rxAttrDangle  = rxMustCompile(`<\w+(\n\s*)+[^>]*>`)
+	rxAttrLF      = rxMustCompile(`(\n\s*)+`)
+	rxETagLoose   = rxMustCompile(`</\w+\s+>`)
+	rxETagSpace   = rxMustCompile(`\s+`)
+	// TagContAttrVal
+	rxAttrPart = rxMustCompile(`\s+\w+\s*=\s*"[\w\s]*"`)
+	rxSTag     = rxMustCompile(`<\w+[\s>/]`)
 )
 
 // Fmt :
@@ -29,9 +31,24 @@ func Fmt(xml string) string {
 	xml = xmlfmt.FormatXML(xml, "", "\t") // NOTICE: after this, auto "\r\n" applied by 'xmlfmt'
 	xml = sReplaceAll(xml, "\r\n", "\n")  // "\r\n" -> "\n"
 
-	// Remove new added LF when tail is already LF
-	xml = rxMultiLF.ReplaceAllStringFunc(xml, func(m string) string {
-		return sReplace(m, "\n\n", "\n", 1)
+	// return xml
+
+	// Remove LF at end of content
+	xml = rxContMultiLF.ReplaceAllStringFunc(xml, func(m string) string {
+		s, e := -1, -1
+		for i := len(m) - 1; i >= 0; i-- {
+			if m[i] == '\t' {
+				if e == -1 {
+					e = i + 1
+				}
+				continue
+			}
+			if m[i] == '\n' {
+				s = i
+				break
+			}
+		}
+		return rxMultiLF.ReplaceAllString(m, m[s:e])
 	})
 
 	mOldNew := make(map[string]string)
@@ -96,6 +113,7 @@ NEXT2:
 
 // TagContAttrVal :
 func TagContAttrVal(xml string) (tag, cont string, attrs []string, mAttrVal map[string]string) {
+
 	xml = sTrim(xml, " \t\n\r")
 	if !isXML(xml) {
 		return "", "", nil, nil
@@ -120,14 +138,28 @@ func TagContAttrVal(xml string) (tag, cont string, attrs []string, mAttrVal map[
 			mAttrVal[a] = v
 		}
 	}
-	if pair := rxTail.FindAllStringIndex(xml, 1); pair != nil {
-		s, e := pair[0][0], pair[0][1]
-		eTag = xml[s:e]
+
+	found := false
+	if pairs := rxTail.FindAllStringIndex(xml, -1); pairs != nil {
+		eTag1st := fSf("</%s>", tag)
+		for _, pair := range pairs {
+			s, e := pair[0], pair[1]
+			eTag = xml[s:e]
+			if eTag == eTag1st {
+				found = true
+				break
+			}
+		}
 		// fPln(3, eTag)
 	}
-	cont = xml[len(sTag):]
-	cont = cont[:sLastIndex(cont, eTag)]
-	// fPln(4, cont)
+
+	if found {
+		start := sIndex(xml, sTag) + len(sTag)
+		cont = xml[start:]
+		cont = cont[:sIndex(cont, eTag)]
+		cont = sTrimRight(cont, " \t\r\n")
+		// fPln(4, cont)
+	}
 
 	return
 }
