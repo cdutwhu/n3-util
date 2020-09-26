@@ -2,64 +2,74 @@ package n3xml
 
 import (
 	"os"
-	"regexp"
-
-	"github.com/cdutwhu/n3-util/n3err"
 )
 
-// SmashSave :
-func SmashSave(xml, saveDir string) []string {
+// SmashFirstAndSave :
+func SmashFirstAndSave(xml, saveDir string) ([]string, bool) {
 	if _, err := os.Stat(saveDir); os.IsNotExist(err) {
 		failOnErr("%v", os.MkdirAll(saveDir, os.ModePerm))
 	}
 	saveDir = sTrimRight(saveDir, `/\`) + "/"
 	mObjCnt := make(map[string]int)
 
-	SubRoots, Subs, err := Smash(RmComment(xml))
-	failOnErr("%v", err)
-	for i, subRoot := range SubRoots {
-		filename := fSf("%s%s_%d.xml", saveDir, subRoot, mObjCnt[subRoot])
-		Subs[i] = Fmt(Subs[i])
-		mustWriteFile(filename, []byte(Subs[i]))
-		mObjCnt[subRoot]++
+	if _, cont, _, _ := TagContAttrVal(xml); cont != "" {
+		roots, subs := SmashCont(RmComment(cont))
+		for i, subRoot := range roots {
+			filename := fSf("%s%s_%d.xml", saveDir, subRoot, mObjCnt[subRoot])
+			subs[i] = Fmt(subs[i])
+			mustWriteFile(filename, []byte(subs[i]))
+			mObjCnt[subRoot]++
+		}
+		return subs, true
 	}
-	return Subs
+	return nil, false
 }
 
-// Smash :
-func Smash(xml string) (SubRoots, Subs []string, err error) {
-	if !isXML(xml) {
-		return nil, nil, n3err.PARAM_INVALID_XML
-	}
+// SmashCont :
+func SmashCont(xml string) (roots, subs []string) {
 
-	root := XMLRoot(xml)
-	offset := len(fSf("<%s>", root)) + 1
-	remain := xml[offset:]
-	r := regexp.MustCompile(`<[^> /]+[ >]`)
-
-	// I := 1
-
+	remain := xml
 AGAIN:
-	if start := r.FindString(remain); start != "" {
-		subroot := sTrim(start, "<> \n\t\r")
-		// fPln(I, subroot)
+	if loc := rxTag.FindStringIndex(remain); loc != nil {
+		s, e := loc[0], loc[1]
+		root := remain[s+1 : e-1]
+		roots = append(roots, root)
 
-		SubRoots = append(SubRoots, subroot)
+		remain = remain[s:] // from first '<tag>'
+		// fPln("remain:", remain)
 
-		endMark := fSf("</%s>", subroot)
-		endPos := sIndex(remain, endMark)
-		length := endPos + len(endMark)
-		offset += length
+		end1, end2 := -1, -1
+		if loc := rxMustCompile(fSf(`</%s\s*>`, root)).FindStringIndex(remain); loc != nil {
+			_, end1 = loc[0], loc[1] // update e to '</tag>' end
+			// fPln("end:", remain[s:end1]) // end tag
+		}
+		if i := sIndex(remain, "/>"); i >= 0 {
+			end2 = i + 2 // update e to '/>' end
+		}
 
-		sub := remain[:length]
-		failOnErrWhen(!isXML(sub), "%v", n3err.XML_INVALID)
-		Subs = append(Subs, sub)
+		// if '/>' is found, and before '</tag>', and this part is valid XML
+		switch {
+		case end1 >= 0 && end2 < 0:
+			e = end1
+		case end1 < 0 && end2 >= 0:
+			e = end2
+		case end1 >= 0 && end2 >= 0:
+			if end2 < end1 && isXML(remain[:end2]) {
+				e = end2
+			} else {
+				e = end1
+			}
+		default:
+			panic("invalid sub xml")
+		}
 
-		remain = xml[offset:]
+		sub := remain[:e]
+		// fPln("sub:", sub)
+		subs = append(subs, sub)
 
-		// I++
+		remain = remain[e:] // from end of first '</tag>' or '/>'
 		goto AGAIN
 	}
 
-	return SubRoots, Subs, nil
+	return
 }

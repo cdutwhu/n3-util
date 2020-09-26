@@ -12,6 +12,8 @@ func TestBasic(t *testing.T) {
 	xml := `abc <text a =  "23" > Thank you for sending us the information on
 		<emphasis b= "ss" >SDL Trados Studio 2015 SDL Trados Studio 2015
 		</emphasis>.
+		<emphasis1 b= "ss" >SDL Trados Studio 2015 SDL Trados Studio 2016
+		</emphasis1>.
 	</text>
 	<Duration   Units  =   "    minute   "   Unit="123">3220
 	3221   11</Duration> def`

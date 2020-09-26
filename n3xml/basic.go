@@ -7,6 +7,7 @@ import (
 
 var (
 	// Fmt
+	rxTag         = rxMustCompile(`<\w+[\s/>]`)
 	rxHead        = rxMustCompile(`<\w+(\s+\w+\s*=\s*"[^"]*"\s*)*\s*/?>`)
 	rxTail        = rxMustCompile(`</\w+\s*>`)
 	rxContMultiLF = rxMustCompile(`(\n\t*){2,}</?\w+`)
