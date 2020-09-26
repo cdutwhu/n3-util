@@ -4,20 +4,23 @@ import (
 	"os"
 )
 
-// SmashFirstAndSave :
-func SmashFirstAndSave(xml, saveDir string) ([]string, bool) {
-	if _, err := os.Stat(saveDir); os.IsNotExist(err) {
+// Break :
+func Break(xml, saveDir string, fmteach bool) ([]string, bool) {
+	if _, err := os.Stat(saveDir); saveDir != "" && os.IsNotExist(err) {
 		failOnErr("%v", os.MkdirAll(saveDir, os.ModePerm))
 	}
-	saveDir = sTrimRight(saveDir, `/\`) + "/"
-	mObjCnt := make(map[string]int)
-
 	if _, cont, _, _ := TagContAttrVal(xml); cont != "" {
+		saveDir = sTrimRight(saveDir, `/\`) + "/"
+		mObjCnt := make(map[string]int)
 		roots, subs := SmashCont(RmComment(cont))
 		for i, subRoot := range roots {
-			filename := fSf("%s%s_%d.xml", saveDir, subRoot, mObjCnt[subRoot])
-			subs[i] = Fmt(subs[i])
-			mustWriteFile(filename, []byte(subs[i]))
+			if saveDir != "/" {
+				filename := fSf("%s%s_%d.xml", saveDir, subRoot, mObjCnt[subRoot])
+				if fmteach {
+					subs[i] = Fmt(subs[i])
+				}
+				mustWriteFile(filename, []byte(subs[i]))
+			}
 			mObjCnt[subRoot]++
 		}
 		return subs, true
@@ -73,3 +76,5 @@ AGAIN:
 
 	return
 }
+
+// func

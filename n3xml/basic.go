@@ -8,7 +8,7 @@ import (
 var (
 	// Fmt
 	rxTag         = rxMustCompile(`<\w+[\s/>]`)
-	rxHead        = rxMustCompile(`<\w+(\s+\w+\s*=\s*"[^"]*"\s*)*\s*/?>`)
+	rxHead        = rxMustCompile(`<\w+(\s+[\w:]+\s*=\s*"[^"]*"\s*)*\s*/?>`)
 	rxTail        = rxMustCompile(`</\w+\s*>`)
 	rxContMultiLF = rxMustCompile(`(\n\t*){2,}</?\w+`)
 	rxMultiLF     = rxMustCompile(`(\n\t*){2,}`)
@@ -23,7 +23,7 @@ var (
 	rxETagLoose   = rxMustCompile(`</\w+\s+>`)
 	rxETagSpace   = rxMustCompile(`\s+`)
 	// TagContAttrVal
-	rxAttrPart = rxMustCompile(`\s+\w+\s*=\s*"[\w\s]*"`)
+	rxAttrPart = rxMustCompile(`\s+[\w:]+\s*=\s*"[^"]*"`)
 	rxSTag     = rxMustCompile(`<\w+[\s>/]`)
 )
 
@@ -158,7 +158,7 @@ func TagContAttrVal(xml string) (tag, cont string, attrs []string, mAttrVal map[
 		start := sIndex(xml, sTag) + len(sTag)
 		cont = xml[start:]
 		cont = cont[:sIndex(cont, eTag)]
-		cont = sTrimRight(cont, " \t\r\n")
+		cont = sTrim(cont, " \t\r\n")
 		// fPln(4, cont)
 	}
 
