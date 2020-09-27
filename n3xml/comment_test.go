@@ -8,8 +8,13 @@ func TestRmComment(t *testing.T) {
 	<WellbeingResponseRefId>E6E34B35-9D75-101A-8C3D-00AA001A1700</WellbeingResponseRefId>
 	<GroupId>Inv0009</GroupId>
 	<PersonRefId SIF_RefObject="StudentPersonal">D3E34B35-9D75-101A-8C3D-00AA001A1652</PersonRefId>
-	<!-- Should you have the school here???
-	<SchoolInfoRefId>CA285746-359D-7510-1A8C-36432A901A16</SchoolInfoRefId>-->
+
+
+	<!-- Should you have the school here??? <!--
+	and also this	-->
+	<SchoolInfoRefId>CA285746-359D-7510-1A8C-36432A901A16</SchoolInfoRefId> -->
+
+	
 	<HowInvolved>Victim</HowInvolved>
 	<FollowUpActionList>
 	 <FollowUpAction>

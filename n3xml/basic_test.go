@@ -70,7 +70,7 @@ func TestDigitalTags(t *testing.T) {
 
 func TestFmt(t *testing.T) {
 	defer trackTime(time.Now())
-	bytes, err := ioutil.ReadFile("../data/xml/d.xml")
+	bytes, err := ioutil.ReadFile("../data/xml/sif.xml")
 	failOnErr("%v", err)
 	fPln(isXML(string(bytes)))
 	xml := Fmt(string(bytes))

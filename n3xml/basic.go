@@ -12,6 +12,8 @@ var (
 	rxTail        = rxMustCompile(`</\w+\s*>`)
 	rxContMultiLF = rxMustCompile(`(\n\t*){2,}</?\w+`)
 	rxMultiLF     = rxMustCompile(`(\n\t*){2,}`)
+	rxDangleTail  = rxMustCompile(`(\n\t*){1,}</\w+`)
+	rxDangleLF    = rxMustCompile(`(\n\t*){1,}`)
 	rxSTagLoose   = rxMustCompile(`<\w+\s{2,}(>|\w+)`)
 	rxSTagSpace   = rxMustCompile(`\s{2,}`)
 	rxAttrLoose   = rxMustCompile(`"\s{2,}[\w/>]`)
@@ -27,15 +29,9 @@ var (
 	rxSTag     = rxMustCompile(`<\w+[\s>/]`)
 )
 
-// Fmt :
-func Fmt(xml string) string {
-	xml = xmlfmt.FormatXML(xml, "", "\t") // NOTICE: after this, auto "\r\n" applied by 'xmlfmt'
-	xml = sReplaceAll(xml, "\r\n", "\n")  // "\r\n" -> "\n"
-
-	// return xml
-
-	// Remove LF at end of content
-	xml = rxContMultiLF.ReplaceAllStringFunc(xml, func(m string) string {
+// RmMultiBlank :
+func RmMultiBlank(xml string) string {
+	return rxContMultiLF.ReplaceAllStringFunc(xml, func(m string) string {
 		s, e := -1, -1
 		for i := len(m) - 1; i >= 0; i-- {
 			if m[i] == '\t' {
@@ -50,6 +46,20 @@ func Fmt(xml string) string {
 			}
 		}
 		return rxMultiLF.ReplaceAllString(m, m[s:e])
+	})
+}
+
+// Fmt :
+func Fmt(xml string) string {
+	xml = xmlfmt.FormatXML(xml, "", "\t") // NOTICE: after this, auto "\r\n" applied by 'xmlfmt'
+	xml = sReplaceAll(xml, "\r\n", "\n")  // "\r\n" -> "\n"
+
+	// return xml
+
+	// Remove LF at end of content
+	xml = RmMultiBlank(xml)
+	xml = rxDangleTail.ReplaceAllStringFunc(xml, func(m string) string {
+		return rxDangleLF.ReplaceAllString(m, "")
 	})
 
 	mOldNew := make(map[string]string)
@@ -112,13 +122,18 @@ NEXT2:
 	return sTrim(xml, " \t\r\n")
 }
 
+// FastTagContAttrVal :
+// func FastTagContAttrVal(xml string) (tag, cont string, attrs []string, mAttrVal map[string]string) {
+
+// }
+
 // TagContAttrVal :
 func TagContAttrVal(xml string) (tag, cont string, attrs []string, mAttrVal map[string]string) {
 
-	xml = sTrim(xml, " \t\n\r")
-	if !isXML(xml) {
-		return "", "", nil, nil
-	}
+	// xml = sTrim(xml, " \t\n\r")
+	// if !isXML(xml) {
+	// 	return "", "", nil, nil
+	// }
 
 	sTag, eTag := "", ""
 	if pair := rxHead.FindAllStringIndex(xml, 1); pair != nil {
@@ -140,25 +155,15 @@ func TagContAttrVal(xml string) (tag, cont string, attrs []string, mAttrVal map[
 		}
 	}
 
-	found := false
-	if pairs := rxTail.FindAllStringIndex(xml, -1); pairs != nil {
-		eTag1st := fSf("</%s>", tag)
-		for _, pair := range pairs {
-			s, e := pair[0], pair[1]
-			eTag = xml[s:e]
-			if eTag == eTag1st {
-				found = true
-				break
-			}
-		}
-		// fPln(3, eTag)
-	}
-
-	if found {
+	rxThisTail := rxMustCompile(fSf(`</%s\s*>`, tag))
+	if loc := rxThisTail.FindStringIndex(xml); loc != nil {
+		s, e := loc[0], loc[1]
+		eTag = xml[s:e]
+		// content :
 		start := sIndex(xml, sTag) + len(sTag)
 		cont = xml[start:]
 		cont = cont[:sIndex(cont, eTag)]
-		cont = sTrim(cont, " \t\r\n")
+		// cont = sTrim(cont, " \t\r\n")
 		// fPln(4, cont)
 	}
 
