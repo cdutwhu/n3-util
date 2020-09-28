@@ -8,19 +8,23 @@ import (
 )
 
 // Break :
-func Break(xml, saveDir string, fmteach bool) ([]string, bool) {
-	if _, err := os.Stat(saveDir); saveDir != "" && os.IsNotExist(err) {
-		failOnErr("%v", os.MkdirAll(saveDir, os.ModePerm))
+func Break(xml, saveDir string, fmt bool) ([]string, bool) {
+	save := true
+	if saveDir == "" {
+		save = false
 	}
-	if _, cont, _, _ := TagContAttrVal(xml); cont != "" {
-		saveDir = sTrimRight(saveDir, `/\`) + "/"
+
+	if root, cont, _, _ := TagContAttrVal(xml); cont != "" {
+		saveDir = sTrimRight(saveDir, `/\`) + "/" + root + "/"
+		if _, err := os.Stat(saveDir); save && os.IsNotExist(err) {
+			failOnErr("%v", os.MkdirAll(saveDir, os.ModePerm))
+		}
 		mObjCnt := make(map[string]int)
-		// roots, subs := SmashCont(RmComment(cont))
-		roots, subs := BreakCont(cont)
+		roots, subs := BreakCont(cont) // BreakCont(RmComment(cont))
 		for i, subRoot := range roots {
-			if saveDir != "/" {
+			if save {
 				filename := fSf("%s%s_%d.xml", saveDir, subRoot, mObjCnt[subRoot])
-				if fmteach {
+				if fmt {
 					subs[i] = Fmt(subs[i])
 				}
 				mustWriteFile(filename, []byte(subs[i]))

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -fr ./sif*/
+rm -fr ./out/

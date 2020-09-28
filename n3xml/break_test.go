@@ -23,7 +23,7 @@ func TestBreak(t *testing.T) {
 	// </emphasis>. Hello
 	// <test  /></root>`
 
-	_, ok := Break(string(bytes), "./sif", true)
+	_, ok := Break(string(bytes), "./out", true)
 	fPln(ok)
 }
 
@@ -44,6 +44,7 @@ func TestSmashCont(t *testing.T) {
 	bytes, err := ioutil.ReadFile("../data/xml/sif.xml")
 	failOnErr("%v", err)
 	xml := string(bytes)
+
 	tag, cont, attrs, m := TagContAttrVal(xml)
 	fPln(tag)
 	fPln(attrs)
@@ -58,6 +59,7 @@ func TestSmashCont(t *testing.T) {
 	// }
 	// for _, sub := range subs {
 	// 	fPln(sub)
+	// 	fPln(" --- ")
 	// }
 	fPln(subs[0])
 }
