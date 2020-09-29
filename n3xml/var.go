@@ -16,6 +16,7 @@ import (
 var (
 	fEf             = fmt.Errorf
 	fPln            = fmt.Println
+	fPf             = fmt.Printf
 	fSf             = fmt.Sprintf
 	sTrim           = strings.Trim
 	sTrimLeft       = strings.TrimLeft
