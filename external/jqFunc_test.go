@@ -2,12 +2,12 @@ package external
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
 func TestJQ(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../data/json/NAPCodeFrame.json")
+	bytes, err := os.ReadFile("../data/json/NAPCodeFrame.json")
 	failOnErr("%v", err)
 	fmtted := FmtJSONStr(string(bytes), "./utils/")
 	// fmt.Println(fmtted)

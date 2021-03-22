@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/cdutwhu/n3-util/n3err"
+	"github.com/digisan/gotk/slice/ts"
 )
 
 // JSONRoot :
@@ -204,8 +205,10 @@ func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 	posGrp := [][]int{}
 
 	for i := 0; i < 2; i++ {
-		lsAttr := toGeneralSlc(L1Attrs(inputs[i]))
-		failOnErrWhen(!exist(keys[i], lsAttr...), "%v: NO %s key attribute [%s]", n3err.INTERNAL, keyTypes[i], keys[i])
+		// lsAttr := toGeneralSlc(L1Attrs(inputs[i]))
+		// failOnErrWhen(!exist(keys[i], lsAttr...), "%v: NO %s key attribute [%s]", n3err.INTERNAL, keyTypes[i], keys[i])
+		lsAttr := L1Attrs(inputs[i])
+		failOnErrWhen(ts.NotIn(keys[i], lsAttr...), "%v: NO %s key attribute [%s]", n3err.INTERNAL, keyTypes[i], keys[i])
 
 		r := regexp.MustCompile(fSf(`\n  "%s": .+[,]?\n`, keys[i]))
 		pSEs := r.FindAllStringIndex(inputs[i], 1)
@@ -216,7 +219,8 @@ func Join(jsonL, fkey, jsonR, pkey, name string) (string, bool) {
 
 		if i == 0 {
 			posGrp = pSEs
-			failOnErrWhen(exist(name, lsAttr...), "%v: [%s] already exists in left json", n3err.INTERNAL, name)
+			// failOnErrWhen(exist(name, lsAttr...), "%v: [%s] already exists in left json", n3err.INTERNAL, name)
+			failOnErrWhen(ts.In(name, lsAttr...), "%v: [%s] already exists in left json", n3err.INTERNAL, name)
 		}
 	}
 

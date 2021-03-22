@@ -1,7 +1,7 @@
 package n3xml
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 )
@@ -56,7 +56,7 @@ func TestBasic(t *testing.T) {
 
 func TestDigitalTags(t *testing.T) {
 	defer trackTime(time.Now())
-	bytes, err := ioutil.ReadFile("../data/xml/siftest347.xml")
+	bytes, err := os.ReadFile("../data/xml/siftest347.xml")
 	failOnErr("%v", err)
 	r := rxMustCompile(`\d*\.\d{2}$`)
 	for _, ln := range splitLn(string(bytes)) {
@@ -70,7 +70,7 @@ func TestDigitalTags(t *testing.T) {
 
 func TestFmt(t *testing.T) {
 	defer trackTime(time.Now())
-	bytes, err := ioutil.ReadFile("../data/xml/sif.xml")
+	bytes, err := os.ReadFile("../data/xml/sif.xml")
 	failOnErr("%v", err)
 	fPln(isXML(string(bytes)))
 	xml := Fmt(string(bytes))

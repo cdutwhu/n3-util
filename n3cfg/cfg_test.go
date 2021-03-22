@@ -127,7 +127,7 @@ func TestRegister(t *testing.T) {
 // 	var readFile func(string)
 
 // 	readFile = func(path string) {
-// 		files, _ := ioutil.ReadDir(path)
+// 		files, _ := os.ReadDir(path)
 // 		for _, f := range files {
 // 			if f.Name() != sToUpper(f.Name()[:1])+f.Name()[1:] {
 // 				continue

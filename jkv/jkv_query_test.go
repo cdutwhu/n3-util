@@ -23,7 +23,7 @@ func TestQuery(t *testing.T) {
 	// path2 := "NAPCodeFrame~~TestletList~~Testlet~~NAPTestletRefId"
 	// value2 := "\"2b7c9606-09b9-43c2-a935-6a2db78bf2c9\""
 
-	if mLvlOIDs, maxL := jkv.QueryPV(path, value); mLvlOIDs != nil && len(mLvlOIDs) > 0 {
+	if mLvlOIDs, maxL := jkv.QueryPV(path, value); len(mLvlOIDs) > 0 {
 
 		for _, oid := range mLvlOIDs[maxL] {
 			fPln(oid, jkv.mOIDObj[oid])

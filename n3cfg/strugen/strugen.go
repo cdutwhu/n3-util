@@ -1,7 +1,7 @@
 package strugen
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/cdutwhu/n3-util/n3err"
@@ -108,7 +108,7 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 		return false
 	}
 
-	bytes, err := ioutil.ReadFile(tomlFile)
+	bytes, err := os.ReadFile(tomlFile)
 	if warnP1OnErr("%v", err) != nil {
 		return false
 	}
@@ -127,7 +127,7 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 	if struFile == "" {
 		struFile = dir + "/" + fname + ".go"
 	}
-	if bytes, err := ioutil.ReadFile(struFile); err == nil && sHasPrefix(string(bytes), "package ") {
+	if bytes, err := os.ReadFile(struFile); err == nil && sHasPrefix(string(bytes), "package ") {
 		addPkg = false
 	}
 
@@ -164,7 +164,7 @@ func GenStruct(tomlFile, struName, pkgName, struFile string) bool {
 
 // GenNewCfg :
 func GenNewCfg(struFile string) bool {
-	bytes, err := ioutil.ReadFile(struFile)
+	bytes, err := os.ReadFile(struFile)
 	if err != nil {
 		return false
 	}

@@ -1,6 +1,6 @@
 package attrim
 
-import "io/ioutil"
+import "os"
 
 // ------------------------- Remove ------------------------- //
 
@@ -73,7 +73,7 @@ AGAIN:
 
 // RmCfgAttrL1 :
 func RmCfgAttrL1(infile, outfile string, attrs ...string) string {
-	bytes, err := ioutil.ReadFile(infile)
+	bytes, err := os.ReadFile(infile)
 	failP1OnErr("%v", err)
 	if !sHasSuffix(outfile, ".toml") {
 		outfile += ".toml"
@@ -152,7 +152,7 @@ AGAIN:
 
 // SelCfgAttrL1 :
 func SelCfgAttrL1(infile, outfile string, attrs ...string) string {
-	bytes, err := ioutil.ReadFile(infile)
+	bytes, err := os.ReadFile(infile)
 	failP1OnErr("%v", err)
 	if !sHasSuffix(outfile, ".toml") {
 		outfile += ".toml"

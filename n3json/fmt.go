@@ -2,7 +2,7 @@ package n3json
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 )
 
 var (
@@ -126,10 +126,11 @@ func Fmt(jsonstr string, nSpace int) string {
 
 // FmtArr :
 func FmtArr(jsonArr string, nSpace int) string {
-	jsonGrp := []string{}
-	for _, json := range SplitArr(jsonArr, nSpace) {
-		jsonGrp = append(jsonGrp, json)
-	}
+	// jsonGrp := []string{}
+	// for _, json := range SplitArr(jsonArr, nSpace) {
+	// 	jsonGrp = append(jsonGrp, json)
+	// }
+	jsonGrp := append([]string{}, SplitArr(jsonArr, nSpace)...)
 	if len(jsonGrp) > 0 {
 		return MakeArr(jsonGrp...)
 	}
@@ -138,7 +139,7 @@ func FmtArr(jsonArr string, nSpace int) string {
 
 // FmtFile :
 func FmtFile(filename string, nSpace int) string {
-	bytes, err := ioutil.ReadFile(filename)
+	bytes, err := os.ReadFile(filename)
 	failP1OnErr("%v", err)
 	if json := string(bytes); isJSON(json) {
 		return Fmt(json, nSpace)

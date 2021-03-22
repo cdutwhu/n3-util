@@ -42,9 +42,7 @@ const jsonStr2 = `[    {
         },
         "verb":
         {
-            "id": "http://adlnet.gov/expapi/verbs/completed",
-            "display":
-            {
+            "id": "http://adlnet.gov/expapi/verbs/completed",            "display":            {
                 "en-US": "completed"
             }
         },

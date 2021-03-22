@@ -1,7 +1,7 @@
 package n3xml
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 
@@ -10,7 +10,7 @@ import (
 
 func TestBreak(t *testing.T) {
 	defer misc.TrackTime(time.Now())
-	bytes, err := ioutil.ReadFile("../data/xml/sif.xml")
+	bytes, err := os.ReadFile("../data/xml/sif.xml")
 	failOnErr("%v", err)
 
 	// xml := `<root> Thank you for sending us the information on
@@ -40,8 +40,8 @@ func TestSmashCont(t *testing.T) {
 	// </emphasis>. Hello
 	// <test  />`
 
-	// bytes, err := ioutil.ReadFile("./sif/NAPCodeFrame_0.xml")
-	bytes, err := ioutil.ReadFile("../data/xml/sif.xml")
+	// bytes, err := os.ReadFile("./sif/NAPCodeFrame_0.xml")
+	bytes, err := os.ReadFile("../data/xml/sif.xml")
 	failOnErr("%v", err)
 	xml := string(bytes)
 
@@ -67,7 +67,7 @@ func TestSmashCont(t *testing.T) {
 func TestFastSmashCont(t *testing.T) {
 	defer misc.TrackTime(time.Now())
 
-	bytes, err := ioutil.ReadFile("../data/xml/fmt.xml")
+	bytes, err := os.ReadFile("../data/xml/fmt.xml")
 	failOnErr("%v", err)
 	xml := string(bytes)
 	tag, cont, attrs, m := TagContAttrVal(xml)

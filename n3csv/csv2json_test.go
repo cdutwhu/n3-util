@@ -1,7 +1,6 @@
 package n3csv
 
 import (
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -11,7 +10,7 @@ func TestCSV2JSON(t *testing.T) {
 	enableLog2F(true, "./err.log")
 
 	dir := "../data/csv/"
-	files, err := ioutil.ReadDir(dir)
+	files, err := os.ReadDir(dir)
 	failOnErr("%v", err)
 
 	for _, file := range files {
